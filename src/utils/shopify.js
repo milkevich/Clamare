@@ -15,7 +15,7 @@ const client = axios.create({
   // src/utils/shopify.js
 
 console.log('VITE_SHOPIFY_STORE_URL:', import.meta.env.VITE_SHOPIFY_STORE_URL);
-console.log('VITE_SHOPIFY_API_TOKEN:', import.meta.env.VITE_SHOPIFY_API_TOKEN);
+console.log('VITE_SHOPIFY_API_TOKE!N:', import.meta.env.VITE_SHOPIFY_API_TOKEN);
 // Add similar logs for other variables if needed
 
 
