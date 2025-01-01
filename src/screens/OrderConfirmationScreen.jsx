@@ -1,66 +1,88 @@
-import React, { useState, useEffect } from "react";
+// OrderConfirmationScreen.jsx
+import React, { useEffect, useState } from 'react';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 
-const OrderConfirmationScreen = ({ orderId }) => {
+const OrderConfirmationScreen = () => {
+  const { orderId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
   const [orderDetails, setOrderDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const orderId = 1001
-
+  
+  // Function to parse query parameters
+  const getQueryParams = () => {
+    return new URLSearchParams(location.search);
+  };
+  
   useEffect(() => {
+    const query = getQueryParams();
+    const key = query.get('key');
+    const syclid = query.get('syclid');
+    
+    console.log("Order ID:", orderId);
+    console.log("Key:", key);
+    console.log("syclid:", syclid);
+    
+    // Handle cases where key is required but missing
+    if (!key) {
+      setError('Invalid or missing key parameter.');
+      return;
+    }
+    
+    // Fetch order details from your backend using orderId and key
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/order-details", {
-          method: "POST",
+        const response = await fetch('http://localhost:5001/api/order-details', { // Update to your backend URL if different
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ orderId }),
+          body: JSON.stringify({ orderId, key, syclid }),
         });
-
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch order details.');
         }
-
         const data = await response.json();
         setOrderDetails(data);
       } catch (err) {
         setError(err.message);
-      } finally {
-        setLoading(false);
       }
     };
-
+    
     fetchOrderDetails();
-  }, [orderId]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
+  }, [orderId, location.search]);
+  
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div>
+        <h2>Error</h2>
+        <p>{error}</p>
+        <button onClick={() => navigate('/')}>Return to Home</button>
+      </div>
+    );
   }
-
+  
   if (!orderDetails) {
-    return <div>No order details found.</div>;
+    return <div>Loading your order details...</div>;
   }
-
+  
   return (
     <div>
-      <h1>Order Confirmation</h1>
-      <p>Order Number: #{orderDetails.orderNumber}</p>
+      <h2>Order Confirmation</h2>
+      <p>Thank you for your purchase! Your order ID is {orderDetails.orderNumber}.</p>
       <p>Email: {orderDetails.email}</p>
+      <h3>Items:</h3>
       <ul>
         {orderDetails.lineItems.edges.map((item, index) => (
           <li key={index}>
-            {item.node.title} × {item.node.quantity}
+            {item.node.title} - Quantity: {item.node.quantity}
           </li>
         ))}
       </ul>
-      <p>
-        Total: {orderDetails.totalPrice.amount}{" "}
-        {orderDetails.totalPrice.currencyCode}
-      </p>
+      <p>Total Price: {orderDetails.totalPrice.amount} {orderDetails.totalPrice.currencyCode}</p>
+      {/* Add more details as needed */}
     </div>
   );
 };

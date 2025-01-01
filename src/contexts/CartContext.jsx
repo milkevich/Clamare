@@ -83,8 +83,9 @@ export const CartProvider = ({ children }) => {
       console.log('Updated cart after removing item:', updatedCart);
       setCart(updatedCart);
       if (updatedCart.lines.edges.length === 0) {
-        console.log('Cart is empty. Removing cartId from localStorage.');
+        console.log('Cart is empty. Removing cartId and checkoutId from localStorage.');
         localStorage.removeItem('shopifyCartId');
+        localStorage.removeItem('shopify_checkout_id'); // Clear checkout ID
         setCart(null);
       }
     } catch (err) {
@@ -126,6 +127,7 @@ export const CartProvider = ({ children }) => {
       }
 
       const newQuantity = line.node.quantity + delta;
+      console.log(`Updating line ID ${lineId} from ${line.node.quantity} to ${newQuantity}`);
 
       if (newQuantity <= 0) {
         // If new quantity is 0 or less, remove the item

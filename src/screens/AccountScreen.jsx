@@ -233,9 +233,9 @@ const AccountScreen = () => {
               ) : error ? (
                 <p style={{ color: 'red' }}>ERROR: {error}</p>
               ) : orders.length > 0 ? (
-                <ul style={{ margin: 0, padding: "1.25rem 0rem", borderTop: '1px solid var(--border-color)', maxWidth: '400px' }}>
+                <ul style={{ margin: 0, maxWidth: '400px', padding: 0 }}>
                   {orders.map(order => (
-                    <li key={order.id}>
+                    <li style={{padding: "1.25rem 1.25rem 1.25rem 0rem", borderTop: '1px solid var(--border-color)',}} key={order.id}>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <p style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>{order.name}</p>
                         <p style={{ margin: 0, fontSize: '12px', fontWeight: '580', color: 'var(--sec-color)' }}>VIEW</p>
