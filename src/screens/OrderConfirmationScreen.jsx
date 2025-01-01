@@ -33,7 +33,7 @@ const OrderConfirmationScreen = () => {
     // Fetch order details from your backend using orderId and key
     const fetchOrderDetails = async () => {
       try {
-        const response = await fetch('http://clamare.store/api/order-details', { // Update to your backend URL if different
+        const response = await fetch('http://clamare-us.myshopify.com/api/order-details', { // Update to your backend URL if different
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
