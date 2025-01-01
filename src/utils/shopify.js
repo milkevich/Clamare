@@ -12,6 +12,13 @@ const client = axios.create({
   
   export default client;
 
+  // src/utils/shopify.js
+
+console.log('VITE_SHOPIFY_STORE_URL:', import.meta.env.VITE_SHOPIFY_STORE_URL);
+console.log('VITE_SHOPIFY_API_TOKEN:', import.meta.env.VITE_SHOPIFY_API_TOKEN);
+// Add similar logs for other variables if needed
+
+
 /**
  * 1) Fetch multiple products for ShopScreen 
  *    - Here we fetch each product's handle, which is critical for generating a Shopify-like URL.

@@ -159,3 +159,7 @@ app.post("/api/order-details", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+// server.js
+console.log(`Shop Name: ${process.env.SHOPIFY_STORE_URL}`);
+console.log(`Access Token: ${process.env.SHOPIFY_ADMIN_API_ACCESS_TOKEN}`);
