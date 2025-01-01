@@ -20,7 +20,7 @@ app.use(express.json());
 
 // Enable CORS for frontend
 app.use(cors({
-  origin: 'https://clamare-us.myshopify.com', // Replace with your frontend URL
+  origin: 'https://clamare.store', // Replace with your frontend URL
   credentials: true,
 }));
 
