@@ -1,0 +1,15 @@
+.galleryGrid {
+    column-count: 3;
+    column-gap: 20px;
+    max-width: 1470px;
+    padding: 0px 10px;
+    margin: auto;
+  }
+  
+  .galleryItem {
+    width: 100%;
+    margin-bottom: 20px;
+    break-inside: avoid;
+    background-color: #f0f0f0; 
+  }
+  

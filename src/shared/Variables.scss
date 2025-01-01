@@ -1,0 +1,132 @@
+:root {
+    font-family: Neue, Helvetica, sans-serif;
+
+    --main-bg-color: rgb(255, 255, 255);
+    --product-bg-color: #F2F2F2;
+    --main-color: rgb(0, 0, 0);
+    --sec-color: #757575;
+    --border-color: #F5F5F5;
+
+
+    background-color: var(--main-bg-color);
+}
+
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+.appContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+}
+
+.content {
+    max-width: 1470px;
+    margin: auto;
+}
+
+ul {
+    list-style-type: none;
+  }
+
+.btn:hover {
+    background-color: rgba(0, 0, 0, 0.041);
+}
+
+::-webkit-scrollbar {
+    background-color: var(--border-color);
+    width: 1px;
+    scrollbar-color: black;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--main-bg-color);
+    border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    border-radius: 0px;
+}
+
+.MuiPaper-root {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: 1px solid var(--main-color) !important;
+    margin-top: 0px !important;
+    box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    -webkit-box-sizing: border-box !important;
+    margin-top: -1px !important;
+}
+
+.MuiMenuItem-root {
+    border-radius: 0 !important;
+}
+
+.Mui-selected {
+    background-color: var(--main-color) !important;
+    color: white !important;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    background-color: var(--main-bg-color);
+    margin: 0;
+    font: inherit;
+    color: currentColor;
+    width: 15px;
+    height: 15px;
+    border: 1px solid var(--main-color);
+    border-radius: 0;
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+    margin-top: 2px;
+  }
+  
+  input[type="checkbox"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em var(--form-control-color);
+    margin-top: 0.01em;
+  }
+  
+  input[type="checkbox"]:checked::before {
+    transform: scale(1);
+    background-color: var(--main-color);
+  }
+
+
+.autocomplete-container {
+    position: relative;
+    width: 100%;
+  }
+  
+  .suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .attribution {
+    margin-top: 4px;
+    text-align: right;
+    font-size: 10px;
+    color: #555;
+  }
+  
+  .attribution img {
+    height: 12px;
+  }

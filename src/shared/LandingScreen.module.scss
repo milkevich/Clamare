@@ -1,0 +1,14 @@
+.landingScreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(100vw - 20px);
+  height: calc(100vh - 120px);
+  max-width: 1470px;
+  margin: auto;
+}
+
+.landingImage {
+  width: 500px;
+  height: 640px;
+}

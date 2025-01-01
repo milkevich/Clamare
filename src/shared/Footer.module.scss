@@ -1,0 +1,29 @@
+.footer {
+    border-top: 1px solid var(--border-color);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 10px;
+    font-weight: 580;
+}
+
+.footerLinks {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.footerLink {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.footerLink:hover {
+    text-decoration: underline;
+}
+
+.footerCopyright {
+    font-weight: 400;
+    color: var(--sec-color);
+}
