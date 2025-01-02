@@ -18,7 +18,7 @@ const NotFound = () => {
                     <p>SEEMS LIKE WE'VE WARNED OFF TRAILS, LET'S GET YOU BACK ON TRACK.</p>
                 </div>
             </div>
-            <div className='btn' onClick={() => {navigate(-1)}} style={{ position: 'fixed', bottom: 0, width: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center', left: 0, cursor: 'pointer', padding: '20px', transition: 'ease-in-out 0.3s all' }}>
+            <div className='btn' onClick={() => {navigate('/')}} style={{ position: 'fixed', bottom: 0, width: '100%', textAlign: 'center', justifyContent: 'center', alignItems: 'center', left: 0, cursor: 'pointer', padding: '20px', transition: 'ease-in-out 0.3s all' }}>
                 <p style={{ display: 'flex', alignItems: 'center' }}><MdKeyboardArrowLeft size={14} /> GO BACK</p>
             </div>
         </div>

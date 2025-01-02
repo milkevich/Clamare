@@ -6,8 +6,8 @@ import { MdKeyboardArrowLeft } from 'react-icons/md';
 import { VscChromeClose } from "react-icons/vsc";
 import { CartContext } from '../contexts/CartContext';
 import { Fade, Slide } from '@mui/material';
-import Loader from '../shared/UI/Loader'
-
+import Loader from '../shared/UI/Loader';
+import s from '../shared/ClothingItemScreen.module.scss';
 
 function ClothingItemScreen() {
     const { handle } = useParams();
@@ -19,6 +19,21 @@ function ClothingItemScreen() {
     const [selectedColor, setSelectedColor] = useState('');
     const [addedItemPopUpShown, setAddedItemPopUpShown] = useState(false);
     const [addedItemDetails, setAddedItemDetails] = useState(null);
+    const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsSmallScreen(window.innerWidth <= 600);
+        };
+
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     useEffect(() => {
         const loadProduct = async () => {
@@ -52,7 +67,7 @@ function ClothingItemScreen() {
     }, [searchParams, product]);
 
     if (!product) {
-        return <Loader/>;
+        return <Loader />;
     }
 
     // Function to get option value
@@ -163,272 +178,211 @@ function ClothingItemScreen() {
     }
 
     return (
-        <div>
-            <Slide direction="left" in={addedItemPopUpShown && !isBagOpened} mountOnEnter unmountOnExit>
+        <div className={s.container}>
+            <Slide
+                direction="left"
+                in={addedItemPopUpShown && !isBagOpened}
+                mountOnEnter
+                unmountOnExit
+            >
                 <div
-                    style={{
-                        position: 'fixed',
-                        top: '100px',
-                        right: '20px',
-                        maxWidth: '300px',
-                        width: '100%',
-                        padding: '15px 25px 15px 15px',
-                        backgroundColor: 'var(--main-bg-color)',
-                        border: '1px solid var(--main-color)',
-                        fontWeight: '580',
-                        fontSize: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        cursor: 'pointer',
-                        zIndex: 101
-                    }}
-
+                    className={s.addedItemPopUp}
                     onClick={() => {
-                        setIsBagOpened(true)
-                        setAddedItemPopUpShown(false)
+                        setIsBagOpened(true);
+                        setAddedItemPopUpShown(false);
                     }}
                 >
-                    <div style={{display: 'flex', gap: '1rem', alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
+                    <div className={s.addedItemDetails}>
                         <img
                             src={addedItemDetails?.image}
                             alt={addedItemDetails?.variantName}
-                            style={{ width: '60px' }}
+                            className={s.addedItemImage}
                         />
-                        <div>
-                            <p style={{ margin: 0, fontWeight: '600', fontSize: '12px' }}>{addedItemDetails?.name.toUpperCase()}</p>
-                            <p style={{ margin: '4px 0', fontWeight: '580', fontSize: '12px' }}>
+                        <div className={s.addedItemInfo}>
+                            <p className={s.addedItemName}>
+                                {addedItemDetails?.name.toUpperCase()}
+                            </p>
+                            <p className={s.addedItemVariant}>
                                 {addedItemDetails?.variantName.toUpperCase()}
                             </p>
-                            <p style={{ margin: 0, fontWeight: '580', fontSize: '12px' }}>
+                            <p className={s.addedItemPrice}>
                                 ${addedItemDetails?.price}
                             </p>
                         </div>
                     </div>
-                    <p onClick={() => setSuccessPopUpShown(false)} style={{ margin: 0, cursor: 'pointer', width: '70%', textAlign: 'right' }}>
+                    <p
+                        className={s.closeButton}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setAddedItemPopUpShown(false);
+                        }}
+                    >
                         <VscChromeClose size={14} />
                     </p>
                 </div>
             </Slide>
+
             <div
+                className={s.backToShop}
                 onClick={() => navigate('/products/all')}
-                style={{
-                    borderBottom: '1px solid var(--border-color)',
-                    padding: '10px',
-                    cursor: 'pointer',
-                    position: 'sticky',
-                    top: 53,
-                    backgroundColor: 'var(--main-bg-color)',
-                    zIndex: 10,
-                }}
             >
-                <p
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        fontSize: '10px',
-                        fontWeight: '580',
-                        margin: 'auto',
-                        marginTop: '0px',
-                        maxWidth: '1300px',
-                    }}
-                >
+                <p className={s.backToShopText}>
                     <MdKeyboardArrowLeft size={14} /> BACK TO SHOP
                 </p>
             </div>
-                    <Fade in={product}>
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    maxWidth: '1300px',
-                    margin: 'auto',
-                    paddingBottom: '1.25rem',
-                }}
-            >
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '1rem',
-                        alignItems: 'center',
-                        maxWidth: '500px',
-                        width: '100%',
-                    }}
-                >
-                    {variantImageUrl && (
-                        <img
-                            src={variantImageUrl}
-                            alt="Current Color Variant"
-                            style={{ maxWidth: '500px', width: '100%' }}
-                        />
-                    )}
 
-                    {imagesToDisplay.map(({ node }) => (
-                        <img
-                            key={node.url}
-                            src={node.url}
-                            alt={product.title}
-                            style={{ maxWidth: '500px', width: '100%' }}
-                        />
-                    ))}
-                </div>
+            <Fade in={product}>
+                <div className={s.mainContent}>
+                    <div className={s.imageColumn}>
+                        {variantImageUrl && (
+                            <img
+                                src={variantImageUrl}
+                                alt="Current Color Variant"
+                                className={s.productImage}
+                            />
+                        )}
 
-                <div
-                    style={{
-                        maxWidth: '600px',
-                        fontSize: '12px',
-                        marginLeft: 'auto',
-                        marginRight: 'auto',
-                        maxHeight: 'calc(100vh - 90px)',
-                        position: 'sticky',
-                        top: 88,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        width: '100%',
-                        padding: '0rem 1.5rem',
-                    }}
-                >
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            height: '100%',
-                            maxHeight: '500px',
-                            paddingBottom: '50px',
-                        }}
-                    >
-                        <div>
-                            <p style={{ fontWeight: '600', fontSize: '12px' }}>
-                                {product.title.toUpperCase()}
-                            </p>
-                            <p>${product?.priceRange?.minVariantPrice?.amount}</p>
+                        {imagesToDisplay.map(({ node }) => (
+                            <img
+                                key={node.url}
+                                src={node.url}
+                                alt={product.title}
+                                className={s.productImage}
+                            />
+                        ))}
+                    </div>
 
-                            <div
-                                style={{
-                                    borderTop: '1px solid var(--border-color)',
-                                    borderBottom: '1px solid var(--border-color)',
-                                    padding: '0.75rem 0rem',
-                                }}
-                            >
-                                {allSizes.length > 0 && (
-                                    <div style={{ display: 'flex' }}>
-                                        {allSizes.map((sz, index) => (
-                                            <button
-                                                key={sz}
-                                                onClick={() => setSelectedSize(sz)}
-                                                style={{
-                                                    padding:
-                                                        index === 0
-                                                            ? '0.25rem 0.5rem 0.25rem 0rem'
-                                                            : '0.25rem 0.5rem',
-                                                    cursor: 'pointer',
-                                                    border: 'none',
-                                                    outline: 'none',
-                                                    backgroundColor: 'var(--main-bg-color)',
-                                                    fontWeight: selectedSize === sz ? '600' : '580',
-                                                    textDecoration:
-                                                        selectedSize === sz ? 'underline' : 'none',
-                                                }}
-                                            >
-                                                {sz.toUpperCase()}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div
-                                style={{
-                                    borderBottom: '1px solid var(--border-color)',
-                                    paddingTop: '0.5rem',
-                                    paddingBottom: '1.5rem',
-                                }}
-                            >
-                                <p
-                                    style={{
-                                        fontSize: '12px',
-                                        fontWeight: '580',
-                                        marginBottom: '0.5rem',
-                                    }}
-                                >
-                                    {selectedColor.toUpperCase() || 'N/A'}
+                    <div className={s.infoContainer}>
+                        <div className={s.infoContent}>
+                            <div>
+                                <p className={s.productTitle}>
+                                    {product.title.toUpperCase()}
+                                </p>
+                                <p className={s.productPrice}>
+                                    ${product?.priceRange?.minVariantPrice?.amount}
                                 </p>
 
-                                {/* Color Variants Selector */}
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        gap: '0.5rem',
-                                        flexWrap: 'wrap',
-                                    }}
-                                >
-                                    {uniqueColors.map((color) => {
-                                        const isActive = selectedColor.toLowerCase() === color.toLowerCase();
-                                        // Find a variant with this color to get its image
-                                        const variantWithColor = allVariants.find(
-                                            (variant) =>
-                                                getOptionValue(variant, 'color').toLowerCase() === color.toLowerCase()
-                                        );
+                                <div className={s.sizeSelectorContainer}>
+                                    {allSizes.length > 0 && (
+                                        <div className={s.sizeButtonsContainer}>
+                                            {allSizes.map((sz, index) => (
+                                                <button
+                                                    key={sz}
+                                                    onClick={() => setSelectedSize(sz)}
+                                                    className={`${s.sizeButton} ${selectedSize === sz
+                                                        ? s.selectedSize
+                                                        : ''
+                                                        }`}
+                                                >
+                                                    {sz.toUpperCase()}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
 
-                                        return (
-                                            <div key={color} style={{ textAlign: 'center' }}>
-                                                {variantWithColor && variantWithColor.image?.url ? (
-                                                    <img
-                                                        src={variantWithColor.image.url}
-                                                        alt={`Color: ${color}`}
-                                                        style={{
-                                                            width: '50px',
-                                                            cursor: 'pointer',
-                                                            border: isActive
-                                                                ? '1px solid var(--main-color)'
-                                                                : '1px solid var(--border-color)',
-                                                        }}
-                                                        onClick={() => handleColorSelect(color)}
-                                                    />
-                                                ) : (
-                                                    <div
-                                                        onClick={() => handleColorSelect(color)}
-                                                        style={{
-                                                            width: '50px',
-                                                            height: '50px',
-                                                            background: '#ccc',
-                                                            display: 'inline-block',
-                                                            cursor: 'pointer',
-                                                            border: isActive
-                                                                ? '1px solid var(--main-color)'
-                                                                : '1px solid var(--border-color)',
-                                                            borderRadius: '50%',
-                                                        }}
-                                                    />
-                                                )}
-                                            </div>
-                                        );
-                                    })}
+                                <div className={s.colorSelectorContainer}>
+                                    <div className={s.colorVariants}>
+                                        {uniqueColors.map((color) => {
+                                            const isActive =
+                                                selectedColor.toLowerCase() ===
+                                                color.toLowerCase();
+                                            // Find a variant with this color to get its image
+                                            const variantWithColor = allVariants.find(
+                                                (variant) =>
+                                                    getOptionValue(
+                                                        variant,
+                                                        'color'
+                                                    ).toLowerCase() ===
+                                                    color.toLowerCase()
+                                            );
+
+                                            return (
+                                                <div
+                                                    key={color}
+                                                    className={s.colorOption}
+                                                >
+                                                    {variantWithColor &&
+                                                        variantWithColor.image?.url ? (
+                                                        <img
+                                                            src={
+                                                                variantWithColor.image
+                                                                    .url
+                                                            }
+                                                            alt={`Color: ${color}`}
+                                                            className={`${s.colorImage} ${isActive
+                                                                ? s.activeColor
+                                                                : ''
+                                                                }`}
+                                                            onClick={() =>
+                                                                handleColorSelect(
+                                                                    color
+                                                                )
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            onClick={() =>
+                                                                handleColorSelect(
+                                                                    color
+                                                                )
+                                                            }
+                                                            className={`${s.colorPlaceholder} ${isActive
+                                                                ? s.activeColor
+                                                                : ''
+                                                                }`}
+                                                        />
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    <p className={s.selectedColorText}>
+                                        {selectedColor.toUpperCase() || 'N/A'}
+                                    </p>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Product Description and Buttons */}
-                        <div>
-                            <p>{product.description}</p>
-                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                                <Button onClick={handleAddToBag}>
-                                    {selectedSize && selectedColor ? 'ADD TO BAG' : 'SELECT A SIZE'}
-                                </Button>
-                                <Button
-                                    secondary={true}
-                                    onClick={() => navigate('/checkout')} // Adjust the path as needed
-                                >
-                                    CHECKOUT
-                                </Button>
+                            {/* Product Description and Buttons */}
+                            <div className={s.productActions}>
+                                <p className={s.productDescription}>
+                                    {product.description}
+                                </p>
+                                {!isSmallScreen &&
+
+                                    <div className={s.actionButtons}>
+                                        <Button onClick={handleAddToBag}>
+                                            {selectedSize && selectedColor
+                                                ? 'ADD TO BAG'
+                                                : 'SELECT A SIZE'}
+                                        </Button>
+                                        <Button
+                                            secondary={true}
+                                            onClick={() => navigate('/checkout')} // Adjust the path as needed
+                                        >
+                                            CHECKOUT
+                                        </Button>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
+                    {isSmallScreen &&
+                        <div className={s.actionButtons}>
+                            <Button onClick={handleAddToBag}>
+                                {selectedSize && selectedColor
+                                    ? 'ADD TO BAG'
+                                    : 'SELECT A SIZE'}
+                            </Button>
+                            <Button
+                                secondary={true}
+                                onClick={() => navigate('/checkout')} // Adjust the path as needed
+                            >
+                                CHECKOUT
+                            </Button>
+                        </div>
+                    }
                 </div>
-            </div>
             </Fade>
         </div>
     );

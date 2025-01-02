@@ -1,0 +1,275 @@
+.container {
+    position: relative;
+}
+
+/* Added Item Pop-Up Styles */
+.addedItemPopUp {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    max-width: 300px;
+    width: 100%;
+    padding: 15px 25px 15px 15px;
+    background-color: var(--main-bg-color);
+    border: 1px solid var(--main-color);
+    font-weight: 580;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    z-index: 101;
+}
+
+.addedItemDetails {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.addedItemImage {
+    width: 60px;
+    object-fit: cover;
+}
+
+.addedItemInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.addedItemName {
+    margin: 0;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.addedItemVariant {
+    margin: 4px 0;
+    font-weight: 580;
+    font-size: 12px;
+}
+
+.addedItemPrice {
+    margin: 0;
+    font-weight: 580;
+    font-size: 12px;
+}
+
+.closeButton {
+    margin: 0;
+    cursor: pointer;
+    width: 70%;
+    text-align: right;
+    display: flex;
+    justify-content: right;
+}
+
+/* Back to Shop Button Styles */
+.backToShop {
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px;
+    cursor: pointer;
+    position: sticky;
+    top: 53px;
+    background-color: var(--main-bg-color);
+    z-index: 10;
+}
+
+.backToShopText {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 580;
+    margin: auto;
+    margin-top: 0px;
+    max-width: 1300px;
+}
+
+/* Main Content Styles */
+.mainContent {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1300px;
+    margin: auto;
+    padding-bottom: 1.25rem;
+}
+
+.imageColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.productImage {
+    max-width: 500px;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Info Container Styles */
+.infoContainer {
+    max-width: 600px;
+    font-size: 12px;
+    margin-left: auto;
+    margin-right: auto;
+    max-height: calc(100vh - 90px);
+    position: sticky;
+    top: 88px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    padding: 0rem 1.5rem;
+}
+
+.infoContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    max-height: 500px;
+    padding-bottom: 50px;
+}
+
+.productTitle {
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 0.5rem;
+}
+
+.productPrice {
+    margin-bottom: 1rem;
+}
+
+.sizeSelectorContainer {
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 0rem;
+}
+
+.sizeButtonsContainer {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.sizeButton {
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background-color: var(--main-bg-color);
+    font-weight: 580;
+    text-decoration: none;
+    transition: all 0.3s ease;
+
+    &.selectedSize {
+        font-weight: 600;
+        text-decoration: underline;
+    }
+}
+
+.colorSelectorContainer {
+    border-bottom: 1px solid var(--border-color);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.selectedColorText {
+    font-size: 12px;
+    font-weight: 580;
+    margin-bottom: 0rem;
+}
+
+.colorVariants {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.colorOption {
+    text-align: center;
+}
+
+.colorImage {
+    width: 50px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    transition: border 0.3s ease;
+
+    &.activeColor {
+        border: 1px solid var(--main-color);
+    }
+}
+
+.colorPlaceholder {
+    width: 50px;
+    height: 50px;
+    background: #ccc;
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    transition: border 0.3s ease;
+
+    &.activeColor {
+        border: 1px solid var(--main-color);
+    }
+}
+
+/* Product Actions Styles */
+.productActions {
+    margin-top: 1rem;
+}
+
+.productDescription {
+    margin-bottom: 1rem;
+}
+
+.actionButtons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+    .mainContent {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .imageColumn {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        padding: 0;
+        overflow-x: scroll;
+    }
+
+    .infoContainer {
+        padding: 0rem 0.75rem;
+        margin: 0;
+        max-width: calc(100% - 1.5rem);
+        margin-bottom: -3rem;
+    }
+
+    .addedItemPopUp {
+        top: 80px;
+        right: 10px;
+        max-width: 90%;
+    }
+
+    .actionButtons {
+        background-color: var(--main-bg-color);
+        padding: 0.75rem;
+        border-top: 1px solid var(--border-color);
+        position: sticky;
+        bottom: 0;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem);
+    }
+}
