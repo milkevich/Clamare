@@ -1,3 +1,4 @@
+// src/index.jsx or your main routing file
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } from 'react-router-dom';
 import App from './App.jsx';
 import ReactDOM from 'react-dom/client';
@@ -12,24 +13,27 @@ import Magazine from './screens/Magazine.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import LogInScreen from './screens/LogInScreen.jsx';
 import SignUpScreen from './screens/SignUpScreen.jsx';
-import OrderConfirmationScreen from './screens/OrderConfirmationScreen.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
+import NotFound from './screens/NotFound.jsx';
+import OrderScreen from './screens/OrderScreen.jsx'; 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
       <Route index element={<LandingScreen />} />
       <Route path='products/all' element={<ShopScreen />} />
+      <Route path='products/*' element={<ShopScreen />} />
       <Route path='pages/support/customer-service' element={<SupportScreen />} />
       <Route path='pages/support/contact' element={<SupportScreen />} />
       <Route path="products/:handle" element={<ClothingItemScreen />} />
       <Route path="pages/magazine" element={<Magazine />} />
-      <Route path="orders/:orderId/authenticate" element={<OrderConfirmationScreen />} />
       <Route element={<Protected />}>
         <Route path='account' element={<AccountScreen />} />
+        <Route path='account/orders/:orderId' element={<OrderScreen />} /> 
       </Route>
       <Route path='account/login' element={<LogInScreen />} />
       <Route path='account/sign-up' element={<SignUpScreen />} />
-      <Route path="*" element={<div>404 Not Found</div>} />
+      <Route path="*" element={<NotFound />} />
     </Route>
   )
 );
@@ -38,7 +42,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <CartProvider>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <ErrorBoundary>
+        <RouterProvider router={router} />
+      </ErrorBoundary>
     </AuthProvider>
   </CartProvider>
 );

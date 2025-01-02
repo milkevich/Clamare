@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create an Axios client for Shopify Storefront
 const client = axios.create({
-    baseURL: `https://${import.meta.env.VITE_SHOPIFY_STORE_URL}/api/2023-10/graphql.json`,
+    baseURL: `https://${import.meta.env.VITE_SHOPIFY_STORE_URL}/api/2023-07/graphql.json`,
     headers: {
       'Content-Type': 'application/json',
       'X-Shopify-Storefront-Access-Token': import.meta.env.VITE_SHOPIFY_API_TOKEN,

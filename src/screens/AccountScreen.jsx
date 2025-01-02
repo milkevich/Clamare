@@ -180,6 +180,12 @@ const AccountScreen = () => {
     return null; // Or a loading indicator while redirecting
   }
 
+  const extractNumericId = (globalId) => {
+    const regex = /Order\/(\d+)/;
+    const match = globalId.match(regex);
+    return match ? match[1] : null;
+  };
+
   return (
     <Fade in={!loading}>
       <div>
@@ -235,7 +241,10 @@ const AccountScreen = () => {
               ) : orders.length > 0 ? (
                 <ul style={{ margin: 0, maxWidth: '400px', padding: 0 }}>
                   {orders.map(order => (
-                    <li style={{padding: "1.25rem 1.25rem 1.25rem 0rem", borderTop: '1px solid var(--border-color)',}} key={order.id}>
+                    <li onClick={() => {
+                      const encodedOrderId = encodeURIComponent(order.id);
+                      navigate(`/account/orders/${encodedOrderId}`);
+                    }} style={{padding: "1.25rem 1.25rem 1.25rem 0rem", borderTop: '1px solid var(--border-color)',}} key={order.id}>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <p style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>{order.name}</p>
                         <p style={{ margin: 0, fontSize: '12px', fontWeight: '580', color: 'var(--sec-color)' }}>VIEW</p>
