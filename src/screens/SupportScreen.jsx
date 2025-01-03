@@ -113,140 +113,136 @@ const reasons = [
 
 const SupportScreen = () => {
     const [expandedIndex, setExpandedIndex] = useState(null);
-  const [height, setHeight] = useState({});
-  const answerRefs = useRef([]);
+    const [height, setHeight] = useState({});
+    const answerRefs = useRef([]);
 
-  const [reason, setReason] = useState('');
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [isSmallScreen2, setIsSmallScreen2] = useState(false);
+    const [reason, setReason] = useState('');
+    const [isSmallScreen, setIsSmallScreen] = useState(false);
+    const [isSmallScreen2, setIsSmallScreen2] = useState(false);
 
-  // Which section is selected? ("Contact" | "FAQ" | "Legal")
-  const [selectedSection, setSelectedSection] = useState('');
+    // Which section is selected? ("Contact" | "FAQ" | "Legal")
+    const [selectedSection, setSelectedSection] = useState('');
 
-  // Refs for scrolling
-  const contactRef = useRef(null);
-  const faqRef = useRef(null);
-  const legalRef = useRef(null);
+    // Refs for scrolling
+    const contactRef = useRef(null);
+    const faqRef = useRef(null);
+    const legalRef = useRef(null);
 
-  // React Router
-  const navigate = useNavigate();
-  const location = useLocation();
+    // React Router
+    const navigate = useNavigate();
+    const location = useLocation();
 
-  // -------- 1) Update `selectedSection` when the URL changes --------
-  useEffect(() => {
-    const path = location.pathname.toLowerCase();
-    if (path.includes('/pages/support/customer-service/contact')) {
-      setSelectedSection('Contact');
-    } else if (path.includes('/pages/support/customer-service/faq')) {
-      setSelectedSection('FAQ');
-    } else if (path.includes('/pages/support/customer-service/legal')) {
-      setSelectedSection('Legal');
-    } else {
-      // default
-      setSelectedSection('Contact');
-    }
-  }, [location.pathname]);
+    // -------- 1) Update `selectedSection` when the URL changes --------
+    useEffect(() => {
+        const path = location.pathname.toLowerCase();
+        if (path.includes('/pages/support/customer-service/contact')) {
+            setSelectedSection('Contact');
+        } else if (path.includes('/pages/support/customer-service/faq')) {
+            setSelectedSection('FAQ');
+        } else if (path.includes('/pages/support/customer-service/legal')) {
+            setSelectedSection('Legal');
+        } else {
+            // default
+            setSelectedSection('Contact');
+        }
+    }, [location.pathname]);
 
-  // -------- 2) Whenever `selectedSection` changes, scroll to that section --------
-  useEffect(() => {
-    if (selectedSection === 'Contact' && contactRef.current) {
-      contactRef.current.scrollIntoView({ behavior: 'smooth' });
-    } else if (selectedSection === 'FAQ' && faqRef.current) {
-      faqRef.current.scrollIntoView({ behavior: 'smooth' });
-    } else if (selectedSection === 'Legal' && legalRef.current) {
-      legalRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [selectedSection]);
+    useEffect(() => {
+        if (selectedSection === 'Contact' && contactRef.current) {
+            contactRef.current.scrollIntoView({ behavior: 'smooth' });
+        } else if (selectedSection === 'FAQ' && faqRef.current) {
+            faqRef.current.scrollIntoView({ behavior: 'smooth' });
+        } else if (selectedSection === 'Legal' && legalRef.current) {
+            legalRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [selectedSection]);
 
-  // -------- 3) Handle tab clicks: change section & update URL --------
-  const handleSectionClick = (section) => {
-    // Update local state (this will trigger the scroll in the above effect)
-    setSelectedSection(section);
+    const handleSectionClick = (section) => {
+        setSelectedSection(section);
 
-    // Update the URL
-    switch (section) {
-      case 'Contact':
-        navigate('/pages/support/customer-service/contact');
-        break;
-      case 'FAQ':
-        navigate('/pages/support/customer-service/faq');
-        break;
-      case 'Legal':
-        navigate('/pages/support/customer-service/legal');
-        break;
-      default:
-        break;
-    }
-  };
-
-  // -------- 4) Screen resizing logic (unchanged) --------
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 800);
-      setIsSmallScreen2(window.innerWidth <= 500);
+        switch (section) {
+            case 'Contact':
+                navigate('/pages/support/customer-service/contact');
+                break;
+            case 'FAQ':
+                navigate('/pages/support/customer-service/faq');
+                break;
+            case 'Legal':
+                navigate('/pages/support/customer-service/legal');
+                break;
+            default:
+                break;
+        }
     };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
-  // -------- 5) FAQ expand/collapse logic (unchanged) --------
-  const toggleExpand = (index) => {
-    setExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
-  };
-  useEffect(() => {
-    answerRefs.current.forEach((ref, index) => {
-      if (ref) {
-        setHeight((prevHeight) => ({
-          ...prevHeight,
-          [index]: expandedIndex === index ? ref.scrollHeight : 0,
-        }));
-      }
-    });
-  }, [expandedIndex]);
+    useEffect(() => {
+        const handleResize = () => {
+            setIsSmallScreen(window.innerWidth <= 800);
+            setIsSmallScreen2(window.innerWidth <= 500);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const toggleExpand = (index) => {
+        setExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
+    };
+    useEffect(() => {
+        answerRefs.current.forEach((ref, index) => {
+            if (ref) {
+                setHeight((prevHeight) => ({
+                    ...prevHeight,
+                    [index]: expandedIndex === index ? ref.scrollHeight : 0,
+                }));
+            }
+        });
+    }, [expandedIndex]);
 
     return (
         <Fade in={true}>
             <div ref={contactRef}>
-                <div style={{ display: 'flex', gap: '1.75rem', maxWidth: '1300px', margin: 'auto', padding: isSmallScreen2 ? '0.5rem 0.75rem' : '0.5rem 1.25rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--main-bg-color)', position: 'sticky', top: 48, zIndex: 60 }}>
-                    <p style={{ fontSize: '10px', fontWeight: '600', margin: 0 }}>CUSTOMER SUPPORT:</p>
+                <div style={{ display: 'flex', gap: '1.75rem', padding: isSmallScreen2 ? '0.5rem 0.75rem' : '0.5rem 1.25rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--main-bg-color)', position: 'sticky', top: 48, zIndex: 60 }}>
+                    <div style={{ maxWidth: '1300px', margin: 'auto', display: 'flex', gap: '1.75rem', width: '100%' }}>
+                        <p style={{ fontSize: '10px', fontWeight: '600', margin: 0 }}>CUSTOMER SUPPORT:</p>
 
-                    <p
-                        onClick={() => handleSectionClick('Contact')}
-                        style={{
-                            fontSize: '10px',
-                            fontWeight: selectedSection === 'Contact' ? '600' : '500',
-                            margin: 0,
-                            textDecoration: selectedSection === 'Contact' ? 'underline' : 'none',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        CONTACT US
-                    </p>
-                    <p
-                        onClick={() => handleSectionClick('FAQ')}
-                        style={{
-                            fontSize: '10px',
-                            fontWeight: selectedSection === 'FAQ' ? '600' : '500',
-                            margin: 0,
-                            textDecoration: selectedSection === 'FAQ' ? 'underline' : 'none',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        FAQ
-                    </p>
-                    <p
-                        onClick={() => handleSectionClick('Legal')}
-                        style={{
-                            fontSize: '10px',
-                            fontWeight: selectedSection === 'Legal' ? '600' : '500',
-                            margin: 0,
-                            textDecoration: selectedSection === 'Legal' ? 'underline' : 'none',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        LEGAL
-                    </p>
+                        <p
+                            onClick={() => handleSectionClick('Contact')}
+                            style={{
+                                fontSize: '10px',
+                                fontWeight: selectedSection === 'Contact' ? '600' : '500',
+                                margin: 0,
+                                textDecoration: selectedSection === 'Contact' ? 'underline' : 'none',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            CONTACT US
+                        </p>
+                        <p
+                            onClick={() => handleSectionClick('FAQ')}
+                            style={{
+                                fontSize: '10px',
+                                fontWeight: selectedSection === 'FAQ' ? '600' : '500',
+                                margin: 0,
+                                textDecoration: selectedSection === 'FAQ' ? 'underline' : 'none',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            FAQ
+                        </p>
+                        <p
+                            onClick={() => handleSectionClick('Legal')}
+                            style={{
+                                fontSize: '10px',
+                                fontWeight: selectedSection === 'Legal' ? '600' : '500',
+                                margin: 0,
+                                textDecoration: selectedSection === 'Legal' ? 'underline' : 'none',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            LEGAL
+                        </p>
+                    </div>
                 </div>
                 {selectedSection !== 'Legal' && isSmallScreen &&
                     <div style={{ height: '3rem', marginTop: '-1.5rem' }}>
@@ -385,6 +381,7 @@ const SupportScreen = () => {
                                             },
                                         }}
                                     />
+                                    <p style={{margin: 0, fontSize: '12px', color: 'var(--sec-color)'}}>Please include all the information regarding your concern.</p>
                                     <Button>SEND A MESSAGE</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
@@ -564,6 +561,7 @@ const SupportScreen = () => {
                                             },
                                         }}
                                     />
+                                    <p style={{margin: 0, fontSize: '12px', color: 'var(--sec-color)'}}>Please include all the information regarding your concern.</p>
                                     <Button>SEND A MESSAGE</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
@@ -614,7 +612,7 @@ const SupportScreen = () => {
                 }
                 {selectedSection === 'Legal' &&
                     <div style={{ maxWidth: '1300px', margin: 'auto', padding: isSmallScreen2 ? '0.75rem' : '1.25rem' }}>
-                        <div ref={legalRef} style={{height: '3rem', display: !isSmallScreen && 'none'}}></div>
+                        <div ref={legalRef} style={{ height: '3rem', display: !isSmallScreen && 'none' }}></div>
                         <div style={{ maxWidth: '550px', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
                             <p style={{ fontSize: isSmallScreen ? '32px' : '24px', margin: 0, padding: '2rem 0rem 1.5rem 0rem', fontWeight: '900' }}>TERMS OF USE</p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>

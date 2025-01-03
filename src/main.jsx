@@ -16,6 +16,7 @@ import SignUpScreen from './screens/SignUpScreen.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import NotFound from './screens/NotFound.jsx';
 import OrderScreen from './screens/OrderScreen.jsx'; 
+import MagazineItem from './screens/MagazineItem.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,6 +30,7 @@ const router = createBrowserRouter(
       <Route path='pages/support/customer-service/legal' element={<SupportScreen />} />
       <Route path="products/:handle" element={<ClothingItemScreen />} />
       <Route path="pages/magazine" element={<Magazine />} />
+      <Route path="pages/magazine/:magazineId/:magazineTitle" element={<MagazineItem />} />
       <Route element={<Protected />}>
         <Route path='account' element={<AccountScreen />} />
         <Route path='account/orders/:orderId' element={<OrderScreen />} /> 

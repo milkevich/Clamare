@@ -220,3 +220,58 @@ export const fetchMagazinePages = async () => {
     throw error;
   }
 };
+
+// shopify.js
+export const fetchSingleMagazinePage = async (idNumber) => {
+  const fullGID = `gid://shopify/Metaobject/${idNumber}`;
+
+  const query = `
+    query MetaobjectByID($id: ID!) {
+  metaobject(id: $id) {
+    id
+    handle
+    fields {
+      key
+      value
+      # single ref
+      reference {
+        __typename
+        ... on MediaImage {
+          image {
+            url
+            altText
+          }
+        }
+      }
+      # multi-refs
+      references(first: 10) {
+        edges {
+          node {
+            __typename
+            ... on MediaImage {
+              image {
+                url
+                altText
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+  `;
+
+  const variables = { id: fullGID };
+  try {
+    const response = await client.post('', { query, variables });
+    if (response.data.errors) {
+      throw new Error(response.data.errors[0].message);
+    }
+    return response.data?.data?.metaobject ?? null;
+  } catch (error) {
+    console.error('[fetchSingleMagazinePage] Error:', error);
+    throw error;
+  }
+};
