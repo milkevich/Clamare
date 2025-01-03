@@ -24,7 +24,9 @@ const router = createBrowserRouter(
       <Route path='products/all' element={<ShopScreen />} />
       <Route path='products/*' element={<ShopScreen />} />
       <Route path='pages/support/customer-service' element={<SupportScreen />} />
-      <Route path='pages/support/contact' element={<SupportScreen />} />
+      <Route path='pages/support/customer-service/faq' element={<SupportScreen />} />
+      <Route path='pages/support/customer-service/contact' element={<SupportScreen />} />
+      <Route path='pages/support/customer-service/legal' element={<SupportScreen />} />
       <Route path="products/:handle" element={<ClothingItemScreen />} />
       <Route path="pages/magazine" element={<Magazine />} />
       <Route element={<Protected />}>

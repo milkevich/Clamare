@@ -3,6 +3,7 @@ import { MdArrowDropDown, MdArrowDropUp, MdOutlineArrowOutward } from 'react-ico
 import Input from '../shared/UI/Input'
 import Button from '../shared/UI/Button';
 import { Fade, MenuItem, TextField } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const questions = [
     {
@@ -117,11 +118,60 @@ const SupportScreen = () => {
     const [reason, setReason] = useState('')
     const [isSmallScreen, setIsSmallScreen] = useState(false)
     const [isSmallScreen2, setIsSmallScreen2] = useState(false)
+    const [selectedSection, setSelectedSection] = useState('Contact')
+    const contactRef = useRef(null);
+    const faqRef = useRef(null);
+    const legalRef = useRef(null);
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const handleSectionClick = (section) => {
+        setSelectedSection(section);
+
+        switch (section) {
+            case 'Contact':
+                navigate('/pages/support/customer-service/contact');
+                break;
+            case 'FAQ':
+                navigate('/pages/support/customer-service/faq');
+                break;
+            case 'Legal':
+                navigate('/pages/support/customer-service/legal');
+                break;
+            default:
+                break;
+        }
+
+        setTimeout(() => {
+            if (section === 'Contact' && contactRef.current) {
+                contactRef.current.scrollIntoView({ behavior: 'smooth' });
+            } else if (section === 'FAQ' && faqRef.current) {
+                faqRef.current.scrollIntoView({ behavior: 'smooth' });
+            } else if (section === 'Legal' && legalRef.current) {
+                legalRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 0);
+    };
+
+    useEffect(() => {
+        const path = location.pathname.toLowerCase();
+
+        if (path.includes('/pages/support/customer-service/contact')) {
+            setSelectedSection('Contact');
+        } else if (path.includes('/pages/support/customer-service/faq')) {
+            setSelectedSection('FAQ');
+        } else if (path.includes('/pages/support/customer-service/legal')) {
+            setSelectedSection('Legal');
+        } else {
+            setSelectedSection('Contact');
+        }
+    }, [location.pathname]);
 
     useEffect(() => {
         const handleResize = () => {
-            setIsSmallScreen(window.innerWidth <= 800); 
-            setIsSmallScreen2(window.innerWidth <= 500); 
+            setIsSmallScreen(window.innerWidth <= 800);
+            setIsSmallScreen2(window.innerWidth <= 500);
         };
 
         handleResize();
@@ -150,191 +200,416 @@ const SupportScreen = () => {
 
     return (
         <Fade in={true}>
-            <div>
-                <div style={{ borderBottom: '1px solid var(--border-color)', padding: isSmallScreen2 ? '0.5rem 0.75rem' : '0.5rem 1.25rem', position: 'sticky', top: 48, backgroundColor: 'var(--main-bg-color)', zIndex: 50 }}>
-                    <div style={{display: 'flex', gap: '1.75rem', maxWidth: '1300px', margin: 'auto'}}>
-                    <p style={{fontSize: '10px', fontWeight: '600', margin: 0}}>CUSTOMER SUPPORT:</p>
-                    <p style={{fontSize: '10px', fontWeight: '580', margin: 0}}>CONTACT US</p>
-                    <p style={{fontSize: '10px', fontWeight: '580', margin: 0}}>FAQ</p>
-                    <p style={{fontSize: '10px', fontWeight: '580', margin: 0}}>LEGAL</p>
-                    </div>
-                </div>
-                <div style={{
-                    margin: 'auto',
-                    display: isSmallScreen ? 'block' : 'flex',
-                    gap: '3rem',
-                    padding: isSmallScreen2 ? '0.75rem' : '1.25rem',
-                    justifyContent: 'space-between',
-                    maxWidth: isSmallScreen ? '600px' : '1300px'
-                }}>
+            <div ref={contactRef}>
+            <div style={{ display: 'flex', gap: '1.75rem', maxWidth: '1300px', margin: 'auto', padding: isSmallScreen2 ? '0.5rem 0.75rem' : '0.5rem 1.25rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--main-bg-color)', position: 'sticky', top: 48, zIndex: 60 }}>
+            <p style={{ fontSize: '10px', fontWeight: '600', margin: 0 }}>CUSTOMER SUPPORT:</p>
+
+            <p
+              onClick={() => handleSectionClick('Contact')}
+              style={{
+                fontSize: '10px',
+                fontWeight: selectedSection === 'Contact' ? '600' : '500',
+                margin: 0,
+                textDecoration: selectedSection === 'Contact' ? 'underline' : 'none',
+                cursor: 'pointer',
+              }}
+            >
+              CONTACT US
+            </p>
+            <p
+              onClick={() => handleSectionClick('FAQ')}
+              style={{
+                fontSize: '10px',
+                fontWeight: selectedSection === 'FAQ' ? '600' : '500',
+                margin: 0,
+                textDecoration: selectedSection === 'FAQ' ? 'underline' : 'none',
+                cursor: 'pointer',
+              }}
+            >
+              FAQ
+            </p>
+            <p
+              onClick={() => handleSectionClick('Legal')}
+              style={{
+                fontSize: '10px',
+                fontWeight: selectedSection === 'Legal' ? '600' : '500',
+                margin: 0,
+                textDecoration: selectedSection === 'Legal' ? 'underline' : 'none',
+                cursor: 'pointer',
+              }}
+            >
+              LEGAL
+            </p>
+          </div>
+          {selectedSection !== 'Legal' && isSmallScreen && 
+            <div style={{height: '3rem', marginTop: '-1.5rem'}}>
+
+            </div>
+          }
+                {selectedSection === 'Contact' &&
                     <div style={{
-                        height: '100%',
-                        width: '100%',
-                        maxWidth: isSmallScreen ? '' : '600px',
-                    }}>
-                        <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBottom: isSmallScreen && '3rem', margin: isSmallScreen && 0, paddingTop: '1rem' }}>CONTACT US</p>
-                        <div>
-                            <div style={{ padding: '0px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                <div style={{ display: 'flex', gap: '20px' }}>
-                                    <Input label="FIRST NAME" outlined={false} />
-                                    <Input label="LAST NAME" outlined={false} />
-                                </div>
-                                <Input label="EMAIL" outlined={false} />
-                                <TextField
-                                    select
-                                    label="REASON"
-                                    value={reason}
-                                    onChange={e => setReason(e.target.value)}
-                                    variant="standard"
-                                    fullWidth
-                                    sx={{
-                                        '& .MuiInput-root:before': {
-                                            borderBottom: '1px solid var(--border-color) !important',
-                                        },
-                                        '& .MuiInput-root:hover:before': {
-                                            borderBottom: '1px solid lightgrey !important',
-                                        },
-                                        '& .MuiInput-root:after': {
-                                            borderBottom: '1px solid var(--main-color) !important',
-                                        },
+                        margin: 'auto',
+                        display: isSmallScreen ? 'block' : 'flex',
+                        gap: '3rem',
+                        padding: isSmallScreen2 ? '0.75rem' : '1.25rem',
+                        justifyContent: 'space-between',
+                        maxWidth: isSmallScreen ? '600px' : '1300px'
+                    }}
+                    >
+                        <div style={{
+                            height: '100%',
+                            width: '100%',
+                            maxWidth: isSmallScreen ? '' : '600px',
+                        }}>
+                            <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBottom: isSmallScreen && '3rem', margin: isSmallScreen && 0, paddingTop: '1rem' }}>CONTACT US</p>
+                            <div>
+                                <div style={{ padding: '0px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                    <div style={{ display: 'flex', gap: '20px' }}>
+                                        <Input label="FIRST NAME" outlined={false} />
+                                        <Input label="LAST NAME" outlined={false} />
+                                    </div>
+                                    <Input label="EMAIL" outlined={false} />
+                                    <TextField
+                                        select
+                                        label="REASON"
+                                        value={reason}
+                                        onChange={e => setReason(e.target.value)}
+                                        variant="standard"
+                                        fullWidth
+                                        sx={{
+                                            '& .MuiInput-root:before': {
+                                                borderBottom: '1px solid var(--border-color) !important',
+                                            },
+                                            '& .MuiInput-root:hover:before': {
+                                                borderBottom: '1px solid lightgrey !important',
+                                            },
+                                            '& .MuiInput-root:after': {
+                                                borderBottom: '1px solid var(--main-color) !important',
+                                            },
 
-                                        '& .MuiOutlinedInput-notchedOutline': {
-                                            borderColor: 'transparent !important',
-                                        },
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'transparent !important',
+                                            },
 
-                                        '& .MuiSelect-select': {
-                                            fontSize: '12px !important',
-                                        },
+                                            '& .MuiSelect-select': {
+                                                fontSize: '12px !important',
+                                            },
 
-                                        '& .MuiInputBase-input': {
-                                            fontSize: '12px !important',
-                                        },
-                                        // Label styling
-                                        '& .MuiInputLabel-root': {
-                                            color: 'var(--main-color)',
-                                            fontSize: '12px',
-                                            transition: 'ease-in-out 0.2s all',
-                                        },
-                                        '& .MuiInputLabel-root.Mui-focused': {
-                                            color: 'var(--main-color)',
-                                            fontSize: '12px',
-                                        },
-                                    }}
-                                    MenuProps={{
-                                        PaperProps: {
-                                            sx: {
-                                                backgroundColor: 'var(--main-color)',
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '12px !important',
+                                            },
+                                            // Label styling
+                                            '& .MuiInputLabel-root': {
                                                 color: 'var(--main-color)',
-                                                border: '1px solid var(--border-color)',
-                                                '& .MuiMenuItem-root': {
-                                                    fontSize: '10px',
-                                                    padding: '10px',
-                                                    '&:hover': {
-                                                        backgroundColor: 'var(--main-color) !important',
-                                                        color: 'var(--main-color) !important',
-                                                        textDecoration: '',
+                                                fontSize: '12px',
+                                                transition: 'ease-in-out 0.2s all',
+                                            },
+                                            '& .MuiInputLabel-root.Mui-focused': {
+                                                color: 'var(--main-color)',
+                                                fontSize: '12px',
+                                            },
+                                        }}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                sx: {
+                                                    backgroundColor: 'var(--main-color)',
+                                                    color: 'var(--main-color)',
+                                                    border: '1px solid var(--border-color)',
+                                                    '& .MuiMenuItem-root': {
+                                                        fontSize: '10px',
+                                                        padding: '10px',
+                                                        '&:hover': {
+                                                            backgroundColor: 'var(--main-color) !important',
+                                                            color: 'var(--main-color) !important',
+                                                            textDecoration: '',
+                                                        },
                                                     },
                                                 },
                                             },
-                                        },
-                                    }}
-                                >
-                                    {reasons.map(option => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-
-                                <TextField
-                                    id="standard-multiline-static"
-                                    label="MESSAGE"
-                                    multiline
-                                    rows={4}
-                                    placeholder="Type your message here"
-                                    fullWidth
-                                    sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            borderRadius: 0,
-                                            padding: '15px',
-                                            fontSize: '12px',
-                                            boxSizing: 'border-box',
-                                            '& fieldset': {
-                                                borderColor: 'var(--border-color)',
-                                            },
-                                            '&:hover fieldset': {
-                                                borderColor: 'lightgrey',
-                                            },
-                                            '&.Mui-focused fieldset': {
-                                                borderColor: 'var(--main-color)',
-                                                borderWidth: '1px',
-                                            },
-                                        },
-                                        '& .MuiInputLabel-root': {
-                                            color: 'var(--main-color)',
-                                            fontSize: '12px',
-                                            transition: 'ease-in-out 0.2s all',
-                                        },
-                                        '& .MuiInputLabel-root.Mui-focused': {
-                                            color: 'var(--main-color)',
-                                            fontSize: '12px',
-                                        },
-                                        '& .MuiInputLabel-shrink': {
-                                            marginTop: '5px',
-                                        },
-                                        '& input:-webkit-autofill': {
-                                            WebkitBoxShadow: '0 0 0 100px var(--sec-bg-color) inset',
-                                            WebkitTextFillColor: 'var(--main-color)',
-                                            transition: 'background-color 5000s ease-in-out 0s',
-                                        },
-                                    }}
-                                />
-
-                                <Button>SEND A MESSAGE</Button>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{
-                        height: '100%',
-                        width: '100%',
-                        maxWidth: isSmallScreen ? '' : '500px',
-                    }}>
-                        <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBlock: isSmallScreen && '3rem', margin: isSmallScreen && 0 }}>FREQUENTLY ASKED QUESTIONS</p>
-                        <div style={{ overflowY: 'auto' }}>
-                            <div style={{ marginTop: '-1px' }}>
-                                {questions.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        style={{
-                                            padding: '20px 0px',
-                                            borderTop: '1px solid var(--border-color)',
-                                            fontSize: '12px',
-                                            fontWeight: '580',
-                                            cursor: 'pointer',
                                         }}
-                                        onClick={() => toggleExpand(index)}
                                     >
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <p style={{ margin: 0, width: 'calc(100% - 20px)' }}>{item.question}</p>
-                                            {expandedIndex === index ? <MdArrowDropUp size={18} /> : <MdArrowDropDown size={18} />}
-                                        </div>
+                                        {reasons.map(option => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+
+                                    <TextField
+                                        id="standard-multiline-static"
+                                        label="MESSAGE"
+                                        multiline
+                                        rows={4}
+                                        placeholder="Type your message here"
+                                        fullWidth
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 0,
+                                                padding: '15px',
+                                                fontSize: '12px',
+                                                boxSizing: 'border-box',
+                                                '& fieldset': {
+                                                    borderColor: 'var(--border-color)',
+                                                },
+                                                '&:hover fieldset': {
+                                                    borderColor: 'lightgrey',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: 'var(--main-color)',
+                                                    borderWidth: '1px',
+                                                },
+                                            },
+                                            '& .MuiInputLabel-root': {
+                                                color: 'var(--main-color)',
+                                                fontSize: '12px',
+                                                transition: 'ease-in-out 0.2s all',
+                                            },
+                                            '& .MuiInputLabel-root.Mui-focused': {
+                                                color: 'var(--main-color)',
+                                                fontSize: '12px',
+                                            },
+                                            '& .MuiInputLabel-shrink': {
+                                                marginTop: '5px',
+                                            },
+                                            '& input:-webkit-autofill': {
+                                                WebkitBoxShadow: '0 0 0 100px var(--sec-bg-color) inset',
+                                                WebkitTextFillColor: 'var(--main-color)',
+                                                transition: 'background-color 5000s ease-in-out 0s',
+                                            },
+                                        }}
+                                    />
+                                    <Button>SEND A MESSAGE</Button>
+                                    {isSmallScreen && <div style={{height: '5rem'}} ref={faqRef}></div>}
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            
+                            style={{
+                            height: '100%',
+                            width: '100%',
+                            maxWidth: isSmallScreen ? '' : '500px',
+                        }}>
+                            <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBottom: isSmallScreen && '3rem', margin: isSmallScreen && 0 }}>FREQUENTLY ASKED QUESTIONS</p>
+                            <div style={{ overflowY: 'auto' }}>
+                                <div style={{ marginTop: '-1px' }}>
+                                    {questions.map((item, index) => (
                                         <div
-                                            ref={(el) => (answerRefs.current[index] = el)}
+                                            key={index}
                                             style={{
-                                                overflow: 'hidden',
-                                                transition: 'height 0.3s ease-in-out',
-                                                height: height[index] || 0,
+                                                padding: '20px 0px',
+                                                borderTop: '1px solid var(--border-color)',
+                                                fontSize: '12px',
+                                                fontWeight: '580',
+                                                cursor: 'pointer',
                                             }}
+                                            onClick={() => toggleExpand(index)}
                                         >
-                                            <p style={{ marginTop: '10px', fontWeight: '400', color: 'var(--sec-color)' }}>{item.answer}</p>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <p style={{ margin: 0, width: 'calc(100% - 20px)' }}>{item.question}</p>
+                                                {expandedIndex === index ? <MdArrowDropUp size={18} /> : <MdArrowDropDown size={18} />}
+                                            </div>
+                                            <div
+                                                ref={(el) => (answerRefs.current[index] = el)}
+                                                style={{
+                                                    overflow: 'hidden',
+                                                    transition: 'height 0.3s ease-in-out',
+                                                    height: height[index] || 0,
+                                                }}
+                                            >
+                                                <p style={{ marginTop: '10px', fontWeight: '400', color: 'var(--sec-color)' }}>{item.answer}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
+                {selectedSection === 'FAQ' &&
+                    <div style={{
+                        margin: 'auto',
+                        display: isSmallScreen ? 'block' : 'flex',
+                        gap: '3rem',
+                        padding: isSmallScreen2 ? '0.75rem' : '1.25rem',
+                        justifyContent: 'space-between',
+                        maxWidth: isSmallScreen ? '600px' : '1300px'
+                    }}>
+                        <div style={{
+                            height: '100%',
+                            width: '100%',
+                            maxWidth: isSmallScreen ? '' : '600px',
+                        }}>
+                            <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBottom: isSmallScreen && '3rem', margin: isSmallScreen && 0, paddingTop: '1rem' }}>CONTACT US</p>
+                            <div>
+                                <div style={{ padding: '0px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                    <div style={{ display: 'flex', gap: '20px' }}>
+                                        <Input label="FIRST NAME" outlined={false} />
+                                        <Input label="LAST NAME" outlined={false} />
+                                    </div>
+                                    <Input label="EMAIL" outlined={false} />
+                                    <TextField
+                                        select
+                                        label="REASON"
+                                        value={reason}
+                                        onChange={e => setReason(e.target.value)}
+                                        variant="standard"
+                                        fullWidth
+                                        sx={{
+                                            '& .MuiInput-root:before': {
+                                                borderBottom: '1px solid var(--border-color) !important',
+                                            },
+                                            '& .MuiInput-root:hover:before': {
+                                                borderBottom: '1px solid lightgrey !important',
+                                            },
+                                            '& .MuiInput-root:after': {
+                                                borderBottom: '1px solid var(--main-color) !important',
+                                            },
+
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: 'transparent !important',
+                                            },
+
+                                            '& .MuiSelect-select': {
+                                                fontSize: '12px !important',
+                                            },
+
+                                            '& .MuiInputBase-input': {
+                                                fontSize: '12px !important',
+                                            },
+                                            // Label styling
+                                            '& .MuiInputLabel-root': {
+                                                color: 'var(--main-color)',
+                                                fontSize: '12px',
+                                                transition: 'ease-in-out 0.2s all',
+                                            },
+                                            '& .MuiInputLabel-root.Mui-focused': {
+                                                color: 'var(--main-color)',
+                                                fontSize: '12px',
+                                            },
+                                        }}
+                                        MenuProps={{
+                                            PaperProps: {
+                                                sx: {
+                                                    backgroundColor: 'var(--main-color)',
+                                                    color: 'var(--main-color)',
+                                                    border: '1px solid var(--border-color)',
+                                                    '& .MuiMenuItem-root': {
+                                                        fontSize: '10px',
+                                                        padding: '10px',
+                                                        '&:hover': {
+                                                            backgroundColor: 'var(--main-color) !important',
+                                                            color: 'var(--main-color) !important',
+                                                            textDecoration: '',
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        }}
+                                    >
+                                        {reasons.map(option => (
+                                            <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+
+                                    <TextField
+                                        id="standard-multiline-static"
+                                        label="MESSAGE"
+                                        multiline
+                                        rows={4}
+                                        placeholder="Type your message here"
+                                        fullWidth
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                borderRadius: 0,
+                                                padding: '15px',
+                                                fontSize: '12px',
+                                                boxSizing: 'border-box',
+                                                '& fieldset': {
+                                                    borderColor: 'var(--border-color)',
+                                                },
+                                                '&:hover fieldset': {
+                                                    borderColor: 'lightgrey',
+                                                },
+                                                '&.Mui-focused fieldset': {
+                                                    borderColor: 'var(--main-color)',
+                                                    borderWidth: '1px',
+                                                },
+                                            },
+                                            '& .MuiInputLabel-root': {
+                                                color: 'var(--main-color)',
+                                                fontSize: '12px',
+                                                transition: 'ease-in-out 0.2s all',
+                                            },
+                                            '& .MuiInputLabel-root.Mui-focused': {
+                                                color: 'var(--main-color)',
+                                                fontSize: '12px',
+                                            },
+                                            '& .MuiInputLabel-shrink': {
+                                                marginTop: '5px',
+                                            },
+                                            '& input:-webkit-autofill': {
+                                                WebkitBoxShadow: '0 0 0 100px var(--sec-bg-color) inset',
+                                                WebkitTextFillColor: 'var(--main-color)',
+                                                transition: 'background-color 5000s ease-in-out 0s',
+                                            },
+                                        }}
+                                    />
+                                    <Button>SEND A MESSAGE</Button>
+                                    {isSmallScreen && <div style={{height: '5rem'}} ref={faqRef}></div>}
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            
+                            style={{
+                            height: '100%',
+                            width: '100%',
+                            maxWidth: isSmallScreen ? '' : '500px',
+                        }}>
+                            <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBottom: isSmallScreen && '3rem', margin: isSmallScreen && 0 }}>FREQUENTLY ASKED QUESTIONS</p>
+                            <div style={{ overflowY: 'auto' }}>
+                                <div style={{ marginTop: '-1px' }}>
+                                    {questions.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                padding: '20px 0px',
+                                                borderTop: '1px solid var(--border-color)',
+                                                fontSize: '12px',
+                                                fontWeight: '580',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => toggleExpand(index)}
+                                        >
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <p style={{ margin: 0, width: 'calc(100% - 20px)' }}>{item.question}</p>
+                                                {expandedIndex === index ? <MdArrowDropUp size={18} /> : <MdArrowDropDown size={18} />}
+                                            </div>
+                                            <div
+                                                ref={(el) => (answerRefs.current[index] = el)}
+                                                style={{
+                                                    overflow: 'hidden',
+                                                    transition: 'height 0.3s ease-in-out',
+                                                    height: height[index] || 0,
+                                                }}
+                                            >
+                                                <p style={{ marginTop: '10px', fontWeight: '400', color: 'var(--sec-color)' }}>{item.answer}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                {selectedSection === 'Legal' &&
+                    <div ref={legalRef} style={{}}>
+                        <p>terms of use.... etc</p>
+                    </div>
+                }
             </div>
         </Fade>
     );
