@@ -266,7 +266,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
         </p>
       </div>
 
-      <div style={{ maxHeight: isSmallScreen ? 'calc(100dvh - 90px)' : 'calc(100vh - 60px)', overflowY: 'scroll', height: '100%' }}>
+      <div style={{ maxHeight: isSmallScreen ? 'calc(100dvh - 70px)' : 'calc(100vh - 60px)', overflowY: 'scroll', height: '100%' }}>
         <div style={{
           margin: 'auto',
           display: 'flex',
