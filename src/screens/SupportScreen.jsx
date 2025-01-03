@@ -115,6 +115,23 @@ const SupportScreen = () => {
     const [height, setHeight] = useState({});
     const answerRefs = useRef([]);
     const [reason, setReason] = useState('')
+    const [isSmallScreen, setIsSmallScreen] = useState(false)
+    const [isSmallScreen2, setIsSmallScreen2] = useState(false)
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsSmallScreen(window.innerWidth <= 800); 
+            setIsSmallScreen2(window.innerWidth <= 500); 
+        };
+
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     const toggleExpand = (index) => {
         setExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
@@ -134,175 +151,103 @@ const SupportScreen = () => {
     return (
         <Fade in={true}>
             <div>
-                <div style={{ borderBottom: '1px solid var(--border-color)', padding: '10px', }}>
-                    <p style={{ margin: 'auto', maxWidth: '700px', fontSize: '12px', fontWeight: '600', marginTop: 0, marginBottom: 0 }}>CUSTOMER SERVICE CENTER</p>
+                <div style={{ borderBottom: '1px solid var(--border-color)', padding: isSmallScreen2 ? '0.5rem 0.75rem' : '0.5rem 1.25rem', position: 'sticky', top: 48, backgroundColor: 'var(--main-bg-color)', zIndex: 50 }}>
+                    <div style={{display: 'flex', gap: '1.75rem', maxWidth: '1300px', margin: 'auto'}}>
+                    <p style={{fontSize: '10px', fontWeight: '600', margin: 0}}>CUSTOMER SUPPORT:</p>
+                    <p style={{fontSize: '10px', fontWeight: '580', margin: 0}}>CONTACT US</p>
+                    <p style={{fontSize: '10px', fontWeight: '580', margin: 0}}>FAQ</p>
+                    <p style={{fontSize: '10px', fontWeight: '580', margin: 0}}>LEGAL</p>
+                    </div>
                 </div>
                 <div style={{
-                    maxWidth: '700px',
                     margin: 'auto',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '20px',
+                    display: isSmallScreen ? 'block' : 'flex',
+                    gap: '3rem',
+                    padding: isSmallScreen2 ? '0.75rem' : '1.25rem',
+                    justifyContent: 'space-between',
+                    maxWidth: isSmallScreen ? '600px' : '1300px'
                 }}>
-                    <div style={{ marginTop: '40px' }}>
-                        <img src="" style={{ width: '100%', height: '150px' }} />
-                    </div>
-                    <div style={{ position: 'sticky', top: '49px', backgroundColor: 'var(--main-bg-color)', paddingTop: '30px', zIndex: 30 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: '600', padding: '20px', border: '1px solid var(--border-color)', backgroundColor: 'var(--main-bg-color)', zIndex: 20 }}>
-                            <p style={{ margin: 0 }}>FAQ</p>
-                            <p style={{ margin: 0 }}>CONTACT</p>
-                            <p style={{ margin: 0 }}>TERMS OF USE</p>
-
-                            <p style={{ margin: 0 }}>INSTAGRAM</p>
-                        </div>
-                    </div>
                     <div style={{
                         height: '100%',
+                        width: '100%',
+                        maxWidth: isSmallScreen ? '' : '600px',
                     }}>
-                        <div
-                            style={{
-                                position: 'sticky',
-                                top: 133,
-                                backgroundColor: 'var(--main-bg-color)',
-                                zIndex: 1,
-                                padding: '10px 20px 10px 20px',
-                                marginBottom: '-1px',
-                                border: '1px solid var(--border-color)'
-                            }}
-                        >
-                            <p style={{ fontWeight: 600, fontSize: '12px', margin: 0 }}>FREQUENTLY ASKED QUESTIONS</p>
-                        </div>
-                        <div style={{ border: '1px solid var(--border-color)', overflowY: 'auto' }}>
-                            <div style={{ marginTop: '-1px' }}>
-                                {questions.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        style={{
-                                            padding: '20px',
-                                            borderTop: '1px solid var(--border-color)',
-                                            fontSize: '12px',
-                                            fontWeight: '580',
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={() => toggleExpand(index)}
-                                    >
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <p style={{ margin: 0 }}>{item.question}</p>
-                                            {expandedIndex === index ? <MdArrowDropUp size={18} /> : <MdArrowDropDown size={18} />}
-                                        </div>
-                                        <div
-                                            ref={(el) => (answerRefs.current[index] = el)}
-                                            style={{
-                                                overflow: 'hidden',
-                                                transition: 'height 0.3s ease-in-out',
-                                                height: height[index] || 0,
-                                            }}
-                                        >
-                                            <p style={{ marginTop: '10px', fontWeight: '400', color: 'var(--sec-color)' }}>{item.answer}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                    <div style={{
-                        height: '100%',
-                    }}>
-                        <div
-                            style={{
-                                position: 'sticky',
-                                top: 133,
-                                backgroundColor: 'var(--main-bg-color)',
-                                zIndex: 10,
-                                padding: '10px 20px 10px 20px',
-                                marginBottom: '-1px',
-                                border: '1px solid var(--border-color)'
-                            }}
-                        >
-                            <p style={{ fontWeight: 600, fontSize: '12px', margin: 0 }}>CONTACT US</p>
-                        </div>
-                        <div style={{ border: '1px solid var(--border-color)' }}>
-                            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBottom: isSmallScreen && '3rem', margin: isSmallScreen && 0, paddingTop: '1rem' }}>CONTACT US</p>
+                        <div>
+                            <div style={{ padding: '0px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                 <div style={{ display: 'flex', gap: '20px' }}>
-                                    <Input label="FIRST NAME" outlined={true} />
-                                    <Input label="LAST NAME" outlined={true} />
+                                    <Input label="FIRST NAME" outlined={false} />
+                                    <Input label="LAST NAME" outlined={false} />
                                 </div>
-                                <Input label="EMAIL" outlined={true} />
+                                <Input label="EMAIL" outlined={false} />
                                 <TextField
                                     select
                                     label="REASON"
                                     value={reason}
-                                    onChange={(e) => {
-                                        setReason(e.target.value)
-                                    }}
-                                    variant="outlined"
+                                    onChange={e => setReason(e.target.value)}
+                                    variant="standard"
                                     fullWidth
                                     sx={{
-                                        '& .MuiOutlinedInput-root': {
-                                            borderRadius: 0,
-                                            height: '50px',
-                                            padding: '0px',
-                                            fontSize: '12px',
-                                            boxSizing: 'border-box',
-                                            fontWeight: '580',
-                                            '& fieldset': {
-                                                borderColor: 'var(--border-color)',
-                                            },
-                                            '&:hover fieldset': {
-                                                borderColor: 'lightgrey',
-                                            },
-                                            '&.Mui-focused fieldset': {
-                                                borderColor: 'var(--main-color)',
-                                                borderWidth: '1px',
-                                            },
+                                        '& .MuiInput-root:before': {
+                                            borderBottom: '1px solid var(--border-color) !important',
                                         },
+                                        '& .MuiInput-root:hover:before': {
+                                            borderBottom: '1px solid lightgrey !important',
+                                        },
+                                        '& .MuiInput-root:after': {
+                                            borderBottom: '1px solid var(--main-color) !important',
+                                        },
+
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                            borderColor: 'transparent !important',
+                                        },
+
+                                        '& .MuiSelect-select': {
+                                            fontSize: '12px !important',
+                                        },
+
+                                        '& .MuiInputBase-input': {
+                                            fontSize: '12px !important',
+                                        },
+                                        // Label styling
                                         '& .MuiInputLabel-root': {
                                             color: 'var(--main-color)',
                                             fontSize: '12px',
                                             transition: 'ease-in-out 0.2s all',
-                                            marginTop: reason ? '5px' : '0px',
-                                            fontWeight: '600',
                                         },
                                         '& .MuiInputLabel-root.Mui-focused': {
                                             color: 'var(--main-color)',
                                             fontSize: '12px',
-                                            marginTop: '5px',
                                         },
                                     }}
                                     MenuProps={{
                                         PaperProps: {
                                             sx: {
-                                                backgroundColor: 'var(--sec-bg-color)',
+                                                backgroundColor: 'var(--main-color)',
                                                 color: 'var(--main-color)',
                                                 border: '1px solid var(--border-color)',
                                                 '& .MuiMenuItem-root': {
-                                                    fontSize: '12px',
+                                                    fontSize: '10px',
                                                     padding: '10px',
                                                     '&:hover': {
-                                                        backgroundColor: 'var(--border-color)',
-                                                        color: 'var(--main-color)',
-                                                    },
-                                                    '&.Mui-selected': {
-                                                        backgroundColor: 'var(--border-color) !important',
+                                                        backgroundColor: 'var(--main-color) !important',
                                                         color: 'var(--main-color) !important',
-                                                    },
-                                                    '&.Mui-selected:hover': {
-                                                        backgroundColor: 'var(--border-color)',
-                                                        color: 'var(--main-color)',
+                                                        textDecoration: '',
                                                     },
                                                 },
                                             },
                                         },
                                     }}
                                 >
-                                    {reasons.map((option) => (
+                                    {reasons.map(option => (
                                         <MenuItem key={option.value} value={option.value}>
                                             {option.label}
                                         </MenuItem>
                                     ))}
                                 </TextField>
+
                                 <TextField
-                                    id="outlined-multiline-static"
+                                    id="standard-multiline-static"
                                     label="MESSAGE"
                                     multiline
                                     rows={4}
@@ -314,7 +259,6 @@ const SupportScreen = () => {
                                             padding: '15px',
                                             fontSize: '12px',
                                             boxSizing: 'border-box',
-                                            fontWeight: '580',
                                             '& fieldset': {
                                                 borderColor: 'var(--border-color)',
                                             },
@@ -330,7 +274,6 @@ const SupportScreen = () => {
                                             color: 'var(--main-color)',
                                             fontSize: '12px',
                                             transition: 'ease-in-out 0.2s all',
-                                            fontWeight: '600',
                                         },
                                         '& .MuiInputLabel-root.Mui-focused': {
                                             color: 'var(--main-color)',
@@ -351,52 +294,46 @@ const SupportScreen = () => {
 
                             </div>
                         </div>
-                        <br />
-                        <div style={{ padding: '20px', fontSize: '12px', fontWeight: '580', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}>
-                            <div>
-                                <p style={{ margin: 0, fontWeight: '600', fontSize: '14px' }}>CONTACT</p>
-                                <p style={{ margin: 0, marginTop: '5px' }}>clamare@gmail.com</p>
-                            </div>
-                            <p style={{ fontSize: '21px', fontWeight: '700', margin: 0 }}><MdOutlineArrowOutward /></p>
-                        </div>
                     </div>
                     <div style={{
                         height: '100%',
+                        width: '100%',
+                        maxWidth: isSmallScreen ? '' : '500px',
                     }}>
-                        <div
-                            style={{
-                                position: 'sticky',
-                                top: 133,
-                                backgroundColor: 'var(--main-bg-color)',
-                                zIndex: 1,
-                                padding: '10px 20px 10px 20px',
-                                marginBottom: '-1px',
-                                border: '1px solid var(--border-color)'
-                            }}
-                        >
-                            <p style={{ fontWeight: 600, fontSize: '12px', margin: 0 }}>SHIPPING & RETURNS</p>
-                        </div>
-                        <div style={{ border: '1px solid var(--border-color)', overflowY: 'auto' }}>
-                            <div style={{ padding: '20px' }}>
-                                <p style={{ fontWeight: '600', fontSize: '14px', margin: 0 }}>SHIPPING</p>
-                                <p style={{ fontSize: '14px', margin: 0, marginTop: '10px' }}>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsam, nam tenetur mollitia, reiciendis nesciunt tempore sit laudantium, sunt vero iste eos ducimus dolore et! Minima quas ratione placeat quos dolor?</p>
-                                <p style={{ fontSize: '14px', margin: 0, marginTop: '10px' }}>Elit. Ipsam, nam tenetur mollitia, reiciendis nesciunt tempore sit laudantium, sunt vero iste eos ducimus dolore et! Minima quas ratione placeat quos dolor?</p>
-                                <p style={{ fontSize: '14px', margin: 0, marginTop: '10px' }}>Adipisicing elit. Ipsam, nam tenetur mollitia, reiciendis nesciunt tempore sit laudantium, sunt vero iste eos ducimus dolore et! Minima quas ratione placeat quos dolor?</p>
+                        <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBlock: isSmallScreen && '3rem', margin: isSmallScreen && 0 }}>FREQUENTLY ASKED QUESTIONS</p>
+                        <div style={{ overflowY: 'auto' }}>
+                            <div style={{ marginTop: '-1px' }}>
+                                {questions.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        style={{
+                                            padding: '20px 0px',
+                                            borderTop: '1px solid var(--border-color)',
+                                            fontSize: '12px',
+                                            fontWeight: '580',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={() => toggleExpand(index)}
+                                    >
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <p style={{ margin: 0, width: 'calc(100% - 20px)' }}>{item.question}</p>
+                                            {expandedIndex === index ? <MdArrowDropUp size={18} /> : <MdArrowDropDown size={18} />}
+                                        </div>
+                                        <div
+                                            ref={(el) => (answerRefs.current[index] = el)}
+                                            style={{
+                                                overflow: 'hidden',
+                                                transition: 'height 0.3s ease-in-out',
+                                                height: height[index] || 0,
+                                            }}
+                                        >
+                                            <p style={{ marginTop: '10px', fontWeight: '400', color: 'var(--sec-color)' }}>{item.answer}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            <div style={{ padding: '20px' }}>
-                                <p style={{ fontWeight: '600', fontSize: '14px', margin: 0 }}>RETURNS</p>
-                                <p style={{ fontSize: '14px', margin: 0, marginTop: '10px' }}>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsam, nam tenetur mollitia, reiciendis nesciunt tempore sit laudantium, sunt vero iste eos ducimus dolore et! Minima quas ratione placeat quos dolor?</p>
-                                <p style={{ fontSize: '14px', margin: 0, marginTop: '10px' }}>Elit. Ipsam, nam tenetur mollitia, reiciendis nesciunt tempore sit laudantium, sunt vero iste eos ducimus dolore et! Minima quas ratione placeat quos dolor?</p>
-                                <p style={{ fontSize: '14px', margin: 0, marginTop: '10px' }}>Adipisicing elit. Ipsam, nam tenetur mollitia, reiciendis nesciunt tempore sit laudantium, sunt vero iste eos ducimus dolore et! Minima quas ratione placeat quos dolor?</p>
-                            </div>
-                            <p style={{ padding: '20px', fontSize: 14, fontWeight: '600', margin: 0 }}>IF YOU HAVE ANY QUESTIONS - YOU CAN CONTACT US HERE</p>
                         </div>
                     </div>
-                    <div style={{ padding: '20px', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between' }}>
-                        <p style={{ fontSize: '14px', fontWeight: '600', margin: 0 }}>Thank you for choosing Clamáre!</p>
-                        <p style={{ fontSize: '14px', fontWeight: '600', margin: 0 }}>GO UP</p>
-                    </div>
-                    <div style={{ height: '30px' }}></div>
                 </div>
             </div>
         </Fade>
