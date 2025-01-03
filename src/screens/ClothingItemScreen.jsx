@@ -277,9 +277,9 @@ function ClothingItemScreen() {
                                     ${Math.floor(product?.priceRange?.minVariantPrice?.amount)}
                                 </p>
 
-                                <div className={s.sizeSelectorContainer}>
+                                <div style={{color: 'var(--main-color)'}} className={s.sizeSelectorContainer}>
                                     {allSizes.length > 0 && (
-                                        <div className={s.sizeButtonsContainer}>
+                                        <div style={{color: 'var(--main-color)'}} className={s.sizeButtonsContainer}>
                                             {allSizes.map((sz) => (
                                                 <button
                                                     key={sz}
@@ -287,6 +287,7 @@ function ClothingItemScreen() {
                                                     className={`${s.sizeButton} ${
                                                         selectedSize === sz ? s.selectedSize : ''
                                                     }`}
+                                                    style={{color: 'var(--main-color)'}}
                                                 >
                                                     {sz.toUpperCase()}
                                                 </button>
