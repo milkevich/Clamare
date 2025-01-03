@@ -12,7 +12,7 @@ const Footer = () => {
     return (
         <div className={s.footer}>
             <div className={s.footerLinks}>
-                <p onClick={() => {handleNavigate('/pages/support/customer-service')}} className={s.footerLink}>SUPPORT</p>
+                <p onClick={() => {handleNavigate('/pages/support/customer-service/faq')}} className={s.footerLink}>SUPPORT</p>
                 <p onClick={() => {handleNavigate('/pages/support/customer-service/contact')}} className={s.footerLink}>CONTACT</p>
                 <a style={{color: 'var(--main-color)'}} href='https://www.instagram.com/clamare.us/' className={s.footerLink}>INSTAGRAM</a>
             </div>
