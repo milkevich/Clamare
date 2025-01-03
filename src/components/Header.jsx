@@ -34,6 +34,8 @@ const Header = () => {
   useEffect(() => {
     if (isBagOpened) {
       document.body.style.overflow = 'hidden';
+    } else if (!isBagOpened) {
+      document.body.style.overflow = '';
     }
   }, [isBagOpened])
 
