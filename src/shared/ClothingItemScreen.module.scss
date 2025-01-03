@@ -272,9 +272,8 @@ span {
     }
 
     .addedItemPopUp {
-        top: 80px;
-        right: 10px;
-        max-width: 90%;
+        top: 90px;
+        max-width: calc(100% - 5rem);
     }
 
     .actionButtons {
