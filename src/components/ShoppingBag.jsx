@@ -405,7 +405,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
                   </div>
                 );
               })}
-              <p style={{ color: 'var(--sec-color)', fontSize: '12px', marginTop: '10px', paddingBottom: isSmallScreen && '100px' }}>
+              <p style={{ color: 'var(--sec-color)', fontSize: '12px', marginTop: '10px', paddingBottom: isSmallScreen && '20px' }}>
                 Taxes / Fees and Shipping cost calculated at checkout.
               </p>
             </div>
