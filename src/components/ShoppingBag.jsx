@@ -415,7 +415,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
             position: 'sticky',
             bottom: 0,
             padding: '20px',
-            paddingBottom: isSmallScreen ? 'calc(env(safe-area-inset-bottom) + 20px)' : '20px',
+            paddingBottom: isSmallScreen ? 'env(safe-area-inset-bottom)' : '20px',
             backgroundColor: 'var(--main-bg-color)',
             borderTop: '1px solid var(--border-color)',
             marginTop: -12

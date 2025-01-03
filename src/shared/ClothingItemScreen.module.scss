@@ -2,6 +2,14 @@
     position: relative;
 }
 
+p {
+    color: var(--main-color);
+}
+
+span {
+    color: var(--main-color);
+}
+
 /* Added Item Pop-Up Styles */
 .addedItemPopUp {
     position: fixed;
