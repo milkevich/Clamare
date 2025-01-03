@@ -31,6 +31,12 @@ const Header = () => {
     setIsBagOpened((prev) => !prev);
   };
 
+  useEffect(() => {
+    if (isBagOpened) {
+      document.body.style.overflow = 'hidden';
+    }
+  }, [isBagOpened])
+
   const handleNavigate = (path) => {
     navigate(path);
   };
