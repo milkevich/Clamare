@@ -1,6 +1,13 @@
-// src/components/Signup.js
-import React, { useState } from 'react';
-import { signUp } from '../utils/auth';
+// src/shared/SignUpScreen.jsx
+
+import React, { useContext, useState } from 'react';
+import Input from '../shared/UI/Input';
+import Button from '../shared/UI/Button';
+import heyThere from '../assets/HeyThere.png';
+import { useNavigate } from 'react-router-dom';
+import { Slide } from '@mui/material';
+import s from '../shared/SignUpScreen.module.scss';
+import { AuthContext } from '../contexts/AuthContext';
 
 const SignUpScreen = () => {
   const [form, setForm] = useState({
@@ -9,55 +16,154 @@ const SignUpScreen = () => {
     firstName: '',
     lastName: '',
   });
-  const [errors, setErrors] = useState([]);
-  const [success, setSuccess] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [alert, setAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const { signUp, authError } = useContext(AuthContext);
+  const navigate = useNavigate();
 
+  // Handle input changes
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Form validation function
+  const validateForm = () => {
+    const { email, password, firstName, lastName } = form;
+    const emailPattern = /^[^@]+@[^@]+\.[^@]+$/;
+
+    if (!firstName.trim() || !lastName.trim()) {
+      setAlertMessage('Please fill in all fields.');
+      return false;
+    }
+
+    if (!email || !email.match(emailPattern)) {
+      setAlertMessage('Please enter a valid email address.');
+      return false;
+    }
+
+    if (!password || password.length < 6) {
+      setAlertMessage('Your password must have at least 6 characters.');
+      return false;
+    }
+
+    return true;
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setAlert(false); // Reset alert
+
+    if (!validateForm()) {
+      setAlert(true);
+      setTimeout(() => setAlert(false), 3000);
+      return;
+    }
+
+    setIsSubmitting(true);
     const { email, password, firstName, lastName } = form;
-    const result = await signUp(email, password, firstName, lastName);
-    if (result.errors) {
-      setErrors(result.errors);
-      setSuccess(null);
-    } else {
-      setSuccess('Account created successfully!');
-      setErrors([]);
+
+    try {
+      const success = await signUp(email, password, firstName, lastName);
+
+      if (success) {
+        navigate('/account');
+      } else {
+        setAlertMessage(authError || 'Something went wrong. Please try again.');
+        setAlert(true);
+      }
+    } catch (error) {
+      setAlertMessage('An unexpected error occurred. Please try again later.');
+      setAlert(true);
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setAlert(false), 3000);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Sign Up</h2>
-      {errors.length > 0 && (
-        <div>
-          {errors.map((error, idx) => (
-            <p key={idx} style={{ color: 'red' }}>{error.message}</p>
-          ))}
+    <>
+      <div className={s.container}>
+        <div className={s.contentWrapper}>
+          <img className={s.image} src={heyThere} alt="Hey There" />
+          <form onSubmit={handleSubmit} className={s.form}>
+            <div className={s.nameFields}>
+              <Input
+                value={form.firstName}
+                onChange={handleChange}
+                label="FIRST NAME"
+                required
+                outlined={false}
+                name="firstName"
+                type="text"
+              />
+              <Input
+                value={form.lastName}
+                onChange={handleChange}
+                label="LAST NAME"
+                required
+                outlined={false}
+                name="lastName"
+                type="text"
+              />
+            </div>
+            <Input
+              value={form.email}
+              onChange={handleChange}
+              label="EMAIL"
+              name="email"
+              type="email"
+              required
+              outlined={false}
+            />
+            <Input
+              value={form.password}
+              onChange={handleChange}
+              label="PASSWORD"
+              type="password"
+              name="password"
+              required
+              outlined={false}
+            />
+            <div className={s.buttonContainer}>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'VERIFYING...' : 'SIGN UP'}
+              </Button>
+            </div>
+          </form>
+          <div className={s.footer}>
+            <p>
+              ALREADY HAVE AN ACCOUNT?{' '}
+              <span
+                onClick={() => navigate('/account/login')}
+                className={s.link}
+              >
+                LOG IN
+              </span>
+            </p>
+            <p>
+              OR CONTINUE AS A{' '}
+              <span
+                onClick={() => navigate('/clothing/shop')}
+                className={s.link}
+              >
+                GUEST
+              </span>
+            </p>
+          </div>
         </div>
-      )}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-      <div>
-        <label>Email:</label>
-        <input type="email" name="email" value={form.email} onChange={handleChange} required />
       </div>
-      <div>
-        <label>Password:</label>
-        <input type="password" name="password" value={form.password} onChange={handleChange} required />
-      </div>
-      <div>
-        <label>First Name:</label>
-        <input type="text" name="firstName" value={form.firstName} onChange={handleChange} required />
-      </div>
-      <div>
-        <label>Last Name:</label>
-        <input type="text" name="lastName" value={form.lastName} onChange={handleChange} required />
-      </div>
-      <button type="submit">Sign Up</button>
-    </form>
+
+      <Slide direction="up" in={alert} mountOnEnter unmountOnExit>
+        <div
+          className={s.alert}
+          role="alert"
+        >
+          <p className={s.alertMessage}>{alertMessage}</p>
+        </div>
+      </Slide>
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
 // src/components/Header.jsx
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import clamareSingleLogo from '../assets/clamareSingleLogo.png';
 import s from '../shared/Header.module.scss';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,22 @@ import { CartContext } from '../contexts/CartContext';
 
 const Header = () => {
   const navigate = useNavigate();
-  // Consume CartContext
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
+
+  useEffect(() => {
+          const handleResize = () => {
+              setIsSmallScreen(window.innerWidth <= 500);
+          };
+  
+          handleResize();
+  
+          window.addEventListener('resize', handleResize);
+  
+          return () => {
+              window.removeEventListener('resize', handleResize);
+          };
+      }, []);
+
   const { cart, loading, error, isBagOpened, setIsBagOpened } = useContext(CartContext);
 
   const toggleBag = () => {
@@ -68,29 +83,18 @@ const Header = () => {
         />
       </Fade>
 
-      {/* Shopping Bag Slide */}
-      <Slide in={isBagOpened} direction="left">
+      <Slide in={isBagOpened} direction={isSmallScreen ? 'up' : 'left'}>
         <div
-          style={{
-            zIndex: 10,
-            position: 'fixed',
-            right: 0,
-            top: 0,
-            height: '100vh',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
+          className={s.slideContainer}
         >
           <div
             onClick={toggleBag}
             style={{
-              width: '100%',
-              maxWidth: '870px',
+              width: 'calc(100% - 500px)',
               cursor: 'w-resize',
             }}
           />
-          <div style={{ maxWidth: '600px', width: '100%', backgroundColor: 'var(--main-bg-color)' }}>
+          <div className={s.shoppingBagContainer}>
             <ShoppingBag onClose={toggleBag} onCheckout={toggleBag} />
           </div>
         </div>

@@ -14,7 +14,9 @@ function ClothingItemScreen() {
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
     const { addItemToCart, refreshCart, setIsBagOpened, isBagOpened } = useContext(CartContext);
+
     const [product, setProduct] = useState(null);
+    const [modelReference, setModelReference] = useState('');  // <-- NEW state
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState('');
     const [addedItemPopUpShown, setAddedItemPopUpShown] = useState(false);
@@ -25,28 +27,43 @@ function ClothingItemScreen() {
         const handleResize = () => {
             setIsSmallScreen(window.innerWidth <= 600);
         };
-
         handleResize();
-
         window.addEventListener('resize', handleResize);
-
         return () => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
 
+    // 1) Fetch product and Model Reference Metafield
     useEffect(() => {
         const loadProduct = async () => {
             try {
                 const productData = await fetchProductByHandle(handle);
-                setProduct(productData);
+                if (productData) {
+                    setProduct(productData);
+
+                    // 2) Extract the modelReference metafield (if it exists)
+                    // For 2023-07, 'metafields' returns an array, not edges.
+                    const modelMetafield = productData.metafields?.find(
+                        (mf) => mf.key === 'modelReference'
+                    );
+                    if (modelMetafield) {
+                        setModelReference(modelMetafield.value);
+                    } else {
+                        setModelReference('');  // No metafield found
+                    }
+                } else {
+                    // Product not found, you can handle it however you like:
+                    // navigate('/products/all'); or show a "not found" message
+                }
             } catch (err) {
                 console.error('Error fetching product by handle:', err);
             }
         };
         loadProduct();
-    }, [handle]);
+    }, [handle, navigate]);
 
+    // 3) Handle variant from URL param
     useEffect(() => {
         const variantNumericId = searchParams.get('variant');
         if (variantNumericId && product) {
@@ -77,6 +94,7 @@ function ClothingItemScreen() {
         )?.value;
     }
 
+    // Map out variants
     const allVariants = product.variants?.edges.map((edge) => edge.node) || [];
 
     // Deduplicate color options
@@ -88,7 +106,6 @@ function ClothingItemScreen() {
             uniqueColorMap.set(colorVal.toLowerCase(), colorVal);
         }
     }
-
     const uniqueColors = Array.from(uniqueColorMap.values());
 
     // Extract all sizes
@@ -96,13 +113,15 @@ function ClothingItemScreen() {
         new Set(
             allVariants
                 .map((v) =>
-                    getOptionValue(v, 'size') ? getOptionValue(v, 'size').toLowerCase() : null
+                    getOptionValue(v, 'size') 
+                      ? getOptionValue(v, 'size').toLowerCase() 
+                      : null
                 )
                 .filter(Boolean)
         )
     );
 
-    // Find the currently selected variant based on color
+    // Current variant based on color selection
     let currentVariant = null;
     if (selectedColor) {
         currentVariant = allVariants.find(
@@ -111,10 +130,9 @@ function ClothingItemScreen() {
         );
     }
 
-    // Function to handle color selection
+    // Handle color selection
     const handleColorSelect = (color) => {
         setSelectedColor(color);
-        // Update the URL search params to reflect the selected variant
         const selectedVariant = allVariants.find(
             (variant) =>
                 getOptionValue(variant, 'color').toLowerCase() === color.toLowerCase()
@@ -125,14 +143,14 @@ function ClothingItemScreen() {
         }
     };
 
+    // Determine which images to display
     const variantImageUrl = currentVariant?.image?.url || '';
-
     const hasVariants = allVariants.length > 0;
     const imagesToDisplay = hasVariants
         ? product.images?.edges.slice(1, -1)
         : product.images?.edges;
 
-    // Function to handle adding to cart
+    // Add to Cart
     async function handleAddToBag() {
         if (!selectedSize) {
             alert('Please select a size.');
@@ -142,7 +160,6 @@ function ClothingItemScreen() {
             alert('Please select a color.');
             return;
         }
-        // Find the variant that matches both selected color and size
         const matchedVariant = allVariants.find(
             (variant) =>
                 getOptionValue(variant, 'color').toLowerCase() === selectedColor.toLowerCase() &&
@@ -159,7 +176,6 @@ function ClothingItemScreen() {
             await addItemToCart(matchedVariant.id, 1);
             await refreshCart();
             console.log('Item successfully added to cart.');
-            // Set the added item details for the pop-up
             setAddedItemDetails({
                 image: matchedVariant.image?.url || '',
                 name: product.title,
@@ -241,7 +257,6 @@ function ClothingItemScreen() {
                                 className={s.productImage}
                             />
                         )}
-
                         {imagesToDisplay.map(({ node }) => (
                             <img
                                 key={node.url}
@@ -259,20 +274,19 @@ function ClothingItemScreen() {
                                     {product.title.toUpperCase()}
                                 </p>
                                 <p className={s.productPrice}>
-                                    ${product?.priceRange?.minVariantPrice?.amount}
+                                    ${Math.floor(product?.priceRange?.minVariantPrice?.amount)}
                                 </p>
 
                                 <div className={s.sizeSelectorContainer}>
                                     {allSizes.length > 0 && (
                                         <div className={s.sizeButtonsContainer}>
-                                            {allSizes.map((sz, index) => (
+                                            {allSizes.map((sz) => (
                                                 <button
                                                     key={sz}
                                                     onClick={() => setSelectedSize(sz)}
-                                                    className={`${s.sizeButton} ${selectedSize === sz
-                                                        ? s.selectedSize
-                                                        : ''
-                                                        }`}
+                                                    className={`${s.sizeButton} ${
+                                                        selectedSize === sz ? s.selectedSize : ''
+                                                    }`}
                                                 >
                                                     {sz.toUpperCase()}
                                                 </button>
@@ -280,20 +294,29 @@ function ClothingItemScreen() {
                                         </div>
                                     )}
                                 </div>
-
+                                
+                                {/* 4) Display the modelReference text if available */}
+                                {modelReference ? (
+                                    <p style={{}}>
+                                        {modelReference.toUpperCase()}
+                                    </p>
+                                ) : (
+                                    <p className={s.modelRefText}>
+                                        {/* Fallback if no metafield is set */}
+                                        MODEL REFERENCE NOT PROVIDED
+                                    </p>
+                                )}
+                                
                                 <div className={s.colorSelectorContainer}>
                                     <div className={s.colorVariants}>
                                         {uniqueColors.map((color) => {
                                             const isActive =
-                                                selectedColor.toLowerCase() ===
-                                                color.toLowerCase();
+                                                selectedColor.toLowerCase() === color.toLowerCase();
+
                                             // Find a variant with this color to get its image
                                             const variantWithColor = allVariants.find(
                                                 (variant) =>
-                                                    getOptionValue(
-                                                        variant,
-                                                        'color'
-                                                    ).toLowerCase() ===
+                                                    getOptionValue(variant, 'color').toLowerCase() ===
                                                     color.toLowerCase()
                                             );
 
@@ -302,35 +325,21 @@ function ClothingItemScreen() {
                                                     key={color}
                                                     className={s.colorOption}
                                                 >
-                                                    {variantWithColor &&
-                                                        variantWithColor.image?.url ? (
+                                                    {variantWithColor && variantWithColor.image?.url ? (
                                                         <img
-                                                            src={
-                                                                variantWithColor.image
-                                                                    .url
-                                                            }
+                                                            src={variantWithColor.image.url}
                                                             alt={`Color: ${color}`}
-                                                            className={`${s.colorImage} ${isActive
-                                                                ? s.activeColor
-                                                                : ''
-                                                                }`}
-                                                            onClick={() =>
-                                                                handleColorSelect(
-                                                                    color
-                                                                )
-                                                            }
+                                                            className={`${s.colorImage} ${
+                                                                isActive ? s.activeColor : ''
+                                                            }`}
+                                                            onClick={() => handleColorSelect(color)}
                                                         />
                                                     ) : (
                                                         <div
-                                                            onClick={() =>
-                                                                handleColorSelect(
-                                                                    color
-                                                                )
-                                                            }
-                                                            className={`${s.colorPlaceholder} ${isActive
-                                                                ? s.activeColor
-                                                                : ''
-                                                                }`}
+                                                            onClick={() => handleColorSelect(color)}
+                                                            className={`${s.colorPlaceholder} ${
+                                                                isActive ? s.activeColor : ''
+                                                            }`}
                                                         />
                                                     )}
                                                 </div>
@@ -348,8 +357,7 @@ function ClothingItemScreen() {
                                 <p className={s.productDescription}>
                                     {product.description}
                                 </p>
-                                {!isSmallScreen &&
-
+                                {!isSmallScreen && (
                                     <div className={s.actionButtons}>
                                         <Button onClick={handleAddToBag}>
                                             {selectedSize && selectedColor
@@ -357,17 +365,18 @@ function ClothingItemScreen() {
                                                 : 'SELECT A SIZE'}
                                         </Button>
                                         <Button
-                                            secondary={true}
-                                            onClick={() => navigate('/checkout')} // Adjust the path as needed
+                                            secondary
+                                            onClick={() => navigate('/checkout')} // Adjust path if needed
                                         >
                                             CHECKOUT
                                         </Button>
                                     </div>
-                                }
+                                )}
                             </div>
                         </div>
                     </div>
-                    {isSmallScreen &&
+
+                    {isSmallScreen && (
                         <div className={s.actionButtons}>
                             <Button onClick={handleAddToBag}>
                                 {selectedSize && selectedColor
@@ -375,13 +384,13 @@ function ClothingItemScreen() {
                                     : 'SELECT A SIZE'}
                             </Button>
                             <Button
-                                secondary={true}
-                                onClick={() => navigate('/checkout')} // Adjust the path as needed
+                                secondary
+                                onClick={() => navigate('/checkout')}
                             >
                                 CHECKOUT
                             </Button>
                         </div>
-                    }
+                    )}
                 </div>
             </Fade>
         </div>

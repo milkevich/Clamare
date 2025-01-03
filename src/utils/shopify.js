@@ -110,10 +110,113 @@ export const fetchProductByHandle = async (handle) => {
             }
           }
         }
+
+        metafields(identifiers: [
+          {namespace: "custom", key: "modelReference"}
+        ]) {
+          id
+          namespace
+          key
+          value
+        }
       }
     }
   `;
   const variables = { handle };
   const response = await client.post('', { query, variables });
-  return response.data.data.productByHandle;  // returns null if not found
+  return response.data.data.productByHandle;
+};
+// shopify.js
+export const fetchLandingPage = async () => {
+  const query = `
+    query {
+      metaobject(
+        handle: {
+          type: "landing_page"
+          handle: "landing-page-bbxgvzio"
+        }
+      ) {
+        fields {
+          key
+          value
+          reference {
+            __typename
+            ... on MediaImage {
+              image {
+                url
+                altText
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await client.post('', { query });
+
+    if (response.data.errors) {
+      console.error('[fetchLandingPageEntry] GraphQL errors:', response.data.errors);
+      throw new Error(response.data.errors[0].message);
+    }
+
+    const metaobjectData = response.data?.data?.metaobject;
+    if (!metaobjectData) return null;
+
+    const heroField = metaobjectData.fields.find((field) => field.key === 'hero_image');
+    if (!heroField) {
+      console.log('NOT FOUND');
+    }
+
+    return heroField?.reference?.image?.url ?? null;
+  } catch (error) {
+    console.error('[fetchLandingPageEntry] Error fetching data:', error);
+    throw error;
+  }
+};
+export const fetchMagazinePages = async () => {
+  const query = `
+    query {
+      metaobjects(type: "magazine_page_chapters", first: 10) {
+        edges {
+          node {
+            id
+            handle
+            fields {
+              key
+              value
+              reference {
+                __typename
+                ... on MediaImage {
+                  image {
+                    url
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await client.post('', { query });
+
+    if (response.data.errors) {
+      console.error('[fetchMagazinePages] GraphQL errors:', response.data.errors);
+      throw new Error(response.data.errors[0].message);
+    }
+
+    // This returns an array of edges (each edge contains a "node")
+    const edges = response.data?.data?.metaobjects?.edges;
+    if (!edges || !edges.length) return [];
+
+    // Map each edge to just the "node"
+    return edges.map((edge) => edge.node);
+  } catch (error) {
+    console.error('[fetchMagazinePages] Error fetching data:', error);
+    throw error;
+  }
 };

@@ -40,6 +40,7 @@ ul {
 ::-webkit-scrollbar {
     background-color: var(--border-color);
     width: 1px;
+    height: 1px;
     scrollbar-color: black;
 }
 
@@ -129,4 +130,10 @@ input[type="checkbox"] {
   
   .attribution img {
     height: 12px;
+  }
+
+  @media (max-width: 600px) {
+    ::-webkit-scrollbar {
+      display: none;
+  }
   }

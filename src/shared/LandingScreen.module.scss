@@ -1,14 +1,32 @@
 .landingScreen {
   display: flex;
-  align-items: center;
   justify-content: center;
-  width: calc(100vw - 20px);
-  height: calc(100vh - 120px);
+  width: calc(100vw - 2.5rem);
+  height: calc(100vh - 175px);
   max-width: 1470px;
   margin: auto;
+  padding: 1.25rem;
 }
 
 .landingImage {
-  width: 500px;
-  height: 640px;
+  height: calc(100vh - 140px - 1rem);
+}
+
+@media (max-width: 600px) {
+  .landingScreen {
+    display: flex;
+    justify-content: center;
+    width: calc(100vw - 1.5rem);
+    height: calc(100vh - 130px);
+    max-width: 1470px;
+    margin: auto;
+    padding: 0.75rem;
+  }
+  
+  .landingImage {
+    height: calc(100vh - 130px);
+    max-width: 600px;
+    width: 100%;
+    object-fit: cover;
+  }
 }

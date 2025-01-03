@@ -1,4 +1,3 @@
-// src/components/LogInScreen.jsx
 import React, { useState, useContext, useEffect } from 'react';
 import { Slide } from '@mui/material';
 import Input from '../shared/UI/Input';
@@ -75,25 +74,29 @@ const LogInScreen = () => {
     <>
       <div
         style={{
-          maxWidth: '400px',
+          maxWidth: '450px',
           margin: 'auto',
           alignItems: 'center',
           justifyContent: 'space-between',
           display: 'flex',
           flexDirection: 'column',
-          height: 'calc(100vh - 140px)',
+          height: 'calc(100vh - 108px - 2.5rem)',
+          paddingTop: '1.25rem',
+          paddingBottom: '1.25rem',
         }}
       >
-        <img style={{ maxWidth: '400px' }} src={heyThere} alt="Hey There" />
+        <img style={{ maxWidth: '450px', width: 'calc(100% - 2.5rem)', padding: '0rem 1.25rem' }} src={heyThere} alt="Hey There" />
         <form
           onSubmit={handleSubmit}
           style={{
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            width: '100%',
+            width: 'calc(100% - 2.5rem)',
             gap: '10px',
             marginTop: '-100px',
+            padding: '0rem 1.25rem',
+            margin: 'auto'
           }}
         >
           <Input

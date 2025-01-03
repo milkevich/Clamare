@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import { fetchCustomer, logOut, logIn as apiLogIn, signUp as apiSignUp } from '../utils/auth';
 
@@ -10,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState(null);
 
+  // Function to load customer data on app load
   const loadCustomer = async () => {
     const token = localStorage.getItem('shopify_access_token');
     const expiresAt = localStorage.getItem('shopify_access_token_expires_at');
@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
       if (result.customer) {
         setCustomer(result.customer);
       } else {
+        // If fetching customer fails, remove tokens
         localStorage.removeItem('shopify_access_token');
         localStorage.removeItem('shopify_access_token_expires_at');
       }
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }) => {
     loadCustomer();
   }, []);
 
+  // Function to handle user log out
   const handleLogout = async () => {
     const token = localStorage.getItem('shopify_access_token');
     if (token) {
@@ -39,49 +41,70 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Function to log in the user
   const logIn = async (email, password) => {
     setAuthLoading(true);
     setAuthError(null);
     const result = await apiLogIn(email, password);
+    console.log('AuthContext.logIn result:', result);
     if (result.customerAccessToken) {
       const { accessToken, expiresAt } = result.customerAccessToken;
       localStorage.setItem('shopify_access_token', accessToken);
       localStorage.setItem('shopify_access_token_expires_at', expiresAt);
       const customerResult = await fetchCustomer(accessToken);
+      console.log('AuthContext.logIn customerResult:', customerResult);
       if (customerResult.customer) {
         setCustomer(customerResult.customer);
+        console.log('Customer set in AuthContext:', customerResult.customer);
       }
     } else if (result.errors) {
-      setAuthError(result.errors);
+      // Aggregate error messages
+      const errorMessages = result.errors.map(err => err.message).join(' ');
+      setAuthError(errorMessages);
+      console.log('AuthContext.logIn errors:', errorMessages);
     }
     setAuthLoading(false);
     return result;
   };
 
+  // Function to sign up the user
   const signUp = async (email, password, firstName, lastName) => {
     setAuthLoading(true);
     setAuthError(null);
     const result = await apiSignUp(email, password, firstName, lastName);
-    if (result.customerAccessToken) { // Ensure the signUp function returns customerAccessToken
-      const { accessToken, expiresAt } = result.customerAccessToken;
-      localStorage.setItem('shopify_access_token', accessToken);
-      localStorage.setItem('shopify_access_token_expires_at', expiresAt);
-      const customerResult = await fetchCustomer(accessToken);
-      if (customerResult.customer) {
-        setCustomer(customerResult.customer);
+    console.log('AuthContext.signUp result:', result);
+    if (result.customer) { 
+      // After sign up, automatically log in the user
+      const loginResult = await logIn(email, password);
+      console.log('AuthContext.signUp loginResult:', loginResult);
+      if (loginResult.customerAccessToken) {
+        console.log('User successfully logged in after sign up.');
+        setAuthLoading(false);
+        return true;
+      } else {
+        // LogIn failed
+        setAuthError('Sign up successful, but log in failed.');
+        setAuthLoading(false);
+        return false;
       }
     } else if (result.errors) {
-      setAuthError(result.errors);
+      // Aggregate error messages
+      const errorMessages = result.errors.map(err => err.message).join(' ');
+      setAuthError(errorMessages);
+      console.log('AuthContext.signUp errors:', errorMessages);
+      setAuthLoading(false);
+      return false;
     }
     setAuthLoading(false);
-    return result;
+    return false;
   };
 
-  // Check token expiration periodically
+  // Periodically check for token expiration
   useEffect(() => {
     const checkTokenExpiry = () => {
-      if (customer && customer.expiresAt) {
-        const expiryDate = new Date(customer.expiresAt);
+      const expiresAt = localStorage.getItem('shopify_access_token_expires_at');
+      if (customer && expiresAt) {
+        const expiryDate = new Date(expiresAt);
         const now = new Date();
 
         if (now > expiryDate) {

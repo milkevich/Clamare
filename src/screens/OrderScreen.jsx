@@ -190,7 +190,7 @@ const OrderScreen = () => {
   return (
     <Fade in={!loading}>
       <div>
-        <div style={{ borderBottom: '1px solid var(--border-color)', position: 'sticky', top: 53, backgroundColor: 'var(--main-bg-color)', zIndex: 50 }}>
+        <div style={{ borderBottom: '1px solid var(--border-color)', position: 'sticky', top: 49, backgroundColor: 'var(--main-bg-color)', zIndex: 50 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '1470px', margin: 'auto', fontSize: '10px', fontWeight: '580', padding: '0rem 1.25rem' }}>
             <p style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }} onClick={() => {
               navigate(-1)

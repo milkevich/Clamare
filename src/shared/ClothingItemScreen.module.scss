@@ -66,13 +66,12 @@
     justify-content: right;
 }
 
-/* Back to Shop Button Styles */
 .backToShop {
     border-bottom: 1px solid var(--border-color);
     padding: 10px;
     cursor: pointer;
     position: sticky;
-    top: 53px;
+    top: 49px;
     background-color: var(--main-bg-color);
     z-index: 10;
 }
@@ -249,6 +248,12 @@
         flex-direction: row;
         padding: 0;
         overflow-x: scroll;
+        max-width: none;
+    }
+
+    .productImage {
+        max-width: 600px;
+        width: 100%;
     }
 
     .infoContainer {

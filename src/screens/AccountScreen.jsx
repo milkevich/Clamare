@@ -1,4 +1,3 @@
-// src/components/AccountScreen.jsx
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import client from '../utils/shopify';
@@ -11,15 +10,31 @@ const AccountScreen = () => {
   const [addresses, setAddresses] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [addressesLoading, setAddressesLoading] = useState(true);
-  const [error, setError] = useState(null); // General error state
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true); // Overall loading state
+  const [loading, setLoading] = useState(true);
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
+  const [isSmallScreen2, setIsSmallScreen2] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 700);
+      setIsSmallScreen2(window.innerWidth <= 500);
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const customerAccessToken = localStorage.getItem('shopify_access_token');
     if (!customerAccessToken) {
-      alert('Session expired. Please log in again.');
-      navigate('/login'); // Redirect to login page
+      navigate('/login');
     }
   }, [navigate]);
 
@@ -137,7 +152,6 @@ const AccountScreen = () => {
     fetchAddresses();
   }, [customer]);
 
-  // Helper function to map status codes to readable labels
   const getOrderStatusLabel = (financialStatus, fulfillmentStatus) => {
     const financialMap = {
       PENDING: 'Pending Payment',
@@ -160,7 +174,6 @@ const AccountScreen = () => {
     const financialStatusLabel = financialMap[financialStatus] || 'Unknown Financial Status';
     const fulfillmentStatusLabel = fulfillmentMap[fulfillmentStatus] || 'Unknown Fulfillment Status';
 
-    // Customize the label based on specific status combinations
     if (financialStatusLabel === 'Refunded') {
       return `${financialStatusLabel}`;
     } else if (fulfillmentStatusLabel === 'Fulfilled') {
@@ -189,17 +202,17 @@ const AccountScreen = () => {
   return (
     <Fade in={!loading}>
       <div>
-        <div style={{ borderBottom: '1px solid var(--border-color)', position: 'sticky', top: 53, backgroundColor: 'var(--main-bg-color)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 1.25rem', fontSize: '10px', maxWidth: '1470px', margin: 'auto' }}>
+        <div style={{ borderBottom: '1px solid var(--border-color)', position: 'sticky', top: 49, backgroundColor: 'var(--main-bg-color)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: isSmallScreen2 ? '0.5rem 0.75rem' : '0.5rem 1.25rem', fontSize: '10px', maxWidth: '1470px', margin: 'auto' }}>
             <p style={{ margin: 0 }}>WELCOME BACK, {customer?.firstName?.toUpperCase()}!</p>
             <p onClick={handleLogout} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '1.25rem', color: 'var(--sec-color)', cursor: 'pointer' }}>
-              {customer?.email?.toUpperCase()} <span style={{ color: 'var(--main-color)' }}>LOG OUT</span>
+              {!isSmallScreen && customer?.email?.toUpperCase()} <span style={{ color: 'var(--main-color)' }}>LOG OUT</span>
             </p>
           </div>
         </div>
-        <div style={{ maxWidth: '1300px', margin: 'auto', display: 'flex', justifyContent: 'space-between', height: 'calc(100vh - 155px - 1.25rem)', padding: '1.25rem' }}>
+        <div style={{ maxWidth: '1300px', margin: 'auto', display: isSmallScreen ? 'block' : 'flex', justifyContent: 'space-between', height: isSmallScreen ? '' : 'calc(100vh - 155px - 1.25rem)', padding: isSmallScreen ? '' : '1.25rem', width: isSmallScreen && '100%', }}>
 
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%', maxWidth: '50%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: isSmallScreen ? '' : '100%', maxWidth: !isSmallScreen && '50%', padding: isSmallScreen2 ? '0.75rem' : isSmallScreen ? '1.25rem' : '' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
               <p style={{ margin: 0, fontSize: '32px', fontWeight: '900' }}>MY ACCOUNT</p>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -207,7 +220,9 @@ const AccountScreen = () => {
                 <p style={{ margin: 0, fontSize: '12px', fontWeight: '580' }}>{customer?.email || ''}</p>
               </div>
             </div>
-
+            {isSmallScreen &&
+              <div style={{ marginTop: '3rem' }}></div>
+            }
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <p style={{ fontSize: '32px', fontWeight: '900', margin: 0, marginBottom: '1.5rem' }}>ADDRESS</p>
               {addressesLoading ? (
@@ -225,26 +240,28 @@ const AccountScreen = () => {
                   ))}
                 </ul>
               ) : (
-                <p>No addresses found.</p>
-              )}
+                <div>
+                  <p style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>NO ADDRESSES FOUND.</p>
+                  <p style={{ margin: 0, fontSize: '12px', fontWeight: '580' }}>Add address by clicking 'Manage Addresses'.</p>
+                </div>)}
               <p style={{ fontSize: '12px', fontWeight: '600', margin: 0, cursor: 'pointer', padding: '1rem 0rem 0rem 0rem' }}>MANAGE ADDRESSES</p>
             </div>
           </div>
 
-          <div style={{ width: '100%', maxWidth: '50%' }}>
-            <p style={{ fontSize: '32px', fontWeight: '900', marginTop: 0, marginBottom: '3rem' }}>ORDER HISTORY</p>
-            <div style={{ maxHeight: 'calc(100vh - 240px - 1.25rem)', maxWidth: '400px', height: '100%', overflowY: 'scroll' }}>
+          <div style={{ width: '100%', maxWidth: !isSmallScreen && '50%' }}>
+            <p style={{ fontSize: '32px', fontWeight: '900', marginBottom: '3rem', marginTop: isSmallScreen ? '3rem' : '0px', padding: isSmallScreen2 ? '0rem 0.75rem' : isSmallScreen ? '0rem 1.25rem' : '' }}>ORDER HISTORY</p>
+            <div style={{ maxHeight: !isSmallScreen && 'calc(100vh - 240px - 1.25rem)', maxWidth: !isSmallScreen && '400px', height: '100%', overflowY: 'scroll' }}>
               {ordersLoading ? (
                 <p>Loading orders...</p>
               ) : error ? (
                 <p style={{ color: 'red' }}>ERROR: {error}</p>
               ) : orders.length > 0 ? (
-                <ul style={{ margin: 0, maxWidth: '400px', padding: 0 }}>
+                <ul style={{ margin: 0, maxWidth: !isSmallScreen && '400px', padding: 0 }}>
                   {orders.map(order => (
                     <li onClick={() => {
                       const encodedOrderId = encodeURIComponent(order.id);
                       navigate(`/account/orders/${encodedOrderId}`);
-                    }} style={{padding: "1.25rem 1.25rem 1.25rem 0rem", borderTop: '1px solid var(--border-color)',}} key={order.id}>
+                    }} style={{ padding: isSmallScreen2 ? "1.25rem 0.75rem" : isSmallScreen ? '1.25rem 1.25rem 1.25rem 1.25rem' : "1.25rem 1.25rem 1.25rem 0rem", borderTop: '1px solid var(--border-color)', }} key={order.id}>
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <p style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>{order.name}</p>
                         <p style={{ margin: 0, fontSize: '12px', fontWeight: '580', color: 'var(--sec-color)' }}>VIEW</p>
@@ -286,7 +303,10 @@ const AccountScreen = () => {
                   ))}
                 </ul>
               ) : (
-                <p>NO ORDERS.</p>
+                <div style={{paddingLeft: isSmallScreen && '1.25rem'}}>
+                  <p style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>NO ORDERS.</p>
+                  <p style={{ margin: 0, fontSize: '12px', fontWeight: '580' }}>You haven't placed any orders yet.</p>
+                </div>
               )}
             </div>
           </div>

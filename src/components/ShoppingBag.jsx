@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Button from '../shared/UI/Button';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../contexts/CartContext';
@@ -10,6 +10,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
   const navigate = useNavigate();
   const { customer } = useContext(AuthContext);
   const { cart, loading, error, removeItemFromCart, updateCartLineQuantityFn } = useContext(CartContext);
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   console.log('ShoppingBag - cart:', cart);
   console.log('ShoppingBag - loading:', loading);
@@ -26,6 +27,20 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
       alert('Failed to remove item from cart. Please try again.');
     }
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 500);
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleQuantityChange = async (lineId, delta) => {
     try {
@@ -117,21 +132,21 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
     }, 0)
     .toFixed(2);
 
-    const handleCheckoutClick = async () => {
-      try {
-        // Retrieve customerAccessToken from localStorage
-        const customerAccessToken = localStorage.getItem('shopify_access_token');
-    
-        if (!customerAccessToken) {
-          alert('Please log in to proceed to checkout.');
-          return navigate('/account/login', { state: { from: '/checkout' } });
-        }
-    
-        console.log('Customer Access Token:', customerAccessToken);
-    
-        // Create a checkout session
-        const createCheckoutMutation = 
-          `mutation checkoutCreate($input: CheckoutCreateInput!) {
+  const handleCheckoutClick = async () => {
+    try {
+      // Retrieve customerAccessToken from localStorage
+      const customerAccessToken = localStorage.getItem('shopify_access_token');
+
+      if (!customerAccessToken) {
+        alert('Please log in to proceed to checkout.');
+        return navigate('/account/login', { state: { from: '/checkout' } });
+      }
+
+      console.log('Customer Access Token:', customerAccessToken);
+
+      // Create a checkout session
+      const createCheckoutMutation =
+        `mutation checkoutCreate($input: CheckoutCreateInput!) {
             checkoutCreate(input: $input) {
               checkout {
                 id
@@ -145,39 +160,39 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
             }
           }`
         ;
-        const checkoutResponse = await client.post('', {
-          query: createCheckoutMutation,
-          variables: {
-            input: {
-              lineItems: cart.lines.edges.map(edge => ({
-                variantId: edge.node.merchandise.id,
-                quantity: edge.node.quantity,
-              })),
-              email: customer?.email || '', // Ensure email is passed
-            },
+      const checkoutResponse = await client.post('', {
+        query: createCheckoutMutation,
+        variables: {
+          input: {
+            lineItems: cart.lines.edges.map(edge => ({
+              variantId: edge.node.merchandise.id,
+              quantity: edge.node.quantity,
+            })),
+            email: customer?.email || '', // Ensure email is passed
           },
-        });
-    
-        console.log('Checkout Creation Response:', checkoutResponse.data);
-    
-        // Check if the mutation was successful
-        if (!checkoutResponse.data || !checkoutResponse.data.data || !checkoutResponse.data.data.checkoutCreate) {
-          console.error('Invalid response structure:', checkoutResponse.data);
-          alert('Failed to create checkout. Please try again.');
-          return;
-        }
-    
-        const { checkout, checkoutUserErrors } = checkoutResponse.data.data.checkoutCreate;
-    
-        if (checkoutUserErrors?.length > 0) {
-          console.error('Checkout Creation Errors:', checkoutUserErrors);
-          const errorMessages = checkoutUserErrors.map(err => err.message).join('\n');
-          alert(`Checkout Creation Errors:\n${errorMessages}`);
-          return;
-        }
-    
-        // Associate customer with the checkout
-        const associateCustomerMutation = `
+        },
+      });
+
+      console.log('Checkout Creation Response:', checkoutResponse.data);
+
+      // Check if the mutation was successful
+      if (!checkoutResponse.data || !checkoutResponse.data.data || !checkoutResponse.data.data.checkoutCreate) {
+        console.error('Invalid response structure:', checkoutResponse.data);
+        alert('Failed to create checkout. Please try again.');
+        return;
+      }
+
+      const { checkout, checkoutUserErrors } = checkoutResponse.data.data.checkoutCreate;
+
+      if (checkoutUserErrors?.length > 0) {
+        console.error('Checkout Creation Errors:', checkoutUserErrors);
+        const errorMessages = checkoutUserErrors.map(err => err.message).join('\n');
+        alert(`Checkout Creation Errors:\n${errorMessages}`);
+        return;
+      }
+
+      // Associate customer with the checkout
+      const associateCustomerMutation = `
           mutation checkoutCustomerAssociateV2($checkoutId: ID!, $customerAccessToken: String!) {
             checkoutCustomerAssociateV2(checkoutId: $checkoutId, customerAccessToken: $customerAccessToken) {
               checkout {
@@ -193,44 +208,44 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
             }
           }`
         ;
-        const associateResponse = await client.post('', {
-          query: associateCustomerMutation,
-          variables: {
-            checkoutId: checkout.id,
-            customerAccessToken,
-          },
-        });
-    
-        console.log('Customer Association Response:', associateResponse.data);
-    
-        // Check if the association mutation was successful
-        if (!associateResponse.data || !associateResponse.data.data || !associateResponse.data.data.checkoutCustomerAssociateV2) {
-          console.error('Invalid association response structure:', associateResponse.data);
-          alert('Failed to associate your account with the checkout. Please try again.');
-          return;
-        }
-    
-        const { checkout: updatedCheckout, checkoutUserErrors: associateErrors } =
-          associateResponse.data.data.checkoutCustomerAssociateV2;
-    
-        if (associateErrors?.length > 0) {
-          console.error('Customer Association Errors:', associateErrors);
-          const errorMessages = associateErrors.map(err => err.message).join('\n');
-          alert(`Customer Association Errors:\n${errorMessages}`);
-          return;
-        }
-    
-        // Verify that the email is correctly associated
-        console.log('Updated Checkout Email:', updatedCheckout.email);
-    
-        // Redirect to the updated checkout URL
-        window.location.href = updatedCheckout.webUrl;
-      } catch (error) {
-        console.error('Error during checkout:', error);
-        alert('An unexpected error occurred during checkout. Please try again.');
+      const associateResponse = await client.post('', {
+        query: associateCustomerMutation,
+        variables: {
+          checkoutId: checkout.id,
+          customerAccessToken,
+        },
+      });
+
+      console.log('Customer Association Response:', associateResponse.data);
+
+      // Check if the association mutation was successful
+      if (!associateResponse.data || !associateResponse.data.data || !associateResponse.data.data.checkoutCustomerAssociateV2) {
+        console.error('Invalid association response structure:', associateResponse.data);
+        alert('Failed to associate your account with the checkout. Please try again.');
+        return;
       }
-    };
-    
+
+      const { checkout: updatedCheckout, checkoutUserErrors: associateErrors } =
+        associateResponse.data.data.checkoutCustomerAssociateV2;
+
+      if (associateErrors?.length > 0) {
+        console.error('Customer Association Errors:', associateErrors);
+        const errorMessages = associateErrors.map(err => err.message).join('\n');
+        alert(`Customer Association Errors:\n${errorMessages}`);
+        return;
+      }
+
+      // Verify that the email is correctly associated
+      console.log('Updated Checkout Email:', updatedCheckout.email);
+
+      // Redirect to the updated checkout URL
+      window.location.href = updatedCheckout.webUrl;
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      alert('An unexpected error occurred during checkout. Please try again.');
+    }
+  };
+
 
   const totalQuantity = cart?.lines?.edges?.reduce((sum, edge) => sum + edge.node.quantity, 0) || 0;
   return (
@@ -260,109 +275,108 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
           height: '100%',
           justifyContent: 'space-between',
         }}>
-          <div style={{maxWidth: '550px', margin: 'auto', width: '100%', marginTop: 0, }}>
-          {cart?.lines?.edges?.map(({ node }) => {
-            const variant = node.merchandise;
-            return (
-              <div
-                key={node.id}
-                style={{
-                  display: 'flex',
-                  gap: '10px',
-                  padding: '0rem 1.25rem 1.25rem 1.25rem',
-                  alignItems: 'center',
-                  width: 'calc(100% - 2.5rem)',
-                  justifyContent: 'space-between',
-                  height: '249px'
-                }}
-              >
-                <div style={{display: 'flex', height: '249px', width: '100%'}}>
-                {variant?.image?.url && (
-                  <img
-                    src={variant.image.url}
-                    alt={variant.title}
-                    style={{
-                      maxWidth: '200px',
-                      width: '100%',
-                      objectFit: 'cover'
-                    }}
-                  />
-                )}
-                <div style={{
-                  fontSize: '12px',
-                  fontWeight: '580',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  padding: '20px',
-                  height: 'calc(100% - 40px)',
-                  gap: '2rem'
-                }}>
-                    <div>
-                    <p style={{ fontSize: '14px', margin: 0 }}>
-                    {node.quantity}x {variant?.product?.title.toUpperCase() || 'Product Title'}
-                    </p>
-                    <p style={{ fontSize: '12px', margin: '0' }}>
-                      ${variant?.priceV2?.amount || '0.00'}
-                    </p>
-                    </div>
-                    <p style={{ fontSize: '12px', margin: '0' }}>
-                      {variant?.title.toUpperCase() || 'Variant Title'}
-                    </p>
-                    <div style={{
+          <div style={{ maxWidth: '550px', margin: 'auto', width: '100%', marginTop: 0, }}>
+            {cart?.lines?.edges?.map(({ node }) => {
+              const variant = node.merchandise;
+              return (
+                <div
+                  key={node.id}
+                  style={{
                     display: 'flex',
+                    gap: '10px',
+                    padding: '0rem 1.25rem 1.25rem 1.25rem',
                     alignItems: 'center',
-                    width: '100px',
-                    justifyContent: 'space-between'
-                  }}>
-                    <Button
-                      secondary
-                      single
-                      onClick={() => handleQuantityChange(node.id, -1)}
-                      disabled={node.quantity <= 1} // Disable if quantity is 1
-                      style={{
-                        opacity: node.quantity <= 1 ? 0.5 : 1,
-                        cursor: node.quantity <= 1 ? 'not-allowed' : 'pointer',
-                      }}
-                    >
-                      –
-                    </Button>
-                    <p style={{ margin: '0 5px' }}>{node.quantity}</p>
-                    <Button
-                      secondary
-                      single
-                      onClick={() => handleQuantityChange(node.id, 1)}
-                    >
-                      +
-                    </Button>
+                    width: 'calc(100% - 2.5rem)',
+                    justifyContent: 'space-between',
+                    height: isSmallScreen ? '186px' : '249px'
+                  }}
+                >
+                  <div style={{ display: 'flex', height: isSmallScreen ? '186px' : '249px', width: '100%' }}>
+                    {variant?.image?.url && (
+                      <img
+                        src={variant.image.url}
+                        alt={variant.title}
+                        style={{
+                          maxWidth: isSmallScreen ? '150px' : '200px',
+                          width: '100%',
+                        }}
+                      />
+                    )}
+                    <div style={{
+                      fontSize: '12px',
+                      fontWeight: '580',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      padding: '20px',
+                      height: 'calc(100% - 40px)',
+                      gap: '2rem'
+                    }}>
+                      <div>
+                        <p style={{ fontSize: isSmallScreen ? '12px' : '14px', margin: 0 }}>
+                          {node.quantity}x {variant?.product?.title.toUpperCase() || 'Product Title'}
+                        </p>
+                        <p style={{ fontSize: isSmallScreen ? '10px' : '12px', margin: '0' }}>
+                          ${Math.floor(variant?.priceV2?.amount)}
+                        </p>
+                      </div>
+                      <p style={{ fontSize: '12px', margin: '0' }}>
+                        {variant?.title.toUpperCase() || 'Variant Title'}
+                      </p>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        width: '100px',
+                        justifyContent: 'space-between'
+                      }}>
+                        <Button
+                          secondary
+                          single
+                          onClick={() => handleQuantityChange(node.id, -1)}
+                          disabled={node.quantity <= 1} // Disable if quantity is 1
+                          style={{
+                            opacity: node.quantity <= 1 ? 0.5 : 1,
+                            cursor: node.quantity <= 1 ? 'not-allowed' : 'pointer',
+                          }}
+                        >
+                          –
+                        </Button>
+                        <p style={{ margin: '0 5px' }}>{node.quantity}</p>
+                        <Button
+                          secondary
+                          single
+                          onClick={() => handleQuantityChange(node.id, 1)}
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </div>
                   </div>
+
+                  <RiDeleteBin5Line onClick={() => handleRemoveItem(node.id)} style={{ cursor: 'pointer' }} />
                 </div>
-                </div>
-                
-                  <RiDeleteBin5Line onClick={() => handleRemoveItem(node.id)} style={{ cursor: 'pointer' }}/>
-              </div>
-            );
-          })}
-          
+              );
+            })}
+
           </div>
           <div style={{
-              position: 'sticky',
-              bottom: 74,
-              padding: '10px 20px',
-              backgroundColor: 'var(--main-bg-color)',
-              borderTop: '1px solid var(--border-color)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              paddingBottom: '10px',
-              marginBottom: '-10px'
-            }}>
-                <p style={{ margin: 0, fontSize: '12px' }}>
-                  SUBTOTAL: ${total}
-                </p>
-                <p style={{ margin: 0, fontSize: '12px' }}>
-                  BAG ({totalQuantity})
-                </p>
-              </div>
+            position: 'sticky',
+            bottom: 74,
+            padding: '10px 20px',
+            backgroundColor: 'var(--main-bg-color)',
+            borderTop: '1px solid var(--border-color)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            paddingBottom: '10px',
+            marginBottom: '-10px'
+          }}>
+            <p style={{ margin: 0, fontSize: '12px' }}>
+              SUBTOTAL: ${total}
+            </p>
+            <p style={{ margin: 0, fontSize: '12px' }}>
+              BAG ({totalQuantity})
+            </p>
+          </div>
           <div>
             <div style={{
               padding: '0px 20px',
@@ -395,22 +409,23 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
                 Taxes / Fees and Shipping cost calculated at checkout.
               </p>
             </div>
-            
+
           </div>
           <div style={{
-              position: 'sticky',
-              bottom: 0,
-              padding: '20px',
-              backgroundColor: 'var(--main-bg-color)',
-              borderTop: '1px solid var(--border-color)',
-              marginTop: -12
-            }}>
-                <Button
-                  onClick={handleCheckoutClick}
-                >
-                  CHECKOUT
-                </Button>
-              </div>
+            position: 'sticky',
+            bottom: 0,
+            padding: '20px',
+            paddingBottom: isSmallScreen ? 'calc(env(safe-area-inset-bottom) + 20px)' : '20px',
+            backgroundColor: 'var(--main-bg-color)',
+            borderTop: '1px solid var(--border-color)',
+            marginTop: -12
+          }}>
+            <Button
+              onClick={handleCheckoutClick}
+            >
+              CHECKOUT
+            </Button>
+          </div>
         </div>
       </div>
     </>
