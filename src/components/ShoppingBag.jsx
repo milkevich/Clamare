@@ -413,9 +413,9 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
           </div>
           <div style={{
             position: 'sticky',
-            bottom: isSmallScreen ? '80px' : 0,
+            bottom: 0,
             padding: '20px',
-            paddingBottom: '20px',
+            paddingBottom: isSmallScreen ? '80px' : '20px',
             backgroundColor: 'var(--main-bg-color)',
             borderTop: '1px solid var(--border-color)',
             marginTop: -12
