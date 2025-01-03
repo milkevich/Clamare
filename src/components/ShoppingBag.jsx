@@ -363,7 +363,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
             position: 'sticky',
             bottom: 74,
             padding: '10px 20px',
-            backgroundColor: 'var(--main-bg-color)',
+            backgroundColor: 'red',
             borderTop: '1px solid var(--border-color)',
             display: 'flex',
             justifyContent: 'space-between',
