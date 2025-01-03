@@ -5,7 +5,7 @@ import Input from '../shared/UI/Input';
 import Button from '../shared/UI/Button';
 import heyThere from '../assets/HeyThere.png';
 import { useNavigate } from 'react-router-dom';
-import { Slide } from '@mui/material';
+import { Fade, Slide } from '@mui/material';
 import s from '../shared/SignUpScreen.module.scss';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -84,76 +84,78 @@ const SignUpScreen = () => {
 
   return (
     <>
-      <div className={s.container}>
-        <div className={s.contentWrapper}>
-          <img className={s.image} src={heyThere} alt="Hey There" />
-          <form onSubmit={handleSubmit} className={s.form}>
-            <div className={s.nameFields}>
+      <Fade timeout={500} in={true}>
+        <div className={s.container}>
+          <div className={s.contentWrapper}>
+            <img className={s.image} src={heyThere} alt="Hey There" />
+            <form onSubmit={handleSubmit} className={s.form}>
+              <div className={s.nameFields}>
+                <Input
+                  value={form.firstName}
+                  onChange={handleChange}
+                  label="FIRST NAME"
+                  required
+                  outlined={false}
+                  name="firstName"
+                  type="text"
+                />
+                <Input
+                  value={form.lastName}
+                  onChange={handleChange}
+                  label="LAST NAME"
+                  required
+                  outlined={false}
+                  name="lastName"
+                  type="text"
+                />
+              </div>
               <Input
-                value={form.firstName}
+                value={form.email}
                 onChange={handleChange}
-                label="FIRST NAME"
+                label="EMAIL"
+                name="email"
+                type="email"
                 required
                 outlined={false}
-                name="firstName"
-                type="text"
               />
               <Input
-                value={form.lastName}
+                value={form.password}
                 onChange={handleChange}
-                label="LAST NAME"
+                label="PASSWORD"
+                type="password"
+                name="password"
                 required
                 outlined={false}
-                name="lastName"
-                type="text"
               />
+              <div className={s.buttonContainer}>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'VERIFYING...' : 'SIGN UP'}
+                </Button>
+              </div>
+            </form>
+            <div className={s.footer}>
+              <p>
+                ALREADY HAVE AN ACCOUNT?{' '}
+                <span
+                  onClick={() => navigate('/account/login')}
+                  className={s.link}
+                >
+                  LOG IN
+                </span>
+              </p>
+              <p>
+                OR CONTINUE AS A{' '}
+                <span
+                  onClick={() => navigate('/clothing/shop')}
+                  className={s.link}
+                >
+                  GUEST
+                </span>
+              </p>
             </div>
-            <Input
-              value={form.email}
-              onChange={handleChange}
-              label="EMAIL"
-              name="email"
-              type="email"
-              required
-              outlined={false}
-            />
-            <Input
-              value={form.password}
-              onChange={handleChange}
-              label="PASSWORD"
-              type="password"
-              name="password"
-              required
-              outlined={false}
-            />
-            <div className={s.buttonContainer}>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'VERIFYING...' : 'SIGN UP'}
-              </Button>
-            </div>
-          </form>
-          <div className={s.footer}>
-            <p>
-              ALREADY HAVE AN ACCOUNT?{' '}
-              <span
-                onClick={() => navigate('/account/login')}
-                className={s.link}
-              >
-                LOG IN
-              </span>
-            </p>
-            <p>
-              OR CONTINUE AS A{' '}
-              <span
-                onClick={() => navigate('/clothing/shop')}
-                className={s.link}
-              >
-                GUEST
-              </span>
-            </p>
           </div>
         </div>
-      </div>
+      </Fade>
 
       <Slide direction="up" in={alert} mountOnEnter unmountOnExit>
         <div

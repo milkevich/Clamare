@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Slide } from '@mui/material';
+import { Fade, Slide } from '@mui/material';
 import Input from '../shared/UI/Input';
 import Button from '../shared/UI/Button';
 import heyThere from '../assets/HeyThere.png';
@@ -72,78 +72,80 @@ const LogInScreen = () => {
 
   return (
     <>
-      <div
-        style={{
-          maxWidth: '450px',
-          margin: 'auto',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          display: 'flex',
-          flexDirection: 'column',
-          height: 'calc(100vh - 108px - 2.5rem)',
-          paddingTop: '1.25rem',
-          paddingBottom: '1.25rem',
-        }}
-      >
-        <img style={{ maxWidth: '450px', width: 'calc(100% - 2.5rem)', padding: '0rem 1.25rem' }} src={heyThere} alt="Hey There" />
-        <form
-          onSubmit={handleSubmit}
+      <Fade timeout={500} in={true}>
+        <div
           style={{
+            maxWidth: '450px',
+            margin: 'auto',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
-            width: 'calc(100% - 2.5rem)',
-            gap: '10px',
-            marginTop: '-100px',
-            padding: '0rem 1.25rem',
-            margin: 'auto'
+            height: 'calc(100vh - 108px - 2.5rem)',
+            paddingTop: '1.25rem',
+            paddingBottom: '1.25rem',
           }}
         >
-          <Input
-            value={form.email}
-            onChange={handleChange}
-            label="EMAIL"
-            name="email"
-            type="email"
-            required
-            outlined={false}
-          />
-          <Input
-            value={form.password}
-            onChange={handleChange}
-            label="PASSWORD"
-            type="password"
-            name="password"
-            required
-            outlined={false}
-          />
-          <br />
-          <br />
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'VERIFYING...' : 'LOG IN'}
-          </Button>
-        </form>
-        <div style={{ fontSize: '12px', fontWeight: '500', textAlign: 'center' }}>
-          <p>
-            DON'T HAVE AN ACCOUNT?{' '}
-            <span
-              onClick={() => navigate('/account/sign-up')}
-              style={{ fontWeight: '600', cursor: 'pointer' }}
-            >
-              SIGN UP
-            </span>
-          </p>
-          <p>
-            OR CONTINUE AS A{' '}
-            <span
-              onClick={() => navigate('/clothing/shop')}
-              style={{ fontWeight: '600', cursor: 'pointer' }}
-            >
-              GUEST
-            </span>
-          </p>
+          <img style={{ maxWidth: '450px', width: 'calc(100% - 2.5rem)', padding: '0rem 1.25rem' }} src={heyThere} alt="Hey There" />
+          <form
+            onSubmit={handleSubmit}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              width: 'calc(100% - 2.5rem)',
+              gap: '10px',
+              marginTop: '-100px',
+              padding: '0rem 1.25rem',
+              margin: 'auto'
+            }}
+          >
+            <Input
+              value={form.email}
+              onChange={handleChange}
+              label="EMAIL"
+              name="email"
+              type="email"
+              required
+              outlined={false}
+            />
+            <Input
+              value={form.password}
+              onChange={handleChange}
+              label="PASSWORD"
+              type="password"
+              name="password"
+              required
+              outlined={false}
+            />
+            <br />
+            <br />
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'VERIFYING...' : 'LOG IN'}
+            </Button>
+          </form>
+          <div style={{ fontSize: '12px', fontWeight: '500', textAlign: 'center' }}>
+            <p>
+              DON'T HAVE AN ACCOUNT?{' '}
+              <span
+                onClick={() => navigate('/account/sign-up')}
+                style={{ fontWeight: '600', cursor: 'pointer' }}
+              >
+                SIGN UP
+              </span>
+            </p>
+            <p>
+              OR CONTINUE AS A{' '}
+              <span
+                onClick={() => navigate('/clothing/shop')}
+                style={{ fontWeight: '600', cursor: 'pointer' }}
+              >
+                GUEST
+              </span>
+            </p>
+          </div>
         </div>
-      </div>
+      </Fade>
       <Slide direction="up" in={alert}>
         <div
           style={{

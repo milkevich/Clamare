@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MdArrowDropDown, MdArrowDropUp, MdOutlineArrowOutward } from 'react-icons/md';
+import { MdArrowDropDown, MdArrowDropUp, MdKeyboardArrowLeft, MdOutlineArrowOutward } from 'react-icons/md';
 import Input from '../shared/UI/Input'
 import Button from '../shared/UI/Button';
 import { Fade, MenuItem, TextField } from '@mui/material';
@@ -120,19 +120,15 @@ const SupportScreen = () => {
     const [isSmallScreen, setIsSmallScreen] = useState(false);
     const [isSmallScreen2, setIsSmallScreen2] = useState(false);
 
-    // Which section is selected? ("Contact" | "FAQ" | "Legal")
     const [selectedSection, setSelectedSection] = useState('');
 
-    // Refs for scrolling
     const contactRef = useRef(null);
     const faqRef = useRef(null);
     const legalRef = useRef(null);
 
-    // React Router
     const navigate = useNavigate();
     const location = useLocation();
 
-    // -------- 1) Update `selectedSection` when the URL changes --------
     useEffect(() => {
         const path = location.pathname.toLowerCase();
         if (path.includes('/pages/support/customer-service/contact')) {
@@ -142,7 +138,6 @@ const SupportScreen = () => {
         } else if (path.includes('/pages/support/customer-service/legal')) {
             setSelectedSection('Legal');
         } else {
-            // default
             setSelectedSection('Contact');
         }
     }, [location.pathname]);
@@ -202,46 +197,49 @@ const SupportScreen = () => {
     return (
         <Fade in={true}>
             <div ref={contactRef}>
-                <div style={{ display: 'flex', gap: '1.75rem', padding: isSmallScreen2 ? '0.5rem 0.75rem' : '0.5rem 1.25rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--main-bg-color)', position: 'sticky', top: 48, zIndex: 60 }}>
-                    <div style={{ maxWidth: '1300px', margin: 'auto', display: 'flex', gap: '1.75rem', width: '100%' }}>
-                        <p style={{ fontSize: '10px', fontWeight: '600', margin: 0 }}>CUSTOMER SUPPORT:</p>
-
-                        <p
-                            onClick={() => handleSectionClick('Contact')}
-                            style={{
-                                fontSize: '10px',
-                                fontWeight: selectedSection === 'Contact' ? '600' : '500',
-                                margin: 0,
-                                textDecoration: selectedSection === 'Contact' ? 'underline' : 'none',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            CONTACT US
-                        </p>
-                        <p
-                            onClick={() => handleSectionClick('FAQ')}
-                            style={{
-                                fontSize: '10px',
-                                fontWeight: selectedSection === 'FAQ' ? '600' : '500',
-                                margin: 0,
-                                textDecoration: selectedSection === 'FAQ' ? 'underline' : 'none',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            FAQ
-                        </p>
-                        <p
-                            onClick={() => handleSectionClick('Legal')}
-                            style={{
-                                fontSize: '10px',
-                                fontWeight: selectedSection === 'Legal' ? '600' : '500',
-                                margin: 0,
-                                textDecoration: selectedSection === 'Legal' ? 'underline' : 'none',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            LEGAL
-                        </p>
+                <div style={{ display: 'flex', gap: '1.75rem', padding: isSmallScreen2 ? '0.5rem 0.75rem' : '0.5rem 1.25rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--main-bg-color)', position: 'sticky', top: 49, zIndex: 60 }}>
+                    <div style={{ maxWidth: '1300px', margin: 'auto', display: 'flex', gap: '1.75rem', width: '100%', justifyContent: 'space-between' }}>
+                        <p onClick={() => {
+                            navigate('/')
+                        }} style={{ margin: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '10px' }}><MdKeyboardArrowLeft size={12} />GO BACK</p>                        
+                        <div style={{ display: 'flex', gap: '1.75rem' }}>
+                            <p
+                                onClick={() => handleSectionClick('Contact')}
+                                style={{
+                                    fontSize: '10px',
+                                    fontWeight: selectedSection === 'Contact' ? '600' : '500',
+                                    margin: 0,
+                                    textDecoration: selectedSection === 'Contact' ? 'underline' : 'none',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                CONTACT US
+                            </p>
+                            <p
+                                onClick={() => handleSectionClick('FAQ')}
+                                style={{
+                                    fontSize: '10px',
+                                    fontWeight: selectedSection === 'FAQ' ? '600' : '500',
+                                    margin: 0,
+                                    textDecoration: selectedSection === 'FAQ' ? 'underline' : 'none',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                FAQ
+                            </p>
+                            <p
+                                onClick={() => handleSectionClick('Legal')}
+                                style={{
+                                    fontSize: '10px',
+                                    fontWeight: selectedSection === 'Legal' ? '600' : '500',
+                                    margin: 0,
+                                    textDecoration: selectedSection === 'Legal' ? 'underline' : 'none',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                LEGAL
+                            </p>
+                        </div>
                     </div>
                 </div>
                 {selectedSection !== 'Legal' && isSmallScreen &&
@@ -381,7 +379,7 @@ const SupportScreen = () => {
                                             },
                                         }}
                                     />
-                                    <p style={{margin: 0, fontSize: '12px', color: 'var(--sec-color)'}}>Please include all the information regarding your concern.</p>
+                                    <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>Please include all the information regarding your concern.</p>
                                     <Button>SEND A MESSAGE</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
@@ -394,7 +392,7 @@ const SupportScreen = () => {
                                 width: '100%',
                                 maxWidth: isSmallScreen ? '' : '500px',
                             }}>
-                            <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBottom: isSmallScreen && '3rem', margin: isSmallScreen && 0 }}>FREQUENTLY ASKED QUESTIONS</p>
+                            <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBottom: isSmallScreen && '3rem', margin: isSmallScreen && 0, paddingTop: '1rem' }}>FREQUENTLY ASKED QUESTIONS</p>
                             <div style={{ overflowY: 'auto' }}>
                                 <div style={{ marginTop: '-1px' }}>
                                     {questions.map((item, index) => (
@@ -561,7 +559,7 @@ const SupportScreen = () => {
                                             },
                                         }}
                                     />
-                                    <p style={{margin: 0, fontSize: '12px', color: 'var(--sec-color)'}}>Please include all the information regarding your concern.</p>
+                                    <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>Please include all the information regarding your concern.</p>
                                     <Button>SEND A MESSAGE</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
@@ -574,7 +572,7 @@ const SupportScreen = () => {
                                 width: '100%',
                                 maxWidth: isSmallScreen ? '' : '500px',
                             }}>
-                            <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBottom: isSmallScreen && '3rem', margin: isSmallScreen && 0 }}>FREQUENTLY ASKED QUESTIONS</p>
+                            <p style={{ fontSize: isSmallScreen ? '32px' : '24px', fontWeight: '900', paddingBottom: isSmallScreen && '3rem', margin: isSmallScreen && 0, paddingTop: '1rem' }}>FREQUENTLY ASKED QUESTIONS</p>
                             <div style={{ overflowY: 'auto' }}>
                                 <div style={{ marginTop: '-1px' }}>
                                     {questions.map((item, index) => (
