@@ -9,7 +9,7 @@ import { AuthContext } from '../contexts/AuthContext';
 const ShoppingBag = ({ onCheckout, onClose }) => {
   const navigate = useNavigate();
   const { customer } = useContext(AuthContext);
-  const { cart, loading, error, removeItemFromCart, updateCartLineQuantityFn } = useContext(CartContext);
+  const { cart, loading, error, removeItemFromCart, updateCartLineQuantityFn, setIsBagOpened } = useContext(CartContext);
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   console.log('ShoppingBag - cart:', cart);
@@ -138,8 +138,8 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
       const customerAccessToken = localStorage.getItem('shopify_access_token');
 
       if (!customerAccessToken) {
-        alert('Please log in to proceed to checkout.');
-        return navigate('/account/login', { state: { from: '/checkout' } });
+        setIsBagOpened(false)
+        return navigate('/account/sign-up', { state: { from: '/checkout' } });
       }
 
       console.log('Customer Access Token:', customerAccessToken);
