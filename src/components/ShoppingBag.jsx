@@ -266,7 +266,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
         </p>
       </div>
 
-      <div style={{ maxHeight: 'calc(100vh - 60px)', overflowY: 'scroll', height: '100%' }}>
+      <div style={{ maxHeight: isSmallScreen ? 'calc(100dvh - 150px)' : 'calc(100vh - 60px)', overflowY: 'scroll', height: '100%' }}>
         <div style={{
           margin: 'auto',
           display: 'flex',
@@ -413,12 +413,10 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
           </div>
           <div style={{
             position: 'sticky',
-            bottom: 0,
+            bottom: -1,
             padding: '20px',
-            paddingBottom: isSmallScreen ? 'env(safe-area-inset-bottom)' : '20px',
             backgroundColor: 'var(--main-bg-color)',
             borderTop: '1px solid var(--border-color)',
-            marginTop: -12
           }}>
             <Button
               onClick={handleCheckoutClick}
