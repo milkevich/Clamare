@@ -381,7 +381,9 @@ const OrderScreen = () => {
             <Button onClick={() => navigate('/account')}>
               RETURN TO ACCOUNT
             </Button>
-            <p style={{ fontSize: '12px', margin: '1rem', fontWeight: '500' }}>HAVE A QUESTION? <span style={{ cursor: 'pointer', fontWeight: '600' }}>CONTACT US HERE</span></p>
+            <p onClick={() => {
+              navigate('/pages/support/customer-service/contact')
+            }} style={{ fontSize: '12px', margin: '1rem', fontWeight: '500' }}>HAVE A QUESTION? <span style={{ cursor: 'pointer', fontWeight: '600' }}>CONTACT US HERE</span></p>
           </div>
         </div>
       </div>

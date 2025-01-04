@@ -244,7 +244,9 @@ const AccountScreen = () => {
                   <p style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>NO ADDRESSES FOUND.</p>
                   <p style={{ margin: 0, fontSize: '12px', fontWeight: '580' }}>Add address by clicking 'Manage Addresses'.</p>
                 </div>)}
-              <p style={{ fontSize: '12px', fontWeight: '600', margin: 0, cursor: 'pointer', padding: '1rem 0rem 0rem 0rem' }}>MANAGE ADDRESSES</p>
+              <p onClick={() => {
+                navigate('/account/manage/addresses')
+              }} style={{ fontSize: '12px', fontWeight: '600', margin: 0, cursor: 'pointer', padding: '1rem 0rem 0rem 0rem' }}>MANAGE ADDRESSES</p>
             </div>
           </div>
 
