@@ -117,7 +117,7 @@ const ManageAddresses = () => {
                 </div>
                 </div>
                 <div style={{ padding: '1.25rem', backgroundColor: 'var(--main-bg-color)', borderTop: '1px solid var(--border-color)', position: 'sticky', bottom: 0 }}>
-                    <div style={{maxWidth: '700px', margin: 'auto'}}>
+                    <div style={{maxWidth: 'calc(700px - 2.5rem)', margin: 'auto',}}>
                         <Button>NEW ADDRESS</Button>
                     </div>
                 </div>

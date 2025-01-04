@@ -121,7 +121,6 @@ function ClothingItemScreen() {
         )
     );
 
-    // Current variant based on color selection
     let currentVariant = null;
     if (selectedColor) {
         currentVariant = allVariants.find(
@@ -130,7 +129,6 @@ function ClothingItemScreen() {
         );
     }
 
-    // Handle color selection
     const handleColorSelect = (color) => {
         setSelectedColor(color);
         const selectedVariant = allVariants.find(
@@ -143,14 +141,12 @@ function ClothingItemScreen() {
         }
     };
 
-    // Determine which images to display
     const variantImageUrl = currentVariant?.image?.url || '';
     const hasVariants = allVariants.length > 0;
     const imagesToDisplay = hasVariants
         ? product.images?.edges.slice(1, -1)
         : product.images?.edges;
 
-    // Add to Cart
     async function handleAddToBag() {
         if (!selectedSize) {
             alert('Please select a size.');
@@ -296,16 +292,12 @@ function ClothingItemScreen() {
                                     )}
                                 </div>
                                 
-                                {/* 4) Display the modelReference text if available */}
                                 {modelReference ? (
                                     <p style={{}}>
                                         {modelReference.toUpperCase()}
                                     </p>
                                 ) : (
-                                    <p className={s.modelRefText}>
-                                        {/* Fallback if no metafield is set */}
-                                        MODEL REFERENCE NOT PROVIDED
-                                    </p>
+                                    null
                                 )}
                                 
                                 <div className={s.colorSelectorContainer}>
@@ -314,7 +306,6 @@ function ClothingItemScreen() {
                                             const isActive =
                                                 selectedColor.toLowerCase() === color.toLowerCase();
 
-                                            // Find a variant with this color to get its image
                                             const variantWithColor = allVariants.find(
                                                 (variant) =>
                                                     getOptionValue(variant, 'color').toLowerCase() ===
