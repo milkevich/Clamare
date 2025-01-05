@@ -88,7 +88,6 @@ function ClothingItemScreen() {
                     // e.g. navigate('/products/all');
                 }
             } catch (err) {
-                console.error('Error fetching product by handle:', err);
             }
         };
         loadProduct();
@@ -235,7 +234,6 @@ function ClothingItemScreen() {
                 setAddedItemPopUpShown(false);
             }, 3000);
         } catch (error) {
-            console.error('Error adding to cart:', error);
             alert('Failed to add item to bag. Please try again.');
         }
     }

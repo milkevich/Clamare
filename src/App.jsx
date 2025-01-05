@@ -16,7 +16,6 @@ function App() {
     const loadStoreStatus = async () => {
       try {
         const data = await fetchStoreStatus();
-        console.log('Fetched store status data:', data);
   
         if (data.length > 0) {
           const fields = data[0];
@@ -24,7 +23,6 @@ function App() {
           setStoreRunning(statusField?.value === 'true');
         }
       } catch (err) {
-        console.error('Error fetching store status:', err);
       } finally {
         setLoading(false);
       }

@@ -87,7 +87,6 @@ const ShopScreen = () => {
           setFadeDelay(true);
         }, 10);
       } catch (error) {
-        console.error("Error fetching products:", error);
       }
     };
     loadProducts();

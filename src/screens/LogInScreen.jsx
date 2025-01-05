@@ -21,14 +21,8 @@ const LogInScreen = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || '/account';
 
-  // Debugging: Log form state whenever it changes
-  useEffect(() => {
-    console.log('Form State:', form);
-  }, [form]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(`Changing ${name} to ${value}`); // Debugging
     setForm((prevForm) => ({
       ...prevForm,
       [name]: value,

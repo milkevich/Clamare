@@ -12,9 +12,7 @@ const LandingScreen = () => {
       try {
         const imageUrl = await fetchLandingPage();
         setHeroImage(imageUrl);
-        console.log(heroImage)
       } catch (err) {
-        console.error('Error fetching hero image:', err);
       } finally {
         setLoading(false);
       }

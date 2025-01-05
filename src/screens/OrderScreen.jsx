@@ -123,9 +123,7 @@ const OrderScreen = () => {
 
       try {
         const response = await client.post('', { query, variables });
-        console.log('Order Details Response:', response.data);
         if (response.data.errors) {
-          console.error('GraphQL Errors:', response.data.errors);
           setError(`Failed to fetch order details: ${response.data.errors.map(err => err.message).join(', ')}`);
           return;
         }
@@ -140,7 +138,6 @@ const OrderScreen = () => {
 
         setOrderDetails(fetchedOrder);
       } catch (err) {
-        console.error('Error fetching order details:', err);
         setError('An error occurred while fetching order details.');
       } finally {
         setLoading(false);

@@ -14,8 +14,6 @@ const client = axios.create({
 
   // src/utils/shopify.js
 
-console.log('VITE_SHOPIFY_STORE_URL:', import.meta.env.VITE_SHOPIFY_STORE_URL);
-console.log('VITE_SHOPIFY_API_TOKE!N:', import.meta.env.VITE_SHOPIFY_API_TOKEN);
 // Add similar logs for other variables if needed
 
 
@@ -157,7 +155,6 @@ export const fetchLandingPage = async () => {
     const response = await client.post('', { query });
 
     if (response.data.errors) {
-      console.error('[fetchLandingPageEntry] GraphQL errors:', response.data.errors);
       throw new Error(response.data.errors[0].message);
     }
 
@@ -166,12 +163,10 @@ export const fetchLandingPage = async () => {
 
     const heroField = metaobjectData.fields.find((field) => field.key === 'hero_image');
     if (!heroField) {
-      console.log('NOT FOUND');
     }
 
     return heroField?.reference?.image?.url ?? null;
   } catch (error) {
-    console.error('[fetchLandingPageEntry] Error fetching data:', error);
     throw error;
   }
 };
@@ -205,7 +200,6 @@ export const fetchMagazinePages = async () => {
     const response = await client.post('', { query });
 
     if (response.data.errors) {
-      console.error('[fetchMagazinePages] GraphQL errors:', response.data.errors);
       throw new Error(response.data.errors[0].message);
     }
 
@@ -216,7 +210,6 @@ export const fetchMagazinePages = async () => {
     // Map each edge to just the "node"
     return edges.map((edge) => edge.node);
   } catch (error) {
-    console.error('[fetchMagazinePages] Error fetching data:', error);
     throw error;
   }
 };
@@ -270,7 +263,6 @@ export const fetchSingleMagazinePage = async (idNumber) => {
     }
     return response.data?.data?.metaobject ?? null;
   } catch (error) {
-    console.error('[fetchSingleMagazinePage] Error:', error);
     throw error;
   }
 };
@@ -305,7 +297,6 @@ export const fetchStoreStatus = async () => {
     const response = await client.post('', { query });
 
     if (response.data.errors) {
-      console.error('[fetchStoreStatus] GraphQL errors:', response.data.errors);
       throw new Error(response.data.errors[0].message);
     }
 
@@ -314,7 +305,6 @@ export const fetchStoreStatus = async () => {
 
     return edges.map((edge) => edge.node.fields);
   } catch (error) {
-    console.error('[fetchStoreStatus] Error fetching data:', error);
     throw error;
   }
 };

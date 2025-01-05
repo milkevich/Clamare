@@ -82,16 +82,13 @@ const AccountScreen = () => {
         };
         try {
           const response = await client.post('', { query, variables });
-          console.log('Orders Response:', response.data);
           if (response.data.errors) {
-            console.error('GraphQL Errors:', response.data.errors);
             setError('Failed to fetch orders.');
             return;
           }
           const fetchedOrders = response.data.data.customer.orders.edges.map(edge => edge.node);
           setOrders(fetchedOrders.reverse());
         } catch (error) {
-          console.error('Error fetching orders:', error);
           setError('An error occurred while fetching orders.');
         } finally {
           setOrdersLoading(false);
@@ -132,16 +129,13 @@ const AccountScreen = () => {
         };
         try {
           const response = await client.post('', { query, variables });
-          console.log('Addresses Response:', response.data);
           if (response.data.errors) {
-            console.error('GraphQL Errors:', response.data.errors);
             setError('Failed to fetch addresses.');
             return;
           }
           const fetchedAddresses = response.data.data.customer.addresses.edges.map(edge => edge.node);
           setAddresses(fetchedAddresses);
         } catch (error) {
-          console.error('Error fetching addresses:', error);
           setError('An error occurred while fetching addresses.');
         } finally {
           setAddressesLoading(false);

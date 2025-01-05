@@ -12,18 +12,11 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
   const { cart, loading, error, removeItemFromCart, updateCartLineQuantityFn, setIsBagOpened } = useContext(CartContext);
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
-  console.log('ShoppingBag - cart:', cart);
-  console.log('ShoppingBag - loading:', loading);
-  console.log('ShoppingBag - error:', error);
-  console.log('ShoppingBag - customer:', customer); // Added for debugging
 
   const handleRemoveItem = async (lineId) => {
     try {
-      console.log('Removing item with lineId:', lineId);
       await removeItemFromCart(lineId);
-      console.log('Item removed successfully.');
     } catch (err) {
-      console.error('Error removing item from cart:', err);
       alert('Failed to remove item from cart. Please try again.');
     }
   };
@@ -46,7 +39,6 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
     try {
       await updateCartLineQuantityFn(lineId, delta);
     } catch (err) {
-      console.error('Error updating quantity:', err);
       alert('Failed to update item quantity. Please try again.');
     }
   };
@@ -124,7 +116,6 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
     .reduce((acc, edge) => {
       const merchandise = edge.node.merchandise;
       if (!merchandise || !merchandise.priceV2 || !merchandise.priceV2.amount) {
-        console.warn(`Missing price information for line item: ${edge.node.id}`);
         return acc;
       }
       const price = parseFloat(merchandise.priceV2.amount);
@@ -140,8 +131,6 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
         setIsBagOpened(false)
         return navigate('/account/sign-up', { state: { from: '/checkout' } });
       }
-
-      console.log('Customer Access Token:', customerAccessToken);
 
       const createCheckoutMutation =
         `mutation checkoutCreate($input: CheckoutCreateInput!) {
@@ -171,10 +160,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
         },
       });
 
-      console.log('Checkout Creation Response:', checkoutResponse.data);
-
       if (!checkoutResponse.data || !checkoutResponse.data.data || !checkoutResponse.data.data.checkoutCreate) {
-        console.error('Invalid response structure:', checkoutResponse.data);
         alert('Failed to create checkout. Please try again.');
         return;
       }
@@ -182,7 +168,6 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
       const { checkout, checkoutUserErrors } = checkoutResponse.data.data.checkoutCreate;
 
       if (checkoutUserErrors?.length > 0) {
-        console.error('Checkout Creation Errors:', checkoutUserErrors);
         const errorMessages = checkoutUserErrors.map(err => err.message).join('\n');
         alert(`Checkout Creation Errors:\n${errorMessages}`);
         return;
@@ -212,10 +197,8 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
         },
       });
 
-      console.log('Customer Association Response:', associateResponse.data);
 
       if (!associateResponse.data || !associateResponse.data.data || !associateResponse.data.data.checkoutCustomerAssociateV2) {
-        console.error('Invalid association response structure:', associateResponse.data);
         alert('Failed to associate your account with the checkout. Please try again.');
         return;
       }
@@ -224,17 +207,14 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
         associateResponse.data.data.checkoutCustomerAssociateV2;
 
       if (associateErrors?.length > 0) {
-        console.error('Customer Association Errors:', associateErrors);
         const errorMessages = associateErrors.map(err => err.message).join('\n');
         alert(`Customer Association Errors:\n${errorMessages}`);
         return;
       }
 
-      console.log('Updated Checkout Email:', updatedCheckout.email);
 
       window.location.href = updatedCheckout.webUrl;
     } catch (error) {
-      console.error('Error during checkout:', error);
       alert('An unexpected error occurred during checkout. Please try again.');
     }
   };

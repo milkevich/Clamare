@@ -16,20 +16,16 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchCartData = async () => {
-      console.log('Fetching cart data...');
       try {
         const storedCartId = localStorage.getItem('shopifyCartId');
         if (!storedCartId) {
-          console.log('No cart found in localStorage.');
           setCart(null);
           setLoading(false);
           return;
         }
         const fetchedCart = await fetchCart(storedCartId);
-        console.log('Fetched cart:', fetchedCart);
         setCart(fetchedCart);
       } catch (err) {
-        console.error('Error fetching cart:', err);
         setError('Failed to load cart.');
       } finally {
         setLoading(false);
@@ -42,13 +38,10 @@ export const CartProvider = ({ children }) => {
   // Create a new cart
   const createNewCart = async (variantId, quantity) => {
     try {
-      console.log('Creating new cart with variantId:', variantId, 'quantity:', quantity);
       const newCart = await createCart(variantId, quantity);
-      console.log('Created new cart:', newCart);
       localStorage.setItem('shopifyCartId', newCart.id);
       setCart(newCart);
     } catch (err) {
-      console.error('Error creating cart:', err);
       throw err;
     }
   };
@@ -56,16 +49,13 @@ export const CartProvider = ({ children }) => {
   // Add item to cart
   const addItemToCart = async (variantId, quantity) => {
     try {
-      console.log('addItemToCart called with variantId:', variantId, 'quantity:', quantity);
       if (!cart) {
         await createNewCart(variantId, quantity);
       } else {
         const updatedCart = await addLineToCart(cart.id, variantId, quantity);
-        console.log('Updated cart after adding item:', updatedCart);
         setCart(updatedCart);
       }
     } catch (err) {
-      console.error('Error adding item to cart:', err);
       throw err;
     }
   };
@@ -74,40 +64,30 @@ export const CartProvider = ({ children }) => {
   const removeItemFromCart = async (lineId) => {
     try {
       if (!cart) {
-        console.log('No cart to remove items from.');
         return;
       }
-      console.log('Removing item with lineId:', lineId);
       const updatedCart = await removeLineFromCart(cart.id, [lineId]);
-      console.log('Updated cart after removing item:', updatedCart);
       setCart(updatedCart);
       if (updatedCart.lines.edges.length === 0) {
-        console.log('Cart is empty. Removing cartId and checkoutId from localStorage.');
         localStorage.removeItem('shopifyCartId');
-        localStorage.removeItem('shopify_checkout_id'); // Clear checkout ID
+        localStorage.removeItem('shopify_checkout_id'); 
         setCart(null);
       }
     } catch (err) {
-      console.error('Error removing item from cart:', err);
       throw err;
     }
   };
 
-  // Refresh cart data
   const refreshCart = async () => {
     try {
-      console.log('Refreshing cart...');
       const storedCartId = localStorage.getItem('shopifyCartId');
       if (!storedCartId) {
-        console.log('No cart found in localStorage.');
         setCart(null);
         return;
       }
       const fetchedCart = await fetchCart(storedCartId);
-      console.log('Fetched cart during refresh:', fetchedCart);
       setCart(fetchedCart);
     } catch (err) {
-      console.error('Error refreshing cart:', err);
       setError('Failed to refresh cart.');
     }
   };
@@ -115,30 +95,23 @@ export const CartProvider = ({ children }) => {
   const updateCartLineQuantityFn = async (lineId, delta) => {
     try {
       if (!cart) {
-        console.log('No cart available.');
         return;
       }
 
       const line = cart.lines.edges.find(edge => edge.node.id === lineId);
       if (!line) {
-        console.warn(`Line ID ${lineId} not found in cart.`);
         return;
       }
 
       const newQuantity = line.node.quantity + delta;
-      console.log(`Updating line ID ${lineId} from ${line.node.quantity} to ${newQuantity}`);
 
       if (newQuantity <= 0) {
-        // If new quantity is 0 or less, remove the item
         await removeItemFromCart(lineId);
       } else {
-        // Otherwise, update the quantity
         const updatedCart = await updateCartLineQuantity(cart.id, lineId, newQuantity);
-        console.log('Updated cart after quantity change:', updatedCart);
         setCart(updatedCart);
       }
     } catch (err) {
-      console.error('Error updating cart line quantity:', err);
       throw err;
     }
   };

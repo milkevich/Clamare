@@ -36,9 +36,7 @@ const Magazine = () => {
             try {
                 const data = await fetchMagazinePages();
                 setMagazineChapters(data);
-                console.log('Chapters:', data);
             } catch (err) {
-                console.error('Error fetching magazine chapters:', err);
             } finally {
                 setLoading(false);
             }

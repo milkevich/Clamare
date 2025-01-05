@@ -31,10 +31,8 @@ const MagazineItem = () => {
         const loadSingleMagazine = async () => {
             try {
                 const data = await fetchSingleMagazinePage(magazineId);
-                console.log('Fetched metaobject:', data);
                 setMagazineItem(data);
             } catch (error) {
-                console.error('Error fetching single magazine page:', error);
             } finally {
                 setLoading(false);
             }

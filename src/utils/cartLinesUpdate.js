@@ -74,7 +74,6 @@ export const updateCartLineQuantity = async (cartId, lineId, newQuantity) => {
   
       return cart;
     } catch (error) {
-      console.error('Error in updateCartLineQuantity:', error);
       throw error;
     }
   };

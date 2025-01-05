@@ -19,7 +19,6 @@ const WebsitePreviewScreen = () => {
         const loadStoreStatus = async () => {
             try {
                 const data = await fetchStoreStatus();
-                console.log('Fetched store status data:', data);
                 setPreviewData(data);
 
                 if (data.length > 0) {
@@ -40,7 +39,6 @@ const WebsitePreviewScreen = () => {
                     setDate(dateField?.value);
                 }
             } catch (err) {
-                console.error('Error fetching store status:', err);
             }
         };
 

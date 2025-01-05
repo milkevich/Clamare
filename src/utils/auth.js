@@ -46,7 +46,6 @@ export const signUp = async (email, password, firstName, lastName) => {
 
     return { customer };
   } catch (error) {
-    console.error('Error signing up:', error);
     return { errors: [{ message: 'An unexpected error occurred.' }] };
   }
 };
@@ -83,7 +82,6 @@ export const logIn = async (email, password) => {
 
     return { customerAccessToken };
   } catch (error) {
-    console.error('Error logging in:', error);
     return { errors: [{ message: 'An unexpected error occurred.' }] };
   }
 };
@@ -128,7 +126,6 @@ export const logOut = async (accessToken) => {
 
     return { deletedAccessToken };
   } catch (error) {
-    console.error('Error logging out:', error);
     return { errors: [{ message: 'An unexpected error occurred.' }] };
   }
 };
@@ -167,28 +164,23 @@ export const fetchCustomer = async (accessToken) => {
       }
     );
 
-    console.log('Fetch Customer Response:', response.data);
 
     if (response.data.errors) {
-      console.error('GraphQL Errors:', response.data.errors);
       return { errors: response.data.errors };
     }
 
     if (!response.data.data) {
-      console.error('No data returned:', response.data);
       return { errors: [{ message: 'No data returned from server.' }] };
     }
 
     const { customer } = response.data.data;
 
     if (!customer) {
-      console.error('Customer not found in response:', response.data.data);
       return { errors: [{ message: 'Customer not found.' }] };
     }
 
     return { customer };
   } catch (error) {
-    console.error('Error fetching customer:', error);
     return { errors: [{ message: 'An unexpected error occurred.' }] };
   }
 };

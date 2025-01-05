@@ -192,10 +192,7 @@ const ManageAddresses = () => {
 
         try {
             const response = await client.post('', { query, variables });
-            console.log('Addresses Response:', response.data);
-
             if (response.data.errors) {
-                console.error('GraphQL Errors:', response.data.errors);
                 return;
             }
 
@@ -207,7 +204,6 @@ const ManageAddresses = () => {
             const fetchedAddresses = data.addresses.edges.map((edge) => edge.node);
             setAddresses(fetchedAddresses);
         } catch (error) {
-            console.error('Error fetching addresses:', error);
         } finally {
             setAddressesLoading(false);
         }
@@ -259,7 +255,6 @@ const ManageAddresses = () => {
 
         try {
             const response = await client.post('', { query: mutation, variables });
-            console.log('Create address response:', response.data);
 
             const errors = response.data.data.customerAddressCreate.customerUserErrors;
             if (errors.length) {
@@ -269,7 +264,6 @@ const ManageAddresses = () => {
             await fetchAddresses();
             togglePopUp();
         } catch (err) {
-            console.error('Error creating address:', err);
         }
     };
 
@@ -293,7 +287,6 @@ const ManageAddresses = () => {
 
         try {
             const response = await client.post('', { query: mutation, variables });
-            console.log('Delete address response:', response.data);
 
             const userErrors = response.data.data.customerAddressDelete.customerUserErrors;
             if (userErrors.length) {
@@ -302,7 +295,6 @@ const ManageAddresses = () => {
             }
             await fetchAddresses();
         } catch (err) {
-            console.error('Error deleting address:', err);
         }
     };
 
@@ -330,7 +322,6 @@ const ManageAddresses = () => {
 
         try {
             const response = await client.post('', { query: mutation, variables });
-            console.log('Set default address response:', response.data);
 
             const errors = response.data.data.customerDefaultAddressUpdate.customerUserErrors;
             if (errors.length) {
@@ -339,7 +330,6 @@ const ManageAddresses = () => {
             }
             await fetchAddresses();
         } catch (err) {
-            console.error('Error setting default address:', err);
         }
     };
 
