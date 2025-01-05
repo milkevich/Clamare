@@ -28,13 +28,13 @@ const Input = ({
           fullWidth
           required={required}
           helperText={helperText}
-          {...props} // Forward additional props
+          {...props}
           sx={{
             '& .MuiOutlinedInput-root': {
               borderRadius: 0,
               height: '50px',
               padding: '0px',
-              fontSize: '12px',
+              fontSize: '10px',
               boxSizing: 'border-box',
               fontWeight: '580',
               '& fieldset': {
@@ -86,6 +86,7 @@ const Input = ({
           sx={{
             input: {
               color: 'var(--main-color)',
+              fontSize: '12px',
             },
             '& .MuiInputLabel-root': {
               color: 'var(--main-color)',

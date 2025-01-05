@@ -134,7 +134,6 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
 
   const handleCheckoutClick = async () => {
     try {
-      // Retrieve customerAccessToken from localStorage
       const customerAccessToken = localStorage.getItem('shopify_access_token');
 
       if (!customerAccessToken) {
@@ -144,7 +143,6 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
 
       console.log('Customer Access Token:', customerAccessToken);
 
-      // Create a checkout session
       const createCheckoutMutation =
         `mutation checkoutCreate($input: CheckoutCreateInput!) {
             checkoutCreate(input: $input) {
@@ -168,14 +166,13 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
               variantId: edge.node.merchandise.id,
               quantity: edge.node.quantity,
             })),
-            email: customer?.email || '', // Ensure email is passed
+            email: customer?.email || '',
           },
         },
       });
 
       console.log('Checkout Creation Response:', checkoutResponse.data);
 
-      // Check if the mutation was successful
       if (!checkoutResponse.data || !checkoutResponse.data.data || !checkoutResponse.data.data.checkoutCreate) {
         console.error('Invalid response structure:', checkoutResponse.data);
         alert('Failed to create checkout. Please try again.');
@@ -191,7 +188,6 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
         return;
       }
 
-      // Associate customer with the checkout
       const associateCustomerMutation = `
           mutation checkoutCustomerAssociateV2($checkoutId: ID!, $customerAccessToken: String!) {
             checkoutCustomerAssociateV2(checkoutId: $checkoutId, customerAccessToken: $customerAccessToken) {
@@ -218,7 +214,6 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
 
       console.log('Customer Association Response:', associateResponse.data);
 
-      // Check if the association mutation was successful
       if (!associateResponse.data || !associateResponse.data.data || !associateResponse.data.data.checkoutCustomerAssociateV2) {
         console.error('Invalid association response structure:', associateResponse.data);
         alert('Failed to associate your account with the checkout. Please try again.');
@@ -235,10 +230,8 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
         return;
       }
 
-      // Verify that the email is correctly associated
       console.log('Updated Checkout Email:', updatedCheckout.email);
 
-      // Redirect to the updated checkout URL
       window.location.href = updatedCheckout.webUrl;
     } catch (error) {
       console.error('Error during checkout:', error);
@@ -256,7 +249,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
           fontSize: '12px',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '10px 20px',
+          padding: isSmallScreen ? '0.5rem 0.75rem' : '0.5rem 1.25rem',
           fontWeight: '580',
         }}
       >
@@ -284,7 +277,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
                   style={{
                     display: 'flex',
                     gap: '10px',
-                    padding: '0rem 1.25rem 1.25rem 1.25rem',
+                    padding: isSmallScreen ?  '0rem 0.75rem 0.75rem 0.75rem' : '0rem 1.25rem 1.25rem 1.25rem',
                     alignItems: 'center',
                     width: 'calc(100% - 2.5rem)',
                     justifyContent: 'space-between',
@@ -362,7 +355,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
           <div style={{
             position: 'sticky',
             bottom: 74,
-            padding: '10px 20px',
+            padding: isSmallScreen ? '0.5rem 0.75rem' : '0.5rem 1.25rem',
             backgroundColor: 'var(--main-bg-color)',
             borderTop: '1px solid var(--border-color)',
             display: 'flex',
@@ -379,7 +372,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
           </div>
           <div>
             <div style={{
-              padding: '0px 20px',
+              padding: isSmallScreen ? '0rem 0.75rem' : '0rem 1.25rem',
               fontSize: '12px',
               display: 'flex',
               flexDirection: 'column',
@@ -414,7 +407,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
           <div style={{
             position: 'sticky',
             bottom: -1,
-            padding: '20px',
+            padding: isSmallScreen ? '0.75rem' : '1.25rem',
             backgroundColor: 'var(--main-bg-color)',
             borderTop: '1px solid var(--border-color)',
           }}>

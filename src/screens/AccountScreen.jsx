@@ -89,7 +89,7 @@ const AccountScreen = () => {
             return;
           }
           const fetchedOrders = response.data.data.customer.orders.edges.map(edge => edge.node);
-          setOrders(fetchedOrders);
+          setOrders(fetchedOrders.reverse());
         } catch (error) {
           console.error('Error fetching orders:', error);
           setError('An error occurred while fetching orders.');

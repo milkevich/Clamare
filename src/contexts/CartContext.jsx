@@ -14,7 +14,6 @@ export const CartProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [isBagOpened, setIsBagOpened] = useState(false);
 
-  // Fetch cart on initial load
   useEffect(() => {
     const fetchCartData = async () => {
       console.log('Fetching cart data...');
