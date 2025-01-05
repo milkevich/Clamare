@@ -459,6 +459,7 @@ const ManageAddresses = () => {
                       flexDirection: 'column',
                       gap: isSmallScreen ? '3.25vh' : '1.25rem',
                       margin: 0,
+                      paddingBottom: isSmallScreen && '5rem'
                     }}
                   >
                     <div>
@@ -669,7 +670,6 @@ const ManageAddresses = () => {
                       ))}
                     </TextField>
   
-                    {/* PHONE */}
                     <Input
                       outlined={false}
                       label="PHONE NUMBER"
