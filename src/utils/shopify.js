@@ -26,7 +26,7 @@ console.log('VITE_SHOPIFY_API_TOKE!N:', import.meta.env.VITE_SHOPIFY_API_TOKEN);
 export const fetchProducts = async () => {
   const query = `
     {
-      products(first: 10) {
+      products(first: 100) {
         edges {
           node {
             id
@@ -39,14 +39,14 @@ export const fetchProducts = async () => {
                 amount
               }
             }
-            images(first: 10) {
+            images(first: 100) {
               edges {
                 node {
                   url
                 }
               }
             }
-            variants(first: 10) {
+            variants(first: 100) {
               edges {
                 node {
                   id
@@ -88,14 +88,14 @@ export const fetchProductByHandle = async (handle) => {
             amount
           }
         }
-        images(first: 10) {
+        images(first: 100) {
           edges {
             node {
               url
             }
           }
         }
-        variants(first: 10) {
+        variants(first: 100) {
           edges {
             node {
               id
@@ -178,7 +178,7 @@ export const fetchLandingPage = async () => {
 export const fetchMagazinePages = async () => {
   const query = `
     query {
-      metaobjects(type: "magazine_page_chapters", first: 10) {
+      metaobjects(type: "magazine_page_chapters", first: 100) {
         edges {
           node {
             id
@@ -244,7 +244,7 @@ export const fetchSingleMagazinePage = async (idNumber) => {
         }
       }
       # multi-refs
-      references(first: 10) {
+      references(first: 100) {
         edges {
           node {
             __typename

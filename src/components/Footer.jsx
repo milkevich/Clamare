@@ -16,7 +16,7 @@ const Footer = () => {
                 <p onClick={() => {handleNavigate('/pages/support/customer-service/contact')}} className={s.footerLink}>CONTACT</p>
                 <a style={{color: 'var(--main-color)'}} href='https://www.instagram.com/clamare.us/' className={s.footerLink}>INSTAGRAM</a>
             </div>
-            <p className={s.footerCopyright}>® Clamáre 2024</p>
+            <p className={s.footerCopyright}>® Clamáre 2025</p>
         </div>
     )
 }

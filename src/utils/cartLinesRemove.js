@@ -14,7 +14,7 @@ const CART_LINES_REMOVE_MUTATION = `
     cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       cart {
         id
-        lines(first: 25) {
+        lines(first: 100) {
           edges {
             node {
               id

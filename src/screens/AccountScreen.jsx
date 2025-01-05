@@ -44,7 +44,7 @@ const AccountScreen = () => {
         const query = `
           query customerOrders($customerAccessToken: String!) {
             customer(customerAccessToken: $customerAccessToken) {
-              orders(first: 10) {
+              orders(first: 100) {
                 edges {
                   node {
                     id
@@ -56,7 +56,7 @@ const AccountScreen = () => {
                       amount
                       currencyCode
                     }
-                    lineItems(first: 5) {
+                    lineItems(first: 100) {
                       edges {
                         node {
                           title

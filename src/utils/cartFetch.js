@@ -14,7 +14,7 @@ const FETCH_CART_QUERY = `
     cart(id: $id) {
       id
       checkoutUrl
-      lines(first: 25) {
+      lines(first: 100) {
         edges {
           node {
             id

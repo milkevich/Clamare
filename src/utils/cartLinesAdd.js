@@ -15,7 +15,7 @@ const CART_LINES_ADD_MUTATION = `
       cart {
         id
         checkoutUrl
-        lines(first: 25) {
+        lines(first: 100) {
           edges {
             node {
               id
