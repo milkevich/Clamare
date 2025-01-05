@@ -67,7 +67,7 @@ const LogInScreen = () => {
       navigate(from, { replace: true });
     }
 
-    setIsSubmitting(false); // End loading
+    setIsSubmitting(false);
   };
 
   return (
@@ -149,7 +149,7 @@ const LogInScreen = () => {
       <Slide direction="up" in={alert}>
         <div
           style={{
-            maxWidth: '370px',
+            maxWidth: '300px',
             width: '100%',
             padding: '10px',
             border: '1px solid var(--main-color)',

@@ -376,13 +376,13 @@ function ClothingItemScreen() {
                                     ${Math.floor(product?.priceRange?.minVariantPrice?.amount)}
                                 </p>
 
-                                {/* SIZE SELECTOR */}
                                 {allSizes.length > 0 && (
                                     <div className={s.sizeSelectorContainer}>
                                         <div className={s.sizeButtonsContainer}>
                                             {allSizes.map((sz) => (
                                                 <button
                                                     key={sz}
+                                                    style={{color: 'var(--main-color)'}}
                                                     onClick={() => setSelectedSize(sz)}
                                                     className={`${s.sizeButton} ${
                                                         selectedSize === sz ? s.selectedSize : ''
@@ -462,7 +462,7 @@ function ClothingItemScreen() {
                                         </Button>
                                         <Button
                                             secondary
-                                            onClick={() => navigate('/checkout')}
+                                            onClick={() => setIsBagOpened(true)}
                                         >
                                             CHECKOUT
                                         </Button>
@@ -482,7 +482,7 @@ function ClothingItemScreen() {
                             </Button>
                             <Button
                                 secondary
-                                onClick={() => navigate('/checkout')}
+                                onClick={() => setIsBagOpened(true)}
                             >
                                 CHECKOUT
                             </Button>

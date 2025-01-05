@@ -1,5 +1,3 @@
-// src/shared/SignUpScreen.jsx
-
 import React, { useContext, useState } from 'react';
 import Input from '../shared/UI/Input';
 import Button from '../shared/UI/Button';
@@ -22,12 +20,10 @@ const SignUpScreen = () => {
   const { signUp, authError } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Handle input changes
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Form validation function
   const validateForm = () => {
     const { email, password, firstName, lastName } = form;
     const emailPattern = /^[^@]+@[^@]+\.[^@]+$/;
@@ -50,10 +46,9 @@ const SignUpScreen = () => {
     return true;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setAlert(false); // Reset alert
+    setAlert(false); 
 
     if (!validateForm()) {
       setAlert(true);
