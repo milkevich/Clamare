@@ -12,7 +12,9 @@ const Input = ({
   helperText = '',
   name,
   required = false,
-  ...props // Capture any additional props
+  white,
+  placeholder,
+  ...props
 }) => {
   return (
     <>
@@ -83,35 +85,36 @@ const Input = ({
           required={required}
           helperText={helperText}
           {...props} // Forward additional props
+          placeholder={placeholder}
           sx={{
             input: {
-              color: 'var(--main-color)',
+              color: white ? 'var(--main-bg-color)' : 'var(--main-color)',
               fontSize: '12px',
             },
             '& .MuiInputLabel-root': {
-              color: 'var(--main-color)',
+              color: white ? 'var(--main-bg-color)' : 'var(--main-color)',
               fontSize: '12px',
               transition: 'ease-in-out 0.2s all',
             },
             '& .MuiInputLabel-root.Mui-focused': {
-              color: 'var(--main-color)',
+              color: white ? 'var(--main-bg-color)' : 'var(--main-color)',
               fontSize: '14px',
               transition: 'ease-in-out 0.2s all',
             },
             '& .MuiInput-underline:before': {
-              borderBottomColor: 'var(--border-color)',
+              borderBottomColor: white ? 'var(--main-bg-color)' : 'var(--border-color)',
             },
             '& .MuiInput-underline:after': {
-              borderBottomColor: 'var(--main-color)',
+              borderBottomColor: white ? 'var(--main-bg-color)' : 'var(--main-color)',
               borderBottomWidth: '1px',
             },
             '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
-              borderBottomColor: 'lightgrey',
+              borderBottomColor: white ? 'var(--sec-color)' : 'lightgrey',
               borderBottomWidth: '1px',
             },
             '& input:-webkit-autofill': {
               WebkitBoxShadow: '0 0 0 100px var(--sec-bg-color) inset',
-              WebkitTextFillColor: 'var(--main-color)',
+              WebkitTextFillColor: white ? 'var(--main-bg-color)' : 'var(--main-color)',
               transition: 'background-color 5000s ease-in-out 0s',
             },
           }}

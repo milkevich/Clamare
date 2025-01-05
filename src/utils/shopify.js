@@ -221,7 +221,6 @@ export const fetchMagazinePages = async () => {
   }
 };
 
-// shopify.js
 export const fetchSingleMagazinePage = async (idNumber) => {
   const fullGID = `gid://shopify/Metaobject/${idNumber}`;
 
@@ -272,6 +271,50 @@ export const fetchSingleMagazinePage = async (idNumber) => {
     return response.data?.data?.metaobject ?? null;
   } catch (error) {
     console.error('[fetchSingleMagazinePage] Error:', error);
+    throw error;
+  }
+};
+
+export const fetchStoreStatus = async () => {
+  const query = `
+    query {
+      metaobjects(type: "store_production", first: 10) {
+        edges {
+          node {
+            id
+            handle
+            fields {
+              key
+              value
+              reference {
+                __typename
+                ... on MediaImage {
+                  image {
+                    url
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await client.post('', { query });
+
+    if (response.data.errors) {
+      console.error('[fetchStoreStatus] GraphQL errors:', response.data.errors);
+      throw new Error(response.data.errors[0].message);
+    }
+
+    const edges = response.data?.data?.metaobjects?.edges;
+    if (!edges || !edges.length) return [];
+
+    return edges.map((edge) => edge.node.fields);
+  } catch (error) {
+    console.error('[fetchStoreStatus] Error fetching data:', error);
     throw error;
   }
 };
