@@ -1,4 +1,3 @@
-// src/components/Header.jsx
 import React, { useState, useContext, useEffect } from 'react';
 import clamareSingleLogo from '../assets/clamareSingleLogo.png';
 import s from '../shared/Header.module.scss';
@@ -43,7 +42,6 @@ const Header = () => {
     navigate(path);
   };
 
-  // Calculate total quantity for the "BAG" count
   const totalQuantity = cart?.lines?.edges?.reduce((sum, edge) => sum + edge.node.quantity, 0) || 0;
 
   return (
