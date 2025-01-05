@@ -76,7 +76,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
             fontSize: '12px',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '10px 20px',
+            padding: isSmallScreen ? '0.5rem 0.75rem' : '0.5rem 1.25rem',
             fontWeight: '580',
           }}
         >

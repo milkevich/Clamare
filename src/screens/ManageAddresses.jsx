@@ -860,11 +860,11 @@ const ManageAddresses = () => {
                   })}
                 </ul>
               ) : (
-                <div>
+                <div style={{padding: isSmallScreen ? '0.75rem' : '1.25rem'}}>
                   <p style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>
                     NO ADDRESSES FOUND.
                   </p>
-                  <p style={{ margin: 0, fontSize: '12px', fontWeight: '580' }}>
+                  <p style={{ margin: 0, fontSize: '12px', fontWeight: '580', color: 'var(--sec-color)' }}>
                     Add an address by clicking 'NEW ADDRESS'.
                   </p>
                 </div>

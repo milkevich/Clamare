@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { fetchProductByHandle } from '../utils/shopify';
 import Button from '../shared/UI/Button';
@@ -8,20 +8,29 @@ import { CartContext } from '../contexts/CartContext';
 import { Fade, Slide } from '@mui/material';
 import Loader from '../shared/UI/Loader';
 import s from '../shared/ClothingItemScreen.module.scss';
+import { IoMdClose } from "react-icons/io";
 
 function ClothingItemScreen() {
     const { handle } = useParams();
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+
     const { addItemToCart, refreshCart, setIsBagOpened, isBagOpened } = useContext(CartContext);
 
     const [product, setProduct] = useState(null);
-    const [modelReference, setModelReference] = useState('');  // <-- NEW state
+    const [modelReference, setModelReference] = useState('');
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState('');
     const [addedItemPopUpShown, setAddedItemPopUpShown] = useState(false);
     const [addedItemDetails, setAddedItemDetails] = useState(null);
     const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+    // For expanded overlay
+    const [imagesExpanded, setImagesExpanded] = useState(false);
+    const [expandedIndex, setExpandedIndex] = useState(null);
+
+    // Refs to each expanded image (so we can scroll to the correct one)
+    const expandedImageRefs = useRef([]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -34,7 +43,30 @@ function ClothingItemScreen() {
         };
     }, []);
 
-    // 1) Fetch product and Model Reference Metafield
+    // -------------------------------
+    // Lock/Unlock body scroll on overlay open/close
+    // And auto-scroll to the clicked image
+    // -------------------------------
+    useEffect(() => {
+        if (imagesExpanded) {
+            // lock main page scrolling
+            document.body.style.overflow = 'hidden';
+
+            // wait for Fade to mount + images to render
+            setTimeout(() => {
+                if (expandedIndex != null) {
+                    expandedImageRefs.current[expandedIndex]?.scrollIntoView({
+                        block: 'start',
+                    });
+                }
+            }, 0);
+        } else {
+            // unlock
+            document.body.style.overflow = '';
+        }
+    }, [imagesExpanded, expandedIndex]);
+
+    // 1) Fetch product and modelReference metafield
     useEffect(() => {
         const loadProduct = async () => {
             try {
@@ -42,28 +74,27 @@ function ClothingItemScreen() {
                 if (productData) {
                     setProduct(productData);
 
-                    // 2) Extract the modelReference metafield (if it exists)
-                    // For 2023-07, 'metafields' returns an array, not edges.
+                    // Extract modelReference metafield
                     const modelMetafield = productData.metafields?.find(
                         (mf) => mf.key === 'modelReference'
                     );
                     if (modelMetafield) {
                         setModelReference(modelMetafield.value);
                     } else {
-                        setModelReference('');  // No metafield found
+                        setModelReference('');
                     }
                 } else {
-                    // Product not found, you can handle it however you like:
-                    // navigate('/products/all'); or show a "not found" message
+                    // Product not found → redirect or show error
+                    // e.g. navigate('/products/all');
                 }
             } catch (err) {
                 console.error('Error fetching product by handle:', err);
             }
         };
         loadProduct();
-    }, [handle, navigate]);
+    }, [handle]);
 
-    // 3) Handle variant from URL param
+    // 2) If URL param "variant=123456" is found, set color from that variant
     useEffect(() => {
         const variantNumericId = searchParams.get('variant');
         if (variantNumericId && product) {
@@ -87,14 +118,14 @@ function ClothingItemScreen() {
         return <Loader />;
     }
 
-    // Function to get option value
+    // Helper to get an option value from a variant
     function getOptionValue(variant, optionName) {
         return variant.selectedOptions.find(
             (opt) => opt.name.toLowerCase() === optionName.toLowerCase()
         )?.value;
     }
 
-    // Map out variants
+    // All variants
     const allVariants = product.variants?.edges.map((edge) => edge.node) || [];
 
     // Deduplicate color options
@@ -108,32 +139,47 @@ function ClothingItemScreen() {
     }
     const uniqueColors = Array.from(uniqueColorMap.values());
 
-    // Extract all sizes
+    // All sizes (deduplicate + lowercase)
     const allSizes = Array.from(
         new Set(
             allVariants
-                .map((v) =>
-                    getOptionValue(v, 'size') 
-                      ? getOptionValue(v, 'size').toLowerCase() 
-                      : null
-                )
+                .map((v) => getOptionValue(v, 'size')?.toLowerCase() || null)
                 .filter(Boolean)
         )
     );
 
+    // The current variant matching the selected color
     let currentVariant = null;
     if (selectedColor) {
         currentVariant = allVariants.find(
             (variant) =>
-                getOptionValue(variant, 'color').toLowerCase() === selectedColor.toLowerCase()
+                getOptionValue(variant, 'color')?.toLowerCase() === selectedColor.toLowerCase()
         );
     }
 
+    const variantImageUrl = currentVariant?.image?.url || '';
+
+    // If the product has "variants", we might skip the first or last images
+    // (depending on how your data is structured).
+    // This is your existing logic:
+    const hasVariants = allVariants.length > 0;
+    const imagesToDisplay = hasVariants
+        ? product.images?.edges.slice(1, -1) // or .slice(1)
+        : product.images?.edges;
+
+    // Combine the "main" variantImageUrl + the extra images into an array for the overlay
+    // We'll put the variant image as index 0, then the rest.
+    const expandedImages = [
+        variantImageUrl,
+        ...(imagesToDisplay?.map((img) => img.node.url) || []),
+    ].filter(Boolean); // remove any empty strings
+
+    // color selection
     const handleColorSelect = (color) => {
         setSelectedColor(color);
         const selectedVariant = allVariants.find(
             (variant) =>
-                getOptionValue(variant, 'color').toLowerCase() === color.toLowerCase()
+                getOptionValue(variant, 'color')?.toLowerCase() === color.toLowerCase()
         );
         if (selectedVariant) {
             const numericId = selectedVariant.id.split('/').pop();
@@ -141,11 +187,18 @@ function ClothingItemScreen() {
         }
     };
 
-    const variantImageUrl = currentVariant?.image?.url || '';
-    const hasVariants = allVariants.length > 0;
-    const imagesToDisplay = hasVariants
-        ? product.images?.edges.slice(1, -1)
-        : product.images?.edges;
+    // If you want each thumbnail to open the overlay:
+    //  i=0 => variantImageUrl, i>0 => imagesToDisplay[i-1]
+    // so if you click the 4th "regular" image, that's index 4 in expandedImages
+    function handleImageClick(index) {
+        setExpandedIndex(index);
+        setImagesExpanded(true);
+    }
+
+    function handleCloseExpanded() {
+        setImagesExpanded(false);
+        setExpandedIndex(null);
+    }
 
     async function handleAddToBag() {
         if (!selectedSize) {
@@ -158,8 +211,8 @@ function ClothingItemScreen() {
         }
         const matchedVariant = allVariants.find(
             (variant) =>
-                getOptionValue(variant, 'color').toLowerCase() === selectedColor.toLowerCase() &&
-                getOptionValue(variant, 'size').toLowerCase() === selectedSize.toLowerCase()
+                getOptionValue(variant, 'color')?.toLowerCase() === selectedColor.toLowerCase() &&
+                getOptionValue(variant, 'size')?.toLowerCase() === selectedSize.toLowerCase()
         );
 
         if (!matchedVariant) {
@@ -168,10 +221,8 @@ function ClothingItemScreen() {
         }
 
         try {
-            console.log('Attempting to add item to cart:', matchedVariant.id, 1);
             await addItemToCart(matchedVariant.id, 1);
             await refreshCart();
-            console.log('Item successfully added to cart.');
             setAddedItemDetails({
                 image: matchedVariant.image?.url || '',
                 name: product.title,
@@ -191,6 +242,47 @@ function ClothingItemScreen() {
 
     return (
         <div className={s.container}>
+            <Fade in={imagesExpanded}>
+                <div
+                    style={{
+                        zIndex: 102,
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        backgroundColor: 'var(--main-bg-color)',
+                        overflowY: 'auto',
+                    }}
+                >
+                        <IoMdClose onClick={handleCloseExpanded} style={{position: 'fixed', padding: '1.25rem', cursor: 'pointer', top: 0, right: 0,}} size={isSmallScreen ? 24 : 32}/>
+                    <div
+                        style={{
+                            zIndex: 103,
+                            margin: 'auto',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '1rem',
+                        }}
+                    >
+                        {expandedImages.map((url, i) => (
+                            <img
+                                key={url}
+                                ref={(el) => (expandedImageRefs.current[i] = el)}
+                                src={url}
+                                alt={`Expanded ${i}`}
+                                style={{
+                                    cursor: 'zoom-out',
+                                    margin: 'auto',
+                                    width: '100vw',
+                                }}
+                                onClick={handleCloseExpanded}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </Fade>
+
             <Slide
                 direction="left"
                 in={addedItemPopUpShown && !isBagOpened}
@@ -212,10 +304,10 @@ function ClothingItemScreen() {
                         />
                         <div className={s.addedItemInfo}>
                             <p className={s.addedItemName}>
-                                {addedItemDetails?.name.toUpperCase()}
+                                {addedItemDetails?.name?.toUpperCase()}
                             </p>
                             <p className={s.addedItemVariant}>
-                                {addedItemDetails?.variantName.toUpperCase()}
+                                {addedItemDetails?.variantName?.toUpperCase()}
                             </p>
                             <p className={s.addedItemPrice}>
                                 ${addedItemDetails?.price}
@@ -234,10 +326,8 @@ function ClothingItemScreen() {
                 </div>
             </Slide>
 
-            <div
-                className={s.backToShop}
-                onClick={() => navigate('/products/all')}
-            >
+            {/* BACK TO SHOP */}
+            <div className={s.backToShop} onClick={() => navigate('/products/all')}>
                 <p className={s.backToShopText}>
                     <MdKeyboardArrowLeft size={14} /> BACK TO SHOP
                 </p>
@@ -245,26 +335,39 @@ function ClothingItemScreen() {
 
             <Fade in={product}>
                 <div className={s.mainContent}>
+                    {/* LEFT COLUMN IMAGES */}
                     <div className={s.imageColumn}>
+                        {/* 0th image => variantImageUrl (if it exists) */}
                         {variantImageUrl && (
                             <img
                                 src={variantImageUrl}
                                 alt="Current Color Variant"
                                 className={s.productImage}
+                                style={{ cursor: 'zoom-in' }}
+                                onClick={() => handleImageClick(0)} // index 0 in expandedImages
                             />
                         )}
-                        {imagesToDisplay.map(({ node }) => (
+                        {/* The rest from imagesToDisplay */}
+                        {imagesToDisplay?.map(({ node }, i) => (
                             <img
                                 key={node.url}
                                 src={node.url}
                                 alt={product.title}
                                 className={s.productImage}
+                                style={{ cursor: 'zoom-in' }}
+                                onClick={() => {
+                                    // index in expandedImages = i+1 
+                                    // because 0 is variantImage
+                                    handleImageClick(i + 1);
+                                }}
                             />
                         ))}
                     </div>
 
+                    {/* RIGHT COLUMN: Info */}
                     <div className={s.infoContainer}>
                         <div className={s.infoContent}>
+                            {/* Title & Price */}
                             <div>
                                 <p className={s.productTitle}>
                                     {product.title.toUpperCase()}
@@ -273,9 +376,10 @@ function ClothingItemScreen() {
                                     ${Math.floor(product?.priceRange?.minVariantPrice?.amount)}
                                 </p>
 
-                                <div style={{color: 'var(--main-color)'}} className={s.sizeSelectorContainer}>
-                                    {allSizes.length > 0 && (
-                                        <div style={{color: 'var(--main-color)'}} className={s.sizeButtonsContainer}>
+                                {/* SIZE SELECTOR */}
+                                {allSizes.length > 0 && (
+                                    <div className={s.sizeSelectorContainer}>
+                                        <div className={s.sizeButtonsContainer}>
                                             {allSizes.map((sz) => (
                                                 <button
                                                     key={sz}
@@ -283,32 +387,30 @@ function ClothingItemScreen() {
                                                     className={`${s.sizeButton} ${
                                                         selectedSize === sz ? s.selectedSize : ''
                                                     }`}
-                                                    style={{color: 'var(--main-color)'}}
                                                 >
                                                     {sz.toUpperCase()}
                                                 </button>
                                             ))}
                                         </div>
-                                    )}
-                                </div>
-                                
-                                {modelReference ? (
-                                    <p style={{}}>
-                                        {modelReference.toUpperCase()}
-                                    </p>
-                                ) : (
-                                    null
+                                    </div>
                                 )}
-                                
+
+                                {/* Model Reference (metafield) */}
+                                {modelReference ? (
+                                    <p>{modelReference.toUpperCase()}</p>
+                                ) : null}
+
+                                {/* COLOR SELECTOR */}
                                 <div className={s.colorSelectorContainer}>
                                     <div className={s.colorVariants}>
                                         {uniqueColors.map((color) => {
                                             const isActive =
                                                 selectedColor.toLowerCase() === color.toLowerCase();
 
+                                            // find the variant that uses this color
                                             const variantWithColor = allVariants.find(
                                                 (variant) =>
-                                                    getOptionValue(variant, 'color').toLowerCase() ===
+                                                    getOptionValue(variant, 'color')?.toLowerCase() ===
                                                     color.toLowerCase()
                                             );
 
@@ -317,7 +419,7 @@ function ClothingItemScreen() {
                                                     key={color}
                                                     className={s.colorOption}
                                                 >
-                                                    {variantWithColor && variantWithColor.image?.url ? (
+                                                    {variantWithColor?.image?.url ? (
                                                         <img
                                                             src={variantWithColor.image.url}
                                                             alt={`Color: ${color}`}
@@ -339,12 +441,14 @@ function ClothingItemScreen() {
                                         })}
                                     </div>
                                     <p className={s.selectedColorText}>
-                                        {selectedColor.toUpperCase() || 'N/A'}
+                                        {selectedColor
+                                            ? selectedColor.toUpperCase()
+                                            : 'N/A'}
                                     </p>
                                 </div>
                             </div>
 
-                            {/* Product Description and Buttons */}
+                            {/* DESCRIPTION & ACTION BUTTONS */}
                             <div className={s.productActions}>
                                 <p className={s.productDescription}>
                                     {product.description}
@@ -358,7 +462,7 @@ function ClothingItemScreen() {
                                         </Button>
                                         <Button
                                             secondary
-                                            onClick={() => navigate('/checkout')} // Adjust path if needed
+                                            onClick={() => navigate('/checkout')}
                                         >
                                             CHECKOUT
                                         </Button>
@@ -368,6 +472,7 @@ function ClothingItemScreen() {
                         </div>
                     </div>
 
+                    {/* For small screens, the ADD buttons appear at bottom */}
                     {isSmallScreen && (
                         <div className={s.actionButtons}>
                             <Button onClick={handleAddToBag}>
