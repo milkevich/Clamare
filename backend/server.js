@@ -24,7 +24,7 @@ app.use(cors({
 
 // Root route for testing
 app.get('/', (req, res) => {
-  res.send('Server is running!');
+  res.send('hello from clamáre backend');
 });
 
 app.post('/api/contact', async (req, res) => {
