@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const validator = require('validator'); // For email validation
-require('dotenv').config(); // Load environment variables
+require('dotenv').config(); 
 const rateLimit = require('express-rate-limit');
 const fs = require('fs');
 const path = require('path');
@@ -22,14 +22,6 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
-
-// Rate Limiting to Prevent Abuse
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again after 15 minutes.',
-});
-app.use(limiter);
 
 // Root route for testing
 app.get('/', (req, res) => {
