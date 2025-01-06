@@ -22,5 +22,6 @@
     "react-toastify": "^11.0.2",
     "validator": "^13.12.0"
   },
+  "devDependencies": {},
   "description": ""
 }
