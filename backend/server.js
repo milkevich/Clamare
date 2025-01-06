@@ -61,7 +61,7 @@ app.post('/api/contact', cors(), async (req, res) => {
           });
       }
 
-      // Read the HTML template
+      // Read the HTML template for the user
       const templatePath = path.join(__dirname, 'supportConfirmationEmailTemplate.html');
       let source;
       try {
@@ -72,16 +72,27 @@ app.post('/api/contact', cors(), async (req, res) => {
       }
       const template = handlebars.compile(source);
 
-      // Define dynamic data for the template
-      const replacements = {
+      // Define dynamic data for the user template
+      const userReplacements = {
           firstName: firstName,
           reason: reason,
           message: message,
           logoUrl: 'https://yourdomain.com/path-to-logo.png', // Replace with your actual logo URL
           supportPageUrl: 'https://clamare.store/support',
       };
+      const htmlToSendToUser = template(userReplacements);
 
-      const htmlToSend = template(replacements);
+      // Define plain text email for support
+      const supportEmailContent = `
+      New Support Request:
+      --------------------------------------
+      Name: ${firstName} ${lastName}
+      Email: ${email}
+      Reason: ${reason}
+      Message:
+      ${message}
+      --------------------------------------
+      `;
 
       // Set up Nodemailer transporter
       const transporter = nodemailer.createTransport({
@@ -97,20 +108,33 @@ app.post('/api/contact', cors(), async (req, res) => {
 
       console.log('Transporter Verification:', await transporter.verify());
 
-      // Prepare and send the email
-      const mailOptions = {
+      // Prepare mail options for the user
+      const mailOptionsUser = {
           from: `"Clamáre Support" <${process.env.EMAIL_USER}>`,
           to: email,
           subject: 'We Have Received Your Message',
-          html: htmlToSend, // Send the rendered HTML template
+          html: htmlToSendToUser,
       };
 
-      await transporter.sendMail(mailOptions);
-      console.log('Email sent successfully.');
+      // Prepare mail options for support
+      const mailOptionsSupport = {
+          from: `"Clamáre Website" <${process.env.EMAIL_USER}>`,
+          to: 'support@clamare.store', // Support email address
+          subject: 'New Support Request',
+          text: supportEmailContent, // Plain text format
+      };
+
+      // Send both emails
+      await Promise.all([
+          transporter.sendMail(mailOptionsUser),
+          transporter.sendMail(mailOptionsSupport),
+      ]);
+
+      console.log('Emails sent successfully.');
 
       res.json({
           success: true,
-          message: 'Form submitted successfully! A confirmation email has been sent to you.',
+          message: 'Form submitted successfully! Confirmation email has been sent, and support has been notified.',
       });
   } catch (error) {
       console.error('Error:', error);
