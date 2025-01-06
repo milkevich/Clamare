@@ -9,7 +9,7 @@ import client from './shopify';
  * @param {string} lastName
  * @returns {object} Customer object or errors
  */
-export const signUp = async (email, password, firstName, lastName) => {
+export const signUp = async (email, password, firstName, lastName, phone) => {
   const mutation = `
     mutation customerCreate($input: CustomerCreateInput!) {
       customerCreate(input: $input) {
@@ -18,6 +18,8 @@ export const signUp = async (email, password, firstName, lastName) => {
           email
           firstName
           lastName
+          phone
+          acceptsMarketing
         }
         customerUserErrors {
           code
@@ -28,7 +30,16 @@ export const signUp = async (email, password, firstName, lastName) => {
     }
   `;
 
-  const variables = { input: { email, password, firstName, lastName } };
+  const variables = { 
+    input: { 
+      email, 
+      password, 
+      firstName, 
+      lastName, 
+      phone, 
+      acceptsMarketing: true 
+    } 
+  };
 
   try {
     const response = await client.post('', { query: mutation, variables });
@@ -38,17 +49,12 @@ export const signUp = async (email, password, firstName, lastName) => {
       return { errors: customerUserErrors };
     }
 
-    // Automatically log in the user after sign up
-    const loginResult = await logIn(email, password);
-    if (loginResult.customerAccessToken) {
-      return { customer, customerAccessToken: loginResult.customerAccessToken };
-    }
-
     return { customer };
   } catch (error) {
     return { errors: [{ message: 'An unexpected error occurred.' }] };
   }
 };
+
 
 /**
  * Log in a customer

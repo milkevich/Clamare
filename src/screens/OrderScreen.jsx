@@ -165,7 +165,6 @@ const OrderScreen = () => {
     return <div>No order details found.</div>;
   }
 
-  // Helper functions to format data
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
@@ -188,7 +187,7 @@ const OrderScreen = () => {
     <Fade in={!loading}>
       <div>
         <div style={{ borderBottom: '1px solid var(--border-color)', position: 'sticky', top: 49, backgroundColor: 'var(--main-bg-color)', zIndex: 50 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '1470px', margin: 'auto', fontSize: '10px', fontWeight: '580', padding: '0rem 1.25rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '1470px', margin: 'auto', fontSize: '10px', fontWeight: '580', padding: '0rem 0.75rem' }}>
             <p style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }} onClick={() => {
               navigate(-1)
             }}><MdKeyboardArrowLeft size={12}/> BACK TO ACCOUNT</p>

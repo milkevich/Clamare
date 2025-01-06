@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Fade, Slide } from '@mui/material';
 import Input from '../shared/UI/Input';
 import Button from '../shared/UI/Button';
-import heyThere from '../assets/HeyThere.png';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -80,7 +79,8 @@ const LogInScreen = () => {
             paddingBottom: '1.25rem',
           }}
         >
-          <img style={{ maxWidth: '450px', width: 'calc(100% - 2.5rem)', padding: '0rem 1.25rem' }} src={heyThere} alt="Hey There" />
+          <p style={{ fontSize: '42px', fontWeight: '900', margin: 0 }}>LOG IN</p>
+          <p style={{ fontSize: '12px', fontWeight: '500', margin: 0, marginTop: '0.5rem' }}>PLEASE FILL IN YOUR INFORMATION.</p>
           <form
             onSubmit={handleSubmit}
             style={{

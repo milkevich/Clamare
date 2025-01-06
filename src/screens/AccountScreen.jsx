@@ -187,12 +187,6 @@ const AccountScreen = () => {
     return null; // Or a loading indicator while redirecting
   }
 
-  const extractNumericId = (globalId) => {
-    const regex = /Order\/(\d+)/;
-    const match = globalId.match(regex);
-    return match ? match[1] : null;
-  };
-
   return (
     <Fade in={!loading}>
       <div>
@@ -212,6 +206,7 @@ const AccountScreen = () => {
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <p style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>{`${customer?.firstName || ''} ${customer?.lastName || ''}`.toUpperCase()}</p>
                 <p style={{ margin: 0, fontSize: '12px', fontWeight: '580' }}>{customer?.email || ''}</p>
+                <p style={{ margin: 0, fontSize: '12px', fontWeight: '580' }}>{customer?.phone || ''}</p>
               </div>
             </div>
             {isSmallScreen &&
@@ -299,7 +294,7 @@ const AccountScreen = () => {
                   ))}
                 </ul>
               ) : (
-                <div style={{paddingLeft: isSmallScreen && '1.25rem'}}>
+                <div style={{paddingLeft: isSmallScreen ? '0.75rem' : '1.25rem'}}>
                   <p style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>NO ORDERS.</p>
                   <p style={{ margin: 0, fontSize: '12px', fontWeight: '580' }}>You haven't placed any orders yet.</p>
                 </div>

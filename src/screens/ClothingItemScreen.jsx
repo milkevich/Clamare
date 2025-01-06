@@ -93,7 +93,6 @@ function ClothingItemScreen() {
         loadProduct();
     }, [handle]);
 
-    // 2) If URL param "variant=123456" is found, set color from that variant
     useEffect(() => {
         const variantNumericId = searchParams.get('variant');
         if (variantNumericId && product) {
@@ -117,17 +116,14 @@ function ClothingItemScreen() {
         return <Loader />;
     }
 
-    // Helper to get an option value from a variant
     function getOptionValue(variant, optionName) {
         return variant.selectedOptions.find(
             (opt) => opt.name.toLowerCase() === optionName.toLowerCase()
         )?.value;
     }
 
-    // All variants
     const allVariants = product.variants?.edges.map((edge) => edge.node) || [];
 
-    // Deduplicate color options
     const uniqueColorMap = new Map();
     for (const variant of allVariants) {
         const colorVal = getOptionValue(variant, 'color');
@@ -138,7 +134,6 @@ function ClothingItemScreen() {
     }
     const uniqueColors = Array.from(uniqueColorMap.values());
 
-    // All sizes (deduplicate + lowercase)
     const allSizes = Array.from(
         new Set(
             allVariants
@@ -147,7 +142,6 @@ function ClothingItemScreen() {
         )
     );
 
-    // The current variant matching the selected color
     let currentVariant = null;
     if (selectedColor) {
         currentVariant = allVariants.find(
@@ -158,22 +152,16 @@ function ClothingItemScreen() {
 
     const variantImageUrl = currentVariant?.image?.url || '';
 
-    // If the product has "variants", we might skip the first or last images
-    // (depending on how your data is structured).
-    // This is your existing logic:
     const hasVariants = allVariants.length > 0;
     const imagesToDisplay = hasVariants
-        ? product.images?.edges.slice(1, -1) // or .slice(1)
+        ? product.images?.edges.slice(1, -1)
         : product.images?.edges;
 
-    // Combine the "main" variantImageUrl + the extra images into an array for the overlay
-    // We'll put the variant image as index 0, then the rest.
     const expandedImages = [
         variantImageUrl,
         ...(imagesToDisplay?.map((img) => img.node.url) || []),
-    ].filter(Boolean); // remove any empty strings
+    ].filter(Boolean); 
 
-    // color selection
     const handleColorSelect = (color) => {
         setSelectedColor(color);
         const selectedVariant = allVariants.find(
@@ -186,9 +174,6 @@ function ClothingItemScreen() {
         }
     };
 
-    // If you want each thumbnail to open the overlay:
-    //  i=0 => variantImageUrl, i>0 => imagesToDisplay[i-1]
-    // so if you click the 4th "regular" image, that's index 4 in expandedImages
     function handleImageClick(index) {
         setExpandedIndex(index);
         setImagesExpanded(true);

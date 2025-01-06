@@ -308,3 +308,45 @@ export const fetchStoreStatus = async () => {
     throw error;
   }
 };
+
+export const fetchEmailInfo = async () => {
+  const query = `
+    query {
+      metaobjects(type: "email", first: 10) {
+        edges {
+          node {
+            id
+            handle
+            fields {
+              key
+              value
+              reference {
+                __typename
+                ... on MediaImage {
+                  image {
+                    url
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await client.post('', { query });
+
+    if (response.data.errors) {
+      throw new Error(response.data.errors[0].message);
+    }
+
+    const edges = response.data?.data?.metaobjects?.edges;
+    if (!edges || !edges.length) return [];
+
+    return edges.map((edge) => edge.node.fields);
+  } catch (error) {
+    throw error;
+  }
+};

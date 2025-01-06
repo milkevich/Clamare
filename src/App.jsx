@@ -4,8 +4,8 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import TitleUpdater from './components/TitleUpdater';
 import WebsitePreviewScreen from './screens/WebsitePreviewScreen';
-import { fetchStoreStatus } from './utils/shopify';
-import './shared/Variables.scss'; 
+import { fetchEmailInfo, fetchStoreStatus } from './utils/shopify';
+import './shared/Variables.scss';
 import Loader from './shared/UI/Loader';
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
     const loadStoreStatus = async () => {
       try {
         const data = await fetchStoreStatus();
-  
+
         if (data.length > 0) {
           const fields = data[0];
           const statusField = fields.find((f) => f.key === 'status');
@@ -27,9 +27,28 @@ function App() {
         setLoading(false);
       }
     };
-  
+
     loadStoreStatus();
-  }, []);  
+  }, []);
+
+  useEffect(() => {
+    const loademail = async () => {
+      try {
+        const data = await fetchEmailInfo();
+
+        if (data.length > 0) {
+          const fields = data[0];
+          const statusField = fields.find((f) => f.key === 'logo');
+          console.log(statusField)
+        }
+      } catch (err) {
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loademail();
+  }, []);
 
   useEffect(() => {
     if (!loading) {
@@ -41,9 +60,10 @@ function App() {
     }
   }, [loading, storeRunning]);
 
-  if (loading) return <Loader/>; 
+  if (loading) return <Loader />;
 
   return (
+
     <div className="appContainer">
       {storeRunning ? (
         <>

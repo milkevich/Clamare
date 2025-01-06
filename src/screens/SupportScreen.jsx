@@ -4,6 +4,7 @@ import Input from '../shared/UI/Input'
 import Button from '../shared/UI/Button';
 import { Fade, MenuItem, TextField } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const questions = [
     {
@@ -115,10 +116,62 @@ const SupportScreen = () => {
     const [expandedIndex, setExpandedIndex] = useState(null);
     const [height, setHeight] = useState({});
     const answerRefs = useRef([]);
-
-    const [reason, setReason] = useState('');
     const [isSmallScreen, setIsSmallScreen] = useState(false);
     const [isSmallScreen2, setIsSmallScreen2] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [messageSent, setMessageSent] = useState(false)
+    const [form, setForm] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        message: '',
+        reason: '',
+    })
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+    
+        try {
+          const response = await fetch('http://localhost:3001/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(form),
+          });
+    
+          const data = await response.json();
+          if (data.success) {
+            setMessageSent(true)
+            setTimeout(() => {
+                setMessageSent(false)
+            }, 3000);
+            toast.success('Message sent successfully! A confirmation email has been sent to you.');
+            setForm({
+              firstName: '',
+              lastName: '',
+              email: '',
+              message: '',
+              reason: '',
+            });
+          } else {
+            toast.error(`Failed to send message: ${data.message}`);
+          }
+        } catch (error) {
+          toast.error('An error occurred. Please try again later.');
+          console.error('Error:', error);
+        } finally {
+          setIsSubmitting(false);
+        }
+      };
+      
 
     const [selectedSection, setSelectedSection] = useState('');
 
@@ -201,7 +254,7 @@ const SupportScreen = () => {
                     <div style={{ maxWidth: '1300px', margin: 'auto', display: 'flex', gap: '1.75rem', width: '100%', justifyContent: 'space-between' }}>
                         <p onClick={() => {
                             navigate('/')
-                        }} style={{ margin: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '10px' }}><MdKeyboardArrowLeft size={12} />GO BACK</p>                        
+                        }} style={{ margin: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '10px' }}><MdKeyboardArrowLeft size={12} />GO BACK</p>
                         <div style={{ display: 'flex', gap: '1.75rem' }}>
                             <p
                                 onClick={() => handleSectionClick('Contact')}
@@ -266,15 +319,16 @@ const SupportScreen = () => {
                             <div>
                                 <div style={{ padding: '0px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                     <div style={{ display: 'flex', gap: '20px' }}>
-                                        <Input label="FIRST NAME" outlined={false} />
-                                        <Input label="LAST NAME" outlined={false} />
+                                        <Input name='firstName' value={form.firstName} onChange={handleInputChange} label="FIRST NAME" outlined={false} />
+                                        <Input name='lastName' value={form.lastName} onChange={handleInputChange} label="LAST NAME" outlined={false} />
                                     </div>
-                                    <Input label="EMAIL" outlined={false} />
+                                    <Input name='email' value={form.email} onChange={handleInputChange} label="EMAIL" outlined={false} />
                                     <TextField
                                         select
                                         label="REASON"
-                                        value={reason}
-                                        onChange={e => setReason(e.target.value)}
+                                        name='reason'
+                                        value={form.reason}
+                                        onChange={handleInputChange}
                                         variant="standard"
                                         fullWidth
                                         sx={{
@@ -343,6 +397,9 @@ const SupportScreen = () => {
                                         rows={4}
                                         placeholder="Type your message here"
                                         fullWidth
+                                        value={form.message}
+                                        name='message'
+                                        onChange={handleInputChange}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 borderRadius: 0,
@@ -380,7 +437,7 @@ const SupportScreen = () => {
                                         }}
                                     />
                                     <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>Please include all the information regarding your concern.</p>
-                                    <Button>SEND A MESSAGE</Button>
+                                    <Button disabled={isSubmitting ? isSubmitting : messageSent} onClick={handleSubmit}>{isSubmitting ? 'SENDING OVER...' : messageSent ? 'MESSAGE SENT!' : 'SEND A MESSAGE'}</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
                             </div>
@@ -446,17 +503,18 @@ const SupportScreen = () => {
                             <div>
                                 <div style={{ padding: '0px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                     <div style={{ display: 'flex', gap: '20px' }}>
-                                        <Input label="FIRST NAME" outlined={false} />
-                                        <Input label="LAST NAME" outlined={false} />
+                                        <Input name='firstName' value={form.firstName} onChange={handleInputChange} label="FIRST NAME" outlined={false} />
+                                        <Input name='lastName' value={form.lastName} onChange={handleInputChange} label="LAST NAME" outlined={false} />
                                     </div>
-                                    <Input label="EMAIL" outlined={false} />
+                                    <Input onChange={handleInputChange} value={form.email} name='email' label="EMAIL" outlined={false} />
                                     <TextField
                                         select
                                         label="REASON"
-                                        value={reason}
-                                        onChange={e => setReason(e.target.value)}
+                                        value={form.reason}
+                                        onChange={handleInputChange}
                                         variant="standard"
                                         fullWidth
+                                        name='reason'
                                         sx={{
                                             '& .MuiInput-root:before': {
                                                 borderBottom: '1px solid var(--border-color) !important',
@@ -521,6 +579,7 @@ const SupportScreen = () => {
                                         label="MESSAGE"
                                         multiline
                                         rows={4}
+                                        name='message'
                                         placeholder="Type your message here"
                                         fullWidth
                                         sx={{
@@ -560,7 +619,7 @@ const SupportScreen = () => {
                                         }}
                                     />
                                     <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>Please include all the information regarding your concern.</p>
-                                    <Button>SEND A MESSAGE</Button>
+                                    <Button disabled={isSubmitting} onClick={handleSubmit}>{isSubmitting ? 'SENDING OVER...' : messageSent ? 'MESSAGE SENT!' : 'SEND A MESSAGE'}</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
                             </div>
