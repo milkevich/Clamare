@@ -1,4 +1,3 @@
-// src/index.jsx or your main routing file
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } from 'react-router-dom';
 import App from './App.jsx';
 import ReactDOM from 'react-dom/client';
