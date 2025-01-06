@@ -587,6 +587,8 @@ const SupportScreen = () => {
 
                                     <TextField
                                         id="standard-multiline-static"
+                                        value={form.message}
+                                        onChange={handleInputChange}
                                         label="MESSAGE"
                                         multiline
                                         rows={4}
