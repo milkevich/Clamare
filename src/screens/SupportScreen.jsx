@@ -140,21 +140,30 @@ const SupportScreen = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-          const response = await api.post('/api/contact', form); // Corrected
-          console.log('Success:', response.data);
-          // Reset form fields
-          setForm({
-            firstName: '',
-            lastName: '',
-            email: '',
-            message: '',
-            reason: '',
-          });
-          toast.success('Your message has been sent successfully!');
-        } catch (error) {
-          console.error('Error:', error);
-          toast.error('Failed to send your message. Please try again later.');
-        }
+            const response = await api.post('/api/contact', form);
+            console.log('Success:', response.data);
+            // Reset form fields
+            setForm({
+              firstName: '',
+              lastName: '',
+              email: '',
+              message: '',
+              reason: '',
+            });
+            toast.success('Your message has been sent successfully!');
+          } catch (error) {
+            console.error('Error:', error);
+            if (error.response) {
+              // Server responded with a status other than 2xx
+              toast.error(error.response.data.message || 'Failed to send your message.');
+            } else if (error.request) {
+              // Request was made but no response received
+              toast.error('No response from server. Please try again later.');
+            } else {
+              // Something else happened
+              toast.error('An unexpected error occurred.');
+            }
+          }
       };
       
 
