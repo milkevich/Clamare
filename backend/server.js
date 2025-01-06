@@ -8,6 +8,7 @@ const path = require('path');
 const handlebars = require('handlebars');
 
 const PORT = process.env.PORT || 3000;
+const verificationCodes = {}
 
 const app = express();
 
