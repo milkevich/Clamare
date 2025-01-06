@@ -14,7 +14,16 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.options('*', cors());
+app.options('*', (req, res) => {
+  res.set({
+    'Access-Control-Allow-Origin': 'https://clamare.store',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+  });
+  res.sendStatus(200);
+});
+
 
 app.use(cors({
   origin: 'https://clamare.store', 
@@ -33,106 +42,55 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/contact', cors(), async (req, res) => {
-  console.log('Incoming data:', req.body);
-  console.log('Transporter Verification:', await transporter.verify());
-
-  const { firstName, lastName, email, message, reason } = req.body;
-
-  if (!firstName || !lastName || !email || !message || !reason) {
-    return res.status(400).json({
-      success: false,
-      message: 'All fields are required. Please fill out the entire form.',
-    });
-  }
-
-  if (!validator.isEmail(email)) {
-    return res.status(400).json({
-      success: false,
-      message: 'Please provide a valid email address.',
-    });
-  }
-
-  // Log the form data (you can also save this to a database)
-  console.log('Form data received:', { firstName, lastName, email, message, reason });
-
-  // Read the HTML template
-  const templatePath = path.join(__dirname, 'supportConfirmationEmailTemplate.html'); // Ensure this path is correct
-  let source;
   try {
-    source = fs.readFileSync(templatePath, 'utf8');
-  } catch (err) {
-    console.error('Error reading email template:', err);
-    return res.status(500).json({ success: false, message: 'Internal Server Error.' });
-  }
-  const template = handlebars.compile(source);
+      console.log('Incoming data:', req.body);
 
-  // Define dynamic data
-  const replacements = {
-    firstName: firstName,
-    reason: reason,
-    message: message,
-    // If using external logo
-    logoUrl: 'https://yourdomain.com/path-to-logo.png', // Replace with your logo URL
-    // If embedding logo, no need for logoUrl
-    supportPageUrl: 'https://clamare.store/support',
-  };
+      const { firstName, lastName, email, message, reason } = req.body;
 
-  const htmlToSend = template(replacements);
+      if (!firstName || !lastName || !email || !message || !reason) {
+          return res.status(400).json({
+              success: false,
+              message: 'All fields are required. Please fill out the entire form.',
+          });
+      }
+      if (!validator.isEmail(email)) {
+          return res.status(400).json({
+              success: false,
+              message: 'Please provide a valid email address.',
+          });
+      }
 
-  // Set up Nodemailer transporter using Zoho SMTP settings from environment variables
-  let transporter;
-  try {
-    transporter = nodemailer.createTransport({
-      host: 'smtp.zoho.com',
-      port: 587, // 587 for TLS, 465 for SSL
-      secure: false, // true for port 465, false for port 587
-      requireTLS: true, // Force TLS
-      auth: {
-        user: process.env.EMAIL_USER, // Your Zoho email address from .env
-        pass: process.env.EMAIL_PASS, // Your Zoho password or App Password from .env
-      },
-      debug: true,
-      logger: true,
-    });
-
-    // Verify transporter configuration
-    await transporter.verify();
-    console.log('Nodemailer transporter is configured correctly for contact.');
-  } catch (error) {
-    console.error('Error configuring transporter:', error);
-    return res.status(500).json({ success: false, message: 'Server configuration error.' });
-  }
-
-  const mailOptions = {
-    from: `"Clamáre Support" <${process.env.EMAIL_USER}>`,
-    to: email, // Receiver's email
-    subject: 'We Have Received Your Message',
-    html: htmlToSend,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log('Confirmation email sent to:', email);
-
-    res.json({
-      success: true,
-      message: 'Form submitted successfully! A confirmation email has been sent to you.',
-    });
-  } catch (error) {
-    console.error('Error sending confirmation email:', error);
-
-    // Determine the type of error and respond accordingly
-    if (error.code === 'EAUTH') {
-      return res.status(500).json({
-        success: false,
-        message: 'Authentication failed. Please check your email credentials.',
+      const transporter = nodemailer.createTransport({
+          host: 'smtp.zoho.com',
+          port: 587,
+          secure: false, 
+          requireTLS: true,
+          auth: {
+              user: process.env.EMAIL_USER,
+              pass: process.env.EMAIL_PASS,
+          },
       });
-    } else {
-      return res.status(500).json({
-        success: false,
-        message: 'Failed to send confirmation email.',
+
+      console.log('Transporter Verification:', await transporter.verify());
+
+      const mailOptions = {
+          from: `"Clamáre Support" <${process.env.EMAIL_USER}>`,
+          to: email,
+          subject: 'We Have Received Your Message',
+          text: `Thank you, ${firstName} ${lastName}, for reaching out regarding: ${reason}.`,
+          html: `<p>Message: ${message}</p>`,
+      };
+
+      await transporter.sendMail(mailOptions);
+      console.log('Email sent successfully.');
+
+      res.json({
+          success: true,
+          message: 'Form submitted successfully! A confirmation email has been sent to you.',
       });
-    }
+  } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ success: false, message: 'Internal server error.' });
   }
 });
 
