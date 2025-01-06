@@ -68,13 +68,13 @@ function App() {
     <div className="appContainer">
       {storeRunning ? (
         <>
+        <ToastContainer />
           <TitleUpdater />
           <div>
             <Header />
             <Outlet />
           </div>
           <Footer />
-          <ToastContainer />
         </>
       ) : (
         <WebsitePreviewScreen />
