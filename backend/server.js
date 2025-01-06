@@ -26,7 +26,7 @@ app.options('*', (req, res) => {
 
 
 app.use(cors({
-  origin: ['https://clamare.store', 'http://localhost:5173'],
+  origin: 'https://clamare.store',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
