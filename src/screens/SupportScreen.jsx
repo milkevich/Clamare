@@ -145,7 +145,7 @@ const SupportScreen = () => {
             !form.lastName.trim() ||
             !form.email.trim() ||
             !form.message.trim() ||
-            !form.reason
+            !form.reason.trim() 
         ) {
             toast.error('All fields are required.');
             return;
