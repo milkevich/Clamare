@@ -148,6 +148,7 @@ const SupportScreen = () => {
             !form.reason.trim() 
         ) {
             toast.error('All fields are required.');
+            console.log(form)
             return;
         }        
         if (!/\S+@\S+\.\S+/.test(form.email)) {
