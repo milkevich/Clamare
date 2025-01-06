@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
@@ -17,11 +16,11 @@ const verificationCodes = {};
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Adjust as needed
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true,
-}));
-app.use(express.json());
+    origin: 'http://localhost:5173', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+  }));
+  app.use(express.json());
 
 // Root route for testing
 app.get('/', (req, res) => {
