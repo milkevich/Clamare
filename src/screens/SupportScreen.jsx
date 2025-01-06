@@ -5,7 +5,6 @@ import Button from '../shared/UI/Button';
 import { Fade, MenuItem, TextField } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import api from '../api';
 
 const questions = [
     {
@@ -139,10 +138,22 @@ const SupportScreen = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
+    
         try {
-            const response = await api.post('/api/contact', form);
-            console.log('Success:', response.data);
-            // Reset form fields
+          const response = await fetch('http://localhost:3001/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(form),
+          });
+    
+          const data = await response.json();
+          if (data.success) {
+            setMessageSent(true)
+            setTimeout(() => {
+                setMessageSent(false)
+            }, 3000);
+            toast.success('Message sent successfully! A confirmation email has been sent to you.');
             setForm({
               firstName: '',
               lastName: '',
@@ -150,20 +161,15 @@ const SupportScreen = () => {
               message: '',
               reason: '',
             });
-            toast.success('Your message has been sent successfully!');
-          } catch (error) {
-            console.error('Error:', error);
-            if (error.response) {
-              // Server responded with a status other than 2xx
-              toast.error(error.response.data.message || 'Failed to send your message.');
-            } else if (error.request) {
-              // Request was made but no response received
-              toast.error('No response from server. Please try again later.');
-            } else {
-              // Something else happened
-              toast.error('An unexpected error occurred.');
-            }
+          } else {
+            toast.error(`Failed to send message: ${data.message}`);
           }
+        } catch (error) {
+          toast.error('An error occurred. Please try again later.');
+          console.error('Error:', error);
+        } finally {
+          setIsSubmitting(false);
+        }
       };
       
 

@@ -63,14 +63,12 @@ const SignUpScreen = () => {
     setAlert(false);
 
     if (!showVerification) {
-      // **Step 1:** Form Submission
       if (!validateForm()) {
         setAlert(true);
         setTimeout(() => setAlert(false), 3000);
         return;
       }
 
-      // Generate the verification code
       const code = generateVerificationCode();
       setGeneratedCode(code);
       console.log(`Generated Verification Code: ${code}`);
