@@ -30,9 +30,9 @@ app.get('/', (req, res) => {
   res.send('hello from clamáre backend :)');
 });
 
-app.post('/api/contact', async (req, res) => {
-  const { firstName, lastName, email, message, reason } = req.body;
-
+app.post('/api/contact', cors(), async (req, res) => {
+    const { firstName, lastName, email, message, reason } = req.body;
+    
   // Validate the form data
   if (!firstName || !lastName || !email || !message || !reason) {
     return res.status(400).json({
