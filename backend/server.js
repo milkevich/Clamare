@@ -26,7 +26,7 @@ app.options('*', (req, res) => {
 
 
 app.use(cors({
-  origin: 'https://clamare.store', 
+  origin: 'https://clamare.store',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -43,54 +43,53 @@ app.get('/', (req, res) => {
 
 app.post('/api/contact', cors(), async (req, res) => {
   try {
-      console.log('Incoming data:', req.body);
+    console.log('Incoming data:', req.body);
 
-      const { firstName, lastName, email, message, reason } = req.body;
+    const { firstName, lastName, email, message, reason } = req.body;
 
-      if (!firstName || !lastName || !email || !message || !reason) {
-          return res.status(400).json({
-              success: false,
-              message: 'All fields are required. Please fill out the entire form.',
-          });
-      }
-      if (!validator.isEmail(email)) {
-          return res.status(400).json({
-              success: false,
-              message: 'Please provide a valid email address.',
-          });
-      }
-
-      const transporter = nodemailer.createTransport({
-          host: 'smtp.zoho.com',
-          port: 587,
-          secure: false, 
-          requireTLS: true,
-          auth: {
-              user: process.env.EMAIL_USER,
-              pass: process.env.EMAIL_PASS,
-          },
+    if (!firstName || !lastName || !email || !message || !reason) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required. Please fill out the entire form.',
       });
-
-      console.log('Transporter Verification:', await transporter.verify());
-
-      const mailOptions = {
-          from: `"Clamáre Support" <${process.env.EMAIL_USER}>`,
-          to: email,
-          subject: 'We Have Received Your Message',
-          text: `Thank you, ${firstName} ${lastName}, for reaching out regarding: ${reason}.`,
-          html: `<p>Message: ${message}</p>`,
-      };
-
-      await transporter.sendMail(mailOptions);
-      console.log('Email sent successfully.');
-
-      res.json({
-          success: true,
-          message: 'Form submitted successfully! A confirmation email has been sent to you.',
+    }
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email address.',
       });
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.zoho.com',
+      port: 587,
+      secure: false,
+      requireTLS: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    console.log('Transporter Verification:', await transporter.verify());
+
+    const mailOptions = {
+      from: `"Clamáre" <${process.env.EMAIL_USER} >`,
+      to: email, 
+      subject: "Verify it's you",
+      html: htmlToSend,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully.');
+
+    res.json({
+      success: true,
+      message: 'Form submitted successfully! A confirmation email has been sent to you.',
+    });
   } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ success: false, message: 'Internal server error.' });
+    console.error('Error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error.' });
   }
 });
 
