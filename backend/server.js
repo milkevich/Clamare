@@ -3,7 +3,6 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const validator = require('validator'); // For email validation
 require('dotenv').config(); 
-const rateLimit = require('express-rate-limit');
 const fs = require('fs');
 const path = require('path');
 const handlebars = require('handlebars');
@@ -21,7 +20,6 @@ app.use(cors({
 
 app.options('*', cors());
 
-// Middleware to log headers for debugging
 app.use((req, res, next) => {
     console.log('CORS Headers:', res.getHeaders());
     next();
@@ -34,7 +32,6 @@ app.get('/', (req, res) => {
 app.post('/api/contact', cors(), async (req, res) => {
     const { firstName, lastName, email, message, reason } = req.body;
 
-  // Validate the form data
   if (!firstName || !lastName || !email || !message || !reason) {
     return res.status(400).json({
       success: false,
@@ -42,7 +39,6 @@ app.post('/api/contact', cors(), async (req, res) => {
     });
   }
 
-  // Validate email format
   if (!validator.isEmail(email)) {
     return res.status(400).json({
       success: false,
