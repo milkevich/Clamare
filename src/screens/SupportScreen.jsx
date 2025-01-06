@@ -139,33 +139,43 @@ const SupportScreen = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        e.preventDefault();
+        if (!form.firstName || !form.lastName || !form.email || !form.message || !form.reason) {
+            toast.error('All fields are required.');
+            return;
+        }
+        if (!/\S+@\S+\.\S+/.test(form.email)) {
+            toast.error('Invalid email format.');
+            return;
+        }
         try {
+            console.log(form);
             const response = await api.post('/api/contact', form);
             console.log('Success:', response.data);
             // Reset form fields
             setForm({
-              firstName: '',
-              lastName: '',
-              email: '',
-              message: '',
-              reason: '',
+                firstName: '',
+                lastName: '',
+                email: '',
+                message: '',
+                reason: '',
             });
             toast.success('Your message has been sent successfully!');
-          } catch (error) {
+        } catch (error) {
             console.error('Error:', error);
             if (error.response) {
-              // Server responded with a status other than 2xx
-              toast.error(error.response.data.message || 'Failed to send your message.');
+                // Server responded with a status other than 2xx
+                toast.error(error.response.data.message || 'Failed to send your message.');
             } else if (error.request) {
-              // Request was made but no response received
-              toast.error('No response from server. Please try again later.');
+                // Request was made but no response received
+                toast.error('No response from server. Please try again later.');
             } else {
-              // Something else happened
-              toast.error('An unexpected error occurred.');
+                // Something else happened
+                toast.error('An unexpected error occurred.');
             }
-          }
-      };
-      
+        }
+    };
+
 
     const [selectedSection, setSelectedSection] = useState('');
 

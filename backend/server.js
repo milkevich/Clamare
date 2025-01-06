@@ -33,6 +33,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/contact', cors(), async (req, res) => {
+  console.log('Incoming data:', req.body);
     const { firstName, lastName, email, message, reason } = req.body;
 
   if (!firstName || !lastName || !email || !message || !reason) {
