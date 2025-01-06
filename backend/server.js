@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const validator = require('validator'); // For email validation
-require('dotenv').config(); 
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const handlebars = require('handlebars');
@@ -11,30 +11,32 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 
-app.use(express.json()); 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.options('*', cors());
 
 app.use(cors({
-    origin: 'https://clamare.store', // Frontend domain
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
+  origin: 'https://clamare.store', // Frontend domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 
 app.use((req, res, next) => {
-    console.log('CORS Headers:', res.getHeaders());
-    next();
+  console.log('CORS Headers:', res.getHeaders());
+  next();
 });
 
 app.get('/', (req, res) => {
-    res.send('hello from clamáre backend :)');
+  res.send('hello from clamáre backend :)');
 });
 
 app.post('/api/contact', cors(), async (req, res) => {
   console.log('Incoming data:', req.body);
-    const { firstName, lastName, email, message, reason } = req.body;
+  console.log('Transporter Verification:', await transporter.verify());
+
+  const { firstName, lastName, email, message, reason } = req.body;
 
   if (!firstName || !lastName || !email || !message || !reason) {
     return res.status(400).json({
@@ -89,9 +91,8 @@ app.post('/api/contact', cors(), async (req, res) => {
         user: process.env.EMAIL_USER, // Your Zoho email address from .env
         pass: process.env.EMAIL_PASS, // Your Zoho password or App Password from .env
       },
-      // Optional: Enable debugging
-      // debug: true,
-      // logger: true,
+      debug: true,
+      logger: true,
     });
 
     // Verify transporter configuration
@@ -141,102 +142,102 @@ app.listen(PORT, () => {
 });
 
 app.post('/api/verification', async (req, res) => {
-    console.log('Received /api/verification request:', req.body);
-    const { code, firstName, email } = req.body;
-  
-    // Basic validation
-    if (!code || !firstName || !email) {
-      return res.status(400).json({
+  console.log('Received /api/verification request:', req.body);
+  const { code, firstName, email } = req.body;
+
+  // Basic validation
+  if (!code || !firstName || !email) {
+    return res.status(400).json({
+      success: false,
+      message: 'Code, first name, and email are required.',
+    });
+  }
+
+  // Validate email format
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please provide a valid email address.',
+    });
+  }
+
+  // Store the verification code
+  verificationCodes[email] = code;
+  console.log(`Stored verification code for ${email}: ${code}`);
+
+  // Read the HTML template
+  const templatePath = path.join(__dirname, 'verificationCodeEmailTemplate.html');
+  let source;
+  try {
+    source = fs.readFileSync(templatePath, 'utf8');
+  } catch (err) {
+    console.error('Error reading email template:', err);
+    return res.status(500).json({ success: false, message: 'Internal Server Error.' });
+  }
+  const template = handlebars.compile(source);
+
+  // Define dynamic data
+  const replacements = {
+    firstName: firstName,
+    code: code,
+  };
+
+  const htmlToSend = template(replacements);
+
+  // Set up Nodemailer transporter using Zoho SMTP settings from environment variables
+  let transporter;
+  try {
+    transporter = nodemailer.createTransport({
+      host: 'smtp.zoho.com',
+      port: 587, // 587 for TLS, 465 for SSL
+      secure: false, // true for port 465, false for port 587
+      requireTLS: true, // Force TLS
+      auth: {
+        user: process.env.EMAIL_USER, // Your Zoho email address from .env
+        pass: process.env.EMAIL_PASS, // Your Zoho password or App Password from .env
+      },
+    });
+
+    // Verify transporter configuration
+    await transporter.verify();
+    console.log('Nodemailer transporter is configured correctly.');
+  } catch (error) {
+    console.error('Error configuring transporter:', error);
+    return res.status(500).json({ success: false, message: 'Server configuration error.' });
+  }
+
+  const mailOptions = {
+    from: `"Clamáre" <${process.env.EMAIL_USER}>`,
+    to: email, // Receiver's email
+    subject: "Verify it's you",
+    html: htmlToSend,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Verification email sent to:', email);
+
+    res.json({
+      success: true,
+      message: 'Verification email sent successfully.',
+    });
+  } catch (error) {
+    console.error('Error sending verification email:', error);
+
+    // Remove the stored code if email fails to send
+    delete verificationCodes[email];
+
+    // Determine the type of error and respond accordingly
+    if (error.code === 'EAUTH') {
+      return res.status(500).json({
         success: false,
-        message: 'Code, first name, and email are required.',
+        message: 'Authentication failed. Please check your email credentials.',
       });
-    }
-  
-    // Validate email format
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({
+    } else {
+      return res.status(500).json({
         success: false,
-        message: 'Please provide a valid email address.',
+        message: 'Failed to send verification email.',
       });
     }
-  
-    // Store the verification code
-    verificationCodes[email] = code;
-    console.log(`Stored verification code for ${email}: ${code}`);
-  
-    // Read the HTML template
-    const templatePath = path.join(__dirname, 'verificationCodeEmailTemplate.html');
-    let source;
-    try {
-      source = fs.readFileSync(templatePath, 'utf8');
-    } catch (err) {
-      console.error('Error reading email template:', err);
-      return res.status(500).json({ success: false, message: 'Internal Server Error.' });
-    }
-    const template = handlebars.compile(source);
-  
-    // Define dynamic data
-    const replacements = {
-      firstName: firstName,
-      code: code,
-    };
-  
-    const htmlToSend = template(replacements);
-  
-    // Set up Nodemailer transporter using Zoho SMTP settings from environment variables
-    let transporter;
-    try {
-      transporter = nodemailer.createTransport({
-        host: 'smtp.zoho.com',
-        port: 587, // 587 for TLS, 465 for SSL
-        secure: false, // true for port 465, false for port 587
-        requireTLS: true, // Force TLS
-        auth: {
-          user: process.env.EMAIL_USER, // Your Zoho email address from .env
-          pass: process.env.EMAIL_PASS, // Your Zoho password or App Password from .env
-        },
-      });
-  
-      // Verify transporter configuration
-      await transporter.verify();
-      console.log('Nodemailer transporter is configured correctly.');
-    } catch (error) {
-      console.error('Error configuring transporter:', error);
-      return res.status(500).json({ success: false, message: 'Server configuration error.' });
-    }
-  
-    const mailOptions = {
-      from: `"Clamáre" <${process.env.EMAIL_USER}>`,
-      to: email, // Receiver's email
-      subject: "Verify it's you",
-      html: htmlToSend,
-    };
-  
-    try {
-      await transporter.sendMail(mailOptions);
-      console.log('Verification email sent to:', email);
-  
-      res.json({
-        success: true,
-        message: 'Verification email sent successfully.',
-      });
-    } catch (error) {
-      console.error('Error sending verification email:', error);
-  
-      // Remove the stored code if email fails to send
-      delete verificationCodes[email];
-  
-      // Determine the type of error and respond accordingly
-      if (error.code === 'EAUTH') {
-        return res.status(500).json({
-          success: false,
-          message: 'Authentication failed. Please check your email credentials.',
-        });
-      } else {
-        return res.status(500).json({
-          success: false,
-          message: 'Failed to send verification email.',
-        });
-      }
-    }
-  });
+  }
+});
