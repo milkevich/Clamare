@@ -4,13 +4,13 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import TitleUpdater from './components/TitleUpdater';
 import WebsitePreviewScreen from './screens/WebsitePreviewScreen';
-import { fetchEmailInfo, fetchStoreStatus } from './utils/shopify';
+import { fetchStoreStatus } from './utils/shopify';
 import './shared/Variables.scss';
 import Loader from './shared/UI/Loader';
 import { ToastContainer } from 'react-toastify';
 
 function App() {
-  const [storeRunning, setStoreRunning] = useState(false);
+  const [storeRunning, setStoreRunning] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,25 +30,6 @@ function App() {
     };
 
     loadStoreStatus();
-  }, []);
-
-  useEffect(() => {
-    const loademail = async () => {
-      try {
-        const data = await fetchEmailInfo();
-
-        if (data.length > 0) {
-          const fields = data[0];
-          const statusField = fields.find((f) => f.key === 'logo');
-          console.log(statusField)
-        }
-      } catch (err) {
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loademail();
   }, []);
 
   useEffect(() => {
