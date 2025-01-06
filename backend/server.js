@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-    res.send('Hello, CORS works!');
+    res.send('hello from clamáre backend :)');
 });
 
 app.post('/api/contact', cors(), async (req, res) => {
