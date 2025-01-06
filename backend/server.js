@@ -7,6 +7,8 @@ const fs = require('fs');
 const path = require('path');
 const handlebars = require('handlebars');
 
+const PORT = process.env.PORT || 3000;
+
 const app = express();
 
 app.options('*', cors());
