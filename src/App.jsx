@@ -68,7 +68,7 @@ function App() {
     <div className="appContainer">
       {storeRunning ? (
         <>
-        <div style={{position: 'fixed', width: '100%', top: 0, left: 0}}>
+        <div style={{position: 'fixed', width: '100%', top: 0, left: 0, zIndex: 100000000}}>
         <ToastContainer />
         </div>
           <TitleUpdater />
