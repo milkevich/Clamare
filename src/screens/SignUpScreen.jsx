@@ -61,36 +61,28 @@ const SignUpScreen = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setAlert(false);
-
+  
     if (!showVerification) {
       if (!validateForm()) {
         setAlert(true);
         setTimeout(() => setAlert(false), 3000);
         return;
       }
-
+  
       const code = generateVerificationCode();
       setGeneratedCode(code);
       console.log(`Generated Verification Code: ${code}`);
-
+  
       try {
-        const response = await fetch('http://localhost:3001/api/verification', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            code: code,
-            firstName: form.firstName,
-            email: form.email
-          })
-
+        const response = await api.post('/api/verification', {
+          code: code,
+          firstName: form.firstName,
+          email: form.email,
         });
-        console.log(code, form.email, form.firstName)
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
+  
+        console.log('Verification response:', response.data);
+  
+        if (response.data.success) {
           // Successfully sent the verification email
           setShowVerification(true);
           setAlertMessage('A verification code has been sent to your email.');
@@ -98,7 +90,7 @@ const SignUpScreen = () => {
           setTimeout(() => setAlert(false), 3000);
         } else {
           // Handle errors returned from the backend
-          setAlertMessage(data.message || 'Failed to send verification email.');
+          setAlertMessage(response.data.message || 'Failed to send verification email.');
           setAlert(true);
           setTimeout(() => setAlert(false), 3000);
         }
@@ -116,11 +108,11 @@ const SignUpScreen = () => {
         setTimeout(() => setAlert(false), 3000);
         return;
       }
-
+  
       // Proceed with sign-up
       setIsSubmitting(true);
       const { email, password, firstName, lastName, phone } = form;
-
+  
       try {
         const success = await signUp(email, password, firstName, lastName, phone);
         if (success) {
@@ -141,6 +133,7 @@ const SignUpScreen = () => {
       }
     }
   };
+  
 
   return (
     <>
