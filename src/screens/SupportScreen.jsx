@@ -140,10 +140,16 @@ const SupportScreen = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         e.preventDefault();
-        if (!form.firstName || !form.lastName || !form.email || !form.message || !form.reason) {
+        if (
+            !form.firstName.trim() ||
+            !form.lastName.trim() ||
+            !form.email.trim() ||
+            !form.message.trim() ||
+            !form.reason
+        ) {
             toast.error('All fields are required.');
             return;
-        }
+        }        
         if (!/\S+@\S+\.\S+/.test(form.email)) {
             toast.error('Invalid email format.');
             return;
@@ -441,7 +447,7 @@ const SupportScreen = () => {
                                         }}
                                     />
                                     <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>Please include all the information regarding your concern.</p>
-                                    <Button disabled={isSubmitting ? isSubmitting : messageSent} onClick={handleSubmit}>{isSubmitting ? 'SENDING OVER...' : messageSent ? 'MESSAGE SENT!' : 'SEND A MESSAGE'}</Button>
+                                    <Button disabled={isSubmitting || messageSent} onClick={handleSubmit}>{isSubmitting ? 'SENDING OVER...' : messageSent ? 'MESSAGE SENT!' : 'SEND A MESSAGE'}</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
                             </div>
@@ -623,7 +629,7 @@ const SupportScreen = () => {
                                         }}
                                     />
                                     <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>Please include all the information regarding your concern.</p>
-                                    <Button disabled={isSubmitting} onClick={handleSubmit}>{isSubmitting ? 'SENDING OVER...' : messageSent ? 'MESSAGE SENT!' : 'SEND A MESSAGE'}</Button>
+                                    <Button disabled={isSubmitting || messageSent} onClick={handleSubmit}>{isSubmitting ? 'SENDING OVER...' : messageSent ? 'MESSAGE SENT!' : 'SEND A MESSAGE'}</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
                             </div>
