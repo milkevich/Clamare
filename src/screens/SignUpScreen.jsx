@@ -28,43 +28,6 @@ const SignUpScreen = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
   };
 
-  const checkIfCustomerExists = async (email) => {
-    const shop = process.env.SHOPIFY_STORE_URL;
-    const accessToken = process.env.SHOPIFY_ADMIN_API_ACCESS_TOKEN;
-  
-    const query = `
-      {
-        customers(first: 1, query: "email:${email}") {
-          edges {
-            node {
-              id
-              email
-            }
-          }
-        }
-      }
-    `;
-  
-    try {
-      const response = await axios.post(
-        `https://${shop}/admin/api/2023-10/graphql.json`, 
-        { query },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Shopify-Access-Token': accessToken,
-          },
-        }
-      );
-  
-      const customers = response.data.data.customers.edges;
-      return customers.length > 0;
-    } catch (error) {
-      console.error('Error checking customer existence:', error.response?.data || error.message);
-      throw new Error('Error checking customer existence');
-    }
-  };
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };

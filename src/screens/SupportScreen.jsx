@@ -138,37 +138,11 @@ const SupportScreen = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
-    
         try {
-          const response = await fetch('http://localhost:3001/api/contact', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form),
-          });
-    
-          const data = await response.json();
-          if (data.success) {
-            setMessageSent(true)
-            setTimeout(() => {
-                setMessageSent(false)
-            }, 3000);
-            toast.success('Message sent successfully! A confirmation email has been sent to you.');
-            setForm({
-              firstName: '',
-              lastName: '',
-              email: '',
-              message: '',
-              reason: '',
-            });
-          } else {
-            toast.error(`Failed to send message: ${data.message}`);
-          }
+          const response = await api.post('/api/contact', formData);
+          console.log('Success:', response.data);
         } catch (error) {
-          toast.error('An error occurred. Please try again later.');
           console.error('Error:', error);
-        } finally {
-          setIsSubmitting(false);
         }
       };
       

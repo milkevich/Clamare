@@ -16,7 +16,7 @@ const verificationCodes = {};
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:5173', 
+    origin: 'http://clamare.store', 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   }));
