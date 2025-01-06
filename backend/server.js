@@ -6,8 +6,6 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const handlebars = require('handlebars');
-const cors = require('cors');
-const express = require('express');
 
 const app = express();
 
