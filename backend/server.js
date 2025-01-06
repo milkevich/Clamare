@@ -7,32 +7,33 @@ const rateLimit = require('express-rate-limit');
 const fs = require('fs');
 const path = require('path');
 const handlebars = require('handlebars');
+const cors = require('cors');
+const express = require('express');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-// In-memory store for verification codes
-const verificationCodes = {};
-
-// Middleware
 app.use(cors({
-    origin: 'https://clamare.store', // Replace this with your frontend domain
+    origin: 'https://clamare.store', // Frontend domain
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true, // If you're using cookies or HTTP authentication
+    credentials: true,
 }));
 
 app.options('*', cors());
 
+// Middleware to log headers for debugging
+app.use((req, res, next) => {
+    console.log('CORS Headers:', res.getHeaders());
+    next();
+});
 
-// Root route for testing
 app.get('/', (req, res) => {
-  res.send('hello from clamáre backend :)');
+    res.send('Hello, CORS works!');
 });
 
 app.post('/api/contact', cors(), async (req, res) => {
     const { firstName, lastName, email, message, reason } = req.body;
-    
+
   // Validate the form data
   if (!firstName || !lastName || !email || !message || !reason) {
     return res.status(400).json({
