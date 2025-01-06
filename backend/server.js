@@ -47,6 +47,7 @@ app.post('/api/contact', cors(), async (req, res) => {
 
       const { firstName, lastName, email, message, reason } = req.body;
 
+      // Validate input
       if (!firstName || !lastName || !email || !message || !reason) {
           return res.status(400).json({
               success: false,
@@ -60,10 +61,33 @@ app.post('/api/contact', cors(), async (req, res) => {
           });
       }
 
+      // Read the HTML template
+      const templatePath = path.join(__dirname, 'supportConfirmationEmailTemplate.html');
+      let source;
+      try {
+          source = fs.readFileSync(templatePath, 'utf8');
+      } catch (err) {
+          console.error('Error reading email template:', err);
+          return res.status(500).json({ success: false, message: 'Internal Server Error.' });
+      }
+      const template = handlebars.compile(source);
+
+      // Define dynamic data for the template
+      const replacements = {
+          firstName: firstName,
+          reason: reason,
+          message: message,
+          logoUrl: 'https://yourdomain.com/path-to-logo.png', // Replace with your actual logo URL
+          supportPageUrl: 'https://clamare.store/support',
+      };
+
+      const htmlToSend = template(replacements);
+
+      // Set up Nodemailer transporter
       const transporter = nodemailer.createTransport({
           host: 'smtp.zoho.com',
           port: 587,
-          secure: false, 
+          secure: false, // Use TLS
           requireTLS: true,
           auth: {
               user: process.env.EMAIL_USER,
@@ -73,12 +97,12 @@ app.post('/api/contact', cors(), async (req, res) => {
 
       console.log('Transporter Verification:', await transporter.verify());
 
+      // Prepare and send the email
       const mailOptions = {
           from: `"Clamáre Support" <${process.env.EMAIL_USER}>`,
           to: email,
           subject: 'We Have Received Your Message',
-          text: `Thank you, ${firstName} ${lastName}, for reaching out regarding: ${reason}.`,
-          html: `<p>Message: ${message}</p>`,
+          html: htmlToSend, // Send the rendered HTML template
       };
 
       await transporter.sendMail(mailOptions);
@@ -93,6 +117,7 @@ app.post('/api/contact', cors(), async (req, res) => {
       res.status(500).json({ success: false, message: 'Internal server error.' });
   }
 });
+
 
 // Start the Server
 app.listen(PORT, () => {
