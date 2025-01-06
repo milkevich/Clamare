@@ -16,11 +16,14 @@ const verificationCodes = {};
 
 // Middleware
 app.use(cors({
-    origin: 'https://clamare.store', 
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-  }));
-  app.use(express.json());
+    origin: 'https://clamare.store', // Replace this with your frontend domain
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // If you're using cookies or HTTP authentication
+}));
+
+app.options('*', cors());
+
 
 // Root route for testing
 app.get('/', (req, res) => {
