@@ -7,6 +7,7 @@ import WebsitePreviewScreen from './screens/WebsitePreviewScreen';
 import { fetchEmailInfo, fetchStoreStatus } from './utils/shopify';
 import './shared/Variables.scss';
 import Loader from './shared/UI/Loader';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   const [storeRunning, setStoreRunning] = useState(false);
@@ -73,6 +74,7 @@ function App() {
             <Outlet />
           </div>
           <Footer />
+          <ToastContainer />
         </>
       ) : (
         <WebsitePreviewScreen />

@@ -140,10 +140,20 @@ const SupportScreen = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-          const response = await api.post('/api/contact', formData);
+          const response = await api.post('/api/contact', form); // Corrected
           console.log('Success:', response.data);
+          // Reset form fields
+          setForm({
+            firstName: '',
+            lastName: '',
+            email: '',
+            message: '',
+            reason: '',
+          });
+          toast.success('Your message has been sent successfully!');
         } catch (error) {
           console.error('Error:', error);
+          toast.error('Failed to send your message. Please try again later.');
         }
       };
       
