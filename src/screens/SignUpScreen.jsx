@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Fade, Slide } from '@mui/material';
 import s from '../shared/SignUpScreen.module.scss';
 import { AuthContext } from '../contexts/AuthContext';
+import api from '../api';
 
 const SignUpScreen = () => {
   const [form, setForm] = useState({
