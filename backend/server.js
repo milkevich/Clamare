@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.options('*', cors());
 
 app.use(cors({
-  origin: 'https://clamare.store', // Frontend domain
+  origin: 'https://clamare.store', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
