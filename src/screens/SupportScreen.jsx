@@ -139,24 +139,26 @@ const SupportScreen = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        e.preventDefault();
+
         if (
             !form.firstName.trim() ||
             !form.lastName.trim() ||
             !form.email.trim() ||
             !form.message.trim() ||
-            !form.reason.trim() 
+            !form.reason.trim()
         ) {
             toast.error('All fields are required.');
-            console.log(form)
             return;
-        }        
+        }
+
         if (!/\S+@\S+\.\S+/.test(form.email)) {
             toast.error('Invalid email format.');
             return;
         }
+
         try {
-            setIsSubmitting(false)
+            setIsSubmitting(true);
+            await api.post('/api/contact', form);
             setForm({
                 firstName: '',
                 lastName: '',
@@ -164,9 +166,9 @@ const SupportScreen = () => {
                 message: '',
                 reason: '',
             });
+            setMessageSent(true);
             toast.success('Your message has been sent successfully!');
         } catch (error) {
-            console.error('Error:', error);
             if (error.response) {
                 toast.error(error.response.data.message || 'Failed to send your message.');
             } else if (error.request) {
@@ -174,6 +176,8 @@ const SupportScreen = () => {
             } else {
                 toast.error('An unexpected error occurred.');
             }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
