@@ -72,7 +72,6 @@ const SignUpScreen = () => {
   
       const code = generateVerificationCode();
       setGeneratedCode(code);
-      console.log(`Generated Verification Code: ${code}`);
   
       try {
         const response = await api.post('/api/verification', {
@@ -81,16 +80,15 @@ const SignUpScreen = () => {
           email: form.email,
         });
   
-        console.log('Verification response:', response.data);
+        setIsSubmitting(true)
   
         if (response.data.success) {
-          // Successfully sent the verification email
           setShowVerification(true);
           setAlertMessage('A verification code has been sent to your email.');
           setAlert(true);
           setTimeout(() => setAlert(false), 3000);
+          setIsSubmitting(false)
         } else {
-          // Handle errors returned from the backend
           setAlertMessage(response.data.message || 'Failed to send verification email.');
           setAlert(true);
           setTimeout(() => setAlert(false), 3000);
@@ -102,7 +100,6 @@ const SignUpScreen = () => {
         setTimeout(() => setAlert(false), 3000);
       }
     } else {
-      // **Step 2:** Code Verification
       if (enteredCode !== generatedCode) {
         setAlertMessage('Invalid verification code. Please try again.');
         setAlert(true);
@@ -110,7 +107,6 @@ const SignUpScreen = () => {
         return;
       }
   
-      // Proceed with sign-up
       setIsSubmitting(true);
       const { email, password, firstName, lastName, phone } = form;
   
