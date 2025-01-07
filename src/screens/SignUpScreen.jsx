@@ -72,16 +72,14 @@ const SignUpScreen = () => {
   
       const code = generateVerificationCode();
       setGeneratedCode(code);
-  
+      setIsSubmitting(true)
       try {
         const response = await api.post('/api/verification', {
           code: code,
           firstName: form.firstName,
           email: form.email,
         });
-  
-        setIsSubmitting(true)
-  
+    
         if (response.data.success) {
           setShowVerification(true);
           setAlertMessage('A verification code has been sent to your email.');
