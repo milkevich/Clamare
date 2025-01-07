@@ -156,10 +156,7 @@ const SupportScreen = () => {
             return;
         }
         try {
-            console.log(form);
-            const response = await api.post('/api/contact', form);
-            console.log('Success:', response.data);
-            // Reset form fields
+            setIsSubmitting(false)
             setForm({
                 firstName: '',
                 lastName: '',
@@ -171,13 +168,10 @@ const SupportScreen = () => {
         } catch (error) {
             console.error('Error:', error);
             if (error.response) {
-                // Server responded with a status other than 2xx
                 toast.error(error.response.data.message || 'Failed to send your message.');
             } else if (error.request) {
-                // Request was made but no response received
                 toast.error('No response from server. Please try again later.');
             } else {
-                // Something else happened
                 toast.error('An unexpected error occurred.');
             }
         }
@@ -448,7 +442,7 @@ const SupportScreen = () => {
                                         }}
                                     />
                                     <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>Please include all the information regarding your concern.</p>
-                                    <Button disabled={isSubmitting || messageSent} onClick={handleSubmit}>{isSubmitting ? 'SENDING OVER...' : messageSent ? 'MESSAGE SENT!' : 'SEND A MESSAGE'}</Button>
+                                    <Button disabled={isSubmitting ? isSubmitting : messageSent} onClick={handleSubmit}>{isSubmitting ? 'SENDING OVER...' : messageSent ? 'MESSAGE SENT!' : 'SEND A MESSAGE'}</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
                             </div>
