@@ -139,7 +139,7 @@ const SignUpScreen = () => {
               <p style={{ fontSize: '42px', fontWeight: '900', margin: 0 }}>
                 {showVerification ? "VERIFY IT'S YOU" : 'SIGN UP'}
               </p>
-              <p style={{ fontSize: '12px', fontWeight: '500', margin: 0, marginTop: '0.5rem' }}>
+              <p style={{ fontSize: '12px', fontWeight: '500', margin: 0, marginTop: '0.5rem', padding: '0rem 1rem' }}>
                 {showVerification
                   ? "PLEASE GO TO YOUR INBOX, WE'VE SENT YOU A 6-DIGIT CODE FOR VERIFICATION"
                   : 'PLEASE FILL IN YOUR INFORMATION'}
