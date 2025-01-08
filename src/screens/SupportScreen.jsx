@@ -448,6 +448,7 @@ const SupportScreen = () => {
                                         }}
                                     />
                                     <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>Please include all the information regarding your concern.</p>
+                                    <p style={{ fontSize: '10px', margin: 0, marginTop: '-10px' }}>OR REACH OUT TO US AT <a style={{fontWeight: '600', textDecoration: 'none', color: 'var(--main-color)'}} href="mailto:support@clamare.store">SUPPORT@CLAMARE.STORE</a></p>
                                     <Button disabled={isSubmitting ? isSubmitting : messageSent} onClick={handleSubmit}>{isSubmitting ? 'SENDING OVER...' : messageSent ? 'MESSAGE SENT!' : 'SEND A MESSAGE'}</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
@@ -632,6 +633,7 @@ const SupportScreen = () => {
                                         }}
                                     />
                                     <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>Please include all the information regarding your concern.</p>
+                                    <p style={{ fontSize: '10px', margin: 0, marginTop: '-10px' }}>OR REACH OUT TO US AT <a style={{fontWeight: '600', textDecoration: 'none', color: 'var(--main-color)'}} href="mailto:support@clamare.store">SUPPORT@CLAMARE.STORE</a></p>
                                     <Button disabled={isSubmitting || messageSent} onClick={handleSubmit}>{isSubmitting ? 'SENDING OVER...' : messageSent ? 'MESSAGE SENT!' : 'SEND A MESSAGE'}</Button>
                                     {isSmallScreen && <div style={{ height: '5rem' }} ref={faqRef}></div>}
                                 </div>
@@ -681,88 +683,88 @@ const SupportScreen = () => {
                     </div>
                 }
                 {selectedSection === 'Legal' && (
-    <div style={{ maxWidth: '1300px', margin: 'auto', padding: isSmallScreen2 ? '0.75rem' : '1.25rem' }}>
-        <div ref={legalRef} style={{ height: '3rem', display: !isSmallScreen && 'none' }}></div>
-        <div style={{ maxWidth: '550px', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-            <p style={{ fontSize: isSmallScreen ? '32px' : '24px', margin: 0, padding: '2rem 0rem 1.5rem 0rem', fontWeight: '900' }}>TERMS OF USE</p>
+                    <div style={{ maxWidth: '1300px', margin: 'auto', padding: isSmallScreen2 ? '0.75rem' : '1.25rem' }}>
+                        <div ref={legalRef} style={{ height: '3rem', display: !isSmallScreen && 'none' }}></div>
+                        <div style={{ maxWidth: '550px', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+                            <p style={{ fontSize: isSmallScreen ? '32px' : '24px', margin: 0, padding: '2rem 0rem 1.5rem 0rem', fontWeight: '900' }}>TERMS OF USE</p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>GENERAL INFORMATION</p>
-                <p style={{ margin: 0 }}>
-                    Clamáre is a clothing brand founded in 2024.
-                    By accessing or using Clamáre's website, you agree to comply with these Terms of Use, including our Privacy Policy. If you do not agree, you should stop using the site immediately. 
-                    We reserve the right to update these terms at any time without notice. Continued use of the website constitutes acceptance of any changes.
-                    Clamáre is not responsible for notifying you of updates, so we encourage regular review of these terms.
-                </p>
-            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
+                                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>GENERAL INFORMATION</p>
+                                <p style={{ margin: 0 }}>
+                                    Clamáre is a clothing brand founded in 2024.
+                                    By accessing or using Clamáre's website, you agree to comply with these Terms of Use, including our Privacy Policy. If you do not agree, you should stop using the site immediately.
+                                    We reserve the right to update these terms at any time without notice. Continued use of the website constitutes acceptance of any changes.
+                                    Clamáre is not responsible for notifying you of updates, so we encourage regular review of these terms.
+                                </p>
+                            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>ELIGIBILITY</p>
-                <p style={{ margin: 0 }}>
-                    Our website and services are intended for individuals who are 18 years of age or older, or the age of majority in your jurisdiction. 
-                    By placing an order, you confirm that you meet these eligibility requirements. If you are underage, you must have parental or guardian consent to use this site.
-                    Clamáre is not liable for any unauthorized use by minors. 
-                </p>
-            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
+                                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>ELIGIBILITY</p>
+                                <p style={{ margin: 0 }}>
+                                    Our website and services are intended for individuals who are 18 years of age or older, or the age of majority in your jurisdiction.
+                                    By placing an order, you confirm that you meet these eligibility requirements. If you are underage, you must have parental or guardian consent to use this site.
+                                    Clamáre is not liable for any unauthorized use by minors.
+                                </p>
+                            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>PRODUCTS AND AVAILABILITY</p>
-                <p style={{ margin: 0 }}>
-                    While we strive to keep our inventory updated, product availability may change without notice. 
-                    Clamáre does not guarantee that items will always be in stock, and we reserve the right to limit quantities or discontinue products at any time. 
-                    Colors, sizes, and designs may appear differently depending on your screen settings, and we cannot ensure that your device displays them accurately.
-                    Clamáre is not responsible for errors in product descriptions or pricing.
-                </p>
-            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
+                                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>PRODUCTS AND AVAILABILITY</p>
+                                <p style={{ margin: 0 }}>
+                                    While we strive to keep our inventory updated, product availability may change without notice.
+                                    Clamáre does not guarantee that items will always be in stock, and we reserve the right to limit quantities or discontinue products at any time.
+                                    Colors, sizes, and designs may appear differently depending on your screen settings, and we cannot ensure that your device displays them accurately.
+                                    Clamáre is not responsible for errors in product descriptions or pricing.
+                                </p>
+                            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>PRICING AND PAYMENTS</p>
-                <p style={{ margin: 0 }}>
-                    All prices are listed in USD unless otherwise stated. We reserve the right to correct any pricing errors or inaccuracies and adjust prices without prior notice. 
-                    Payments are securely processed through Shopify, and Clamáre does not store or handle your payment information. 
-                    Any issues with payment processing should be directed to your payment provider. 
-                    Clamáre is not liable for declined transactions, bank errors, or other payment-related issues.
-                </p>
-            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
+                                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>PRICING AND PAYMENTS</p>
+                                <p style={{ margin: 0 }}>
+                                    All prices are listed in USD unless otherwise stated. We reserve the right to correct any pricing errors or inaccuracies and adjust prices without prior notice.
+                                    Payments are securely processed through Shopify, and Clamáre does not store or handle your payment information.
+                                    Any issues with payment processing should be directed to your payment provider.
+                                    Clamáre is not liable for declined transactions, bank errors, or other payment-related issues.
+                                </p>
+                            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>SHIPPING POLICY</p>
-                <p style={{ margin: 0 }}>
-                    We ship to select countries, including most of Europe, the U.S., Canada, and Australia. Shipping times are estimates and may vary due to unforeseen circumstances such as courier delays or customs processing. 
-                    Clamáre is not responsible for delays or losses caused by third-party couriers. 
-                    Once the package leaves our facility, liability for its delivery lies with the courier. Lost or stolen packages will not be refunded or replaced by Clamáre.
-                </p>
-            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
+                                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>SHIPPING POLICY</p>
+                                <p style={{ margin: 0 }}>
+                                    We ship to select countries, including most of Europe, the U.S., Canada, and Australia. Shipping times are estimates and may vary due to unforeseen circumstances such as courier delays or customs processing.
+                                    Clamáre is not responsible for delays or losses caused by third-party couriers.
+                                    Once the package leaves our facility, liability for its delivery lies with the courier. Lost or stolen packages will not be refunded or replaced by Clamáre.
+                                </p>
+                            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>RETURNS AND REFUNDS</p>
-                <p style={{ margin: 0 }}>
-                    All sales are final. Refund requests will be reviewed on a case-by-case basis and must be submitted within 14 days of receiving your order. 
-                    Products must be in their original condition and packaging to be eligible for consideration. 
-                    Clamáre reserves the right to deny refunds for items that show signs of use or damage.
-                </p>
-            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
+                                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>RETURNS AND REFUNDS</p>
+                                <p style={{ margin: 0 }}>
+                                    All sales are final. Refund requests will be reviewed on a case-by-case basis and must be submitted within 14 days of receiving your order.
+                                    Products must be in their original condition and packaging to be eligible for consideration.
+                                    Clamáre reserves the right to deny refunds for items that show signs of use or damage.
+                                </p>
+                            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>INTELLECTUAL PROPERTY</p>
-                <p style={{ margin: 0 }}>
-                    All content on our website, including text, images, logos, and designs, is the exclusive property of Clamáre. 
-                    Unauthorized use, reproduction, or distribution is strictly prohibited and may result in legal action. 
-                    Accessing or using this website does not grant you ownership or rights to any intellectual property.
-                </p>
-            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
+                                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>INTELLECTUAL PROPERTY</p>
+                                <p style={{ margin: 0 }}>
+                                    All content on our website, including text, images, logos, and designs, is the exclusive property of Clamáre.
+                                    Unauthorized use, reproduction, or distribution is strictly prohibited and may result in legal action.
+                                    Accessing or using this website does not grant you ownership or rights to any intellectual property.
+                                </p>
+                            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>DISCLAIMERS AND LIMITATIONS OF LIABILITY</p>
-                <p style={{ margin: 0 }}>
-                    Clamáre provides this website and its content on an "as is" basis without warranties of any kind, express or implied. 
-                    We disclaim all warranties, including but not limited to merchantability, fitness for a particular purpose, and non-infringement. 
-                    Clamáre is not liable for indirect, incidental, or consequential damages arising from your use of the site, including loss of data, revenue, or profits.
-                </p>
-            </div>
-        </div>
-    </div>
-)}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', fontWeight: '580' }}>
+                                <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', padding: '0.5rem 0rem' }}>DISCLAIMERS AND LIMITATIONS OF LIABILITY</p>
+                                <p style={{ margin: 0 }}>
+                                    Clamáre provides this website and its content on an "as is" basis without warranties of any kind, express or implied.
+                                    We disclaim all warranties, including but not limited to merchantability, fitness for a particular purpose, and non-infringement.
+                                    Clamáre is not liable for indirect, incidental, or consequential damages arising from your use of the site, including loss of data, revenue, or profits.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
             </div>
         </Fade>
