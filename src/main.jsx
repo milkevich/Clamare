@@ -14,7 +14,7 @@ import LogInScreen from './screens/LogInScreen.jsx';
 import SignUpScreen from './screens/SignUpScreen.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import NotFound from './screens/NotFound.jsx';
-import OrderScreen from './screens/OrderScreen.jsx';
+import OrderScreen from './screens/OrderScreen.jsx'; 
 import MagazineItem from './screens/MagazineItem.jsx';
 import ManageAddresses from './screens/ManageAddresses.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
@@ -34,8 +34,8 @@ const router = createBrowserRouter(
       <Route path="pages/magazine/:magazineId/:magazineTitle" element={<MagazineItem />} />
       <Route element={<Protected />}>
         <Route path='account' element={<AccountScreen />} />
-        <Route path='account/orders/:orderId' element={<OrderScreen />} />
-        <Route path='account/manage/addresses' element={<ManageAddresses />} />
+        <Route path='account/orders/:orderId' element={<OrderScreen />} /> 
+        <Route path='account/manage/addresses' element={<ManageAddresses />} /> 
       </Route>
       <Route path='account/login' element={<LogInScreen />} />
       <Route path='account/sign-up' element={<SignUpScreen />} />
@@ -49,9 +49,8 @@ root.render(
   <CartProvider>
     <AuthProvider>
       <ErrorBoundary>
-        <RouterProvider router={router} >
-          <ScrollToTop />
-        </RouterProvider>
+        <ScrollToTop />
+        <RouterProvider router={router} />
       </ErrorBoundary>
     </AuthProvider>
   </CartProvider>
