@@ -1,4 +1,3 @@
-// src/contexts/CartContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import { fetchCart } from '../utils/cartFetch';
 import { removeLineFromCart } from '../utils/cartLinesRemove';
@@ -13,6 +12,14 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isBagOpened, setIsBagOpened] = useState(false);
+
+  useEffect(() => {
+    if(isBagOpened) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [isBagOpened])
 
   useEffect(() => {
     const fetchCartData = async () => {
@@ -35,7 +42,6 @@ export const CartProvider = ({ children }) => {
     fetchCartData();
   }, []);
 
-  // Create a new cart
   const createNewCart = async (variantId, quantity) => {
     try {
       const newCart = await createCart(variantId, quantity);
@@ -46,7 +52,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Add item to cart
   const addItemToCart = async (variantId, quantity) => {
     try {
       if (!cart) {
@@ -60,7 +65,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Remove item from cart
   const removeItemFromCart = async (lineId) => {
     try {
       if (!cart) {

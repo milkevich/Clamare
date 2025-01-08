@@ -43,16 +43,10 @@ function ClothingItemScreen() {
         };
     }, []);
 
-    // -------------------------------
-    // Lock/Unlock body scroll on overlay open/close
-    // And auto-scroll to the clicked image
-    // -------------------------------
     useEffect(() => {
         if (imagesExpanded) {
-            // lock main page scrolling
             document.body.style.overflow = 'hidden';
 
-            // wait for Fade to mount + images to render
             setTimeout(() => {
                 if (expandedIndex != null) {
                     expandedImageRefs.current[expandedIndex]?.scrollIntoView({
@@ -61,12 +55,10 @@ function ClothingItemScreen() {
                 }
             }, 0);
         } else {
-            // unlock
             document.body.style.overflow = '';
         }
     }, [imagesExpanded, expandedIndex]);
 
-    // 1) Fetch product and modelReference metafield
     useEffect(() => {
         const loadProduct = async () => {
             try {
@@ -74,7 +66,6 @@ function ClothingItemScreen() {
                 if (productData) {
                     setProduct(productData);
 
-                    // Extract modelReference metafield
                     const modelMetafield = productData.metafields?.find(
                         (mf) => mf.key === 'modelReference'
                     );
@@ -84,8 +75,7 @@ function ClothingItemScreen() {
                         setModelReference('');
                     }
                 } else {
-                    // Product not found → redirect or show error
-                    // e.g. navigate('/products/all');
+                    // not found?? 
                 }
             } catch (err) {
             }
@@ -318,19 +308,16 @@ function ClothingItemScreen() {
 
             <Fade in={product}>
                 <div className={s.mainContent}>
-                    {/* LEFT COLUMN IMAGES */}
                     <div className={s.imageColumn}>
-                        {/* 0th image => variantImageUrl (if it exists) */}
                         {variantImageUrl && (
                             <img
                                 src={variantImageUrl}
                                 alt="Current Color Variant"
                                 className={s.productImage}
                                 style={{ cursor: 'zoom-in' }}
-                                onClick={() => handleImageClick(0)} // index 0 in expandedImages
+                                onClick={() => handleImageClick(0)} 
                             />
                         )}
-                        {/* The rest from imagesToDisplay */}
                         {imagesToDisplay?.map(({ node }, i) => (
                             <img
                                 key={node.url}
@@ -339,18 +326,14 @@ function ClothingItemScreen() {
                                 className={s.productImage}
                                 style={{ cursor: 'zoom-in' }}
                                 onClick={() => {
-                                    // index in expandedImages = i+1 
-                                    // because 0 is variantImage
                                     handleImageClick(i + 1);
                                 }}
                             />
                         ))}
                     </div>
 
-                    {/* RIGHT COLUMN: Info */}
                     <div className={s.infoContainer}>
                         <div className={s.infoContent}>
-                            {/* Title & Price */}
                             <div>
                                 <p className={s.productTitle}>
                                     {product.title.toUpperCase()}
@@ -378,19 +361,16 @@ function ClothingItemScreen() {
                                     </div>
                                 )}
 
-                                {/* Model Reference (metafield) */}
                                 {modelReference ? (
                                     <p>{modelReference.toUpperCase()}</p>
                                 ) : null}
 
-                                {/* COLOR SELECTOR */}
                                 <div className={s.colorSelectorContainer}>
                                     <div className={s.colorVariants}>
                                         {uniqueColors.map((color) => {
                                             const isActive =
                                                 selectedColor.toLowerCase() === color.toLowerCase();
 
-                                            // find the variant that uses this color
                                             const variantWithColor = allVariants.find(
                                                 (variant) =>
                                                     getOptionValue(variant, 'color')?.toLowerCase() ===
