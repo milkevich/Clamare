@@ -20,7 +20,7 @@ class ErrorBoundary extends Component {
         <div style={{height: '100vh', width: '90vw', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
           <div style={{fontSize: '12px', display: 'flex', flexDirection: 'column', gap: '0.5rem', textAlign: 'center', maxWidth: '400px', margin: 'auto'}}>
           <p style={{margin: 0}}>CLAMÁRE:</p>
-          <p style={{margin: 0}}>SOMETHING WENT WRONG. PLEASE TRY AGAIN OR CONTACT SUPPORT AT SUPPORT@CLAMARE.STORE</p>
+          <p style={{margin: 0}}>SOMETHING WENT WRONG. PLEASE TRY AGAIN OR CONTACT SUPPORT AT <a href='https://mail.google.com/mail/u/0/#inbox?compose=jrjtWvPfnzRbwkwVkzzFQGHxvtJmkwSnGvdshwRqDknzSrmCPGtGRMHLFKjWlvwcmZhPsrhQ'>SUPPORT@CLAMARE.STORE</a></p>
           </div>
         </div>
       )
