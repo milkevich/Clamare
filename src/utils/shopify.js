@@ -29,7 +29,7 @@ export const fetchProducts = async () => {
           node {
             id
             title
-            handle      # <--- to replicate the shopify slug (e.g. "grey-knit-sweater")
+            handle      #
             description
             availableForSale
             priceRange {
