@@ -17,6 +17,7 @@ import NotFound from './screens/NotFound.jsx';
 import OrderScreen from './screens/OrderScreen.jsx'; 
 import MagazineItem from './screens/MagazineItem.jsx';
 import ManageAddresses from './screens/ManageAddresses.jsx';
+import ScrollToTop from './components/ScrollToTop.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -48,6 +49,7 @@ root.render(
   <CartProvider>
     <AuthProvider>
       <ErrorBoundary>
+        <ScrollToTop />
         <RouterProvider router={router} />
       </ErrorBoundary>
     </AuthProvider>
