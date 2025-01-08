@@ -176,16 +176,12 @@ const WebsitePreviewScreen = () => {
                             </p>
                             <p style={{ fontSize: '12px', fontWeight: '400', marginTop: '0.5rem', color: 'var(--main-bg-color)' }}>
                                 HEY, WE'RE CURRENTLY PREPARING FOR THE DROP,
-                                {date ? (
-                                    <>
+                                <>
                                         {' '}COME BACK ON{' '}
                                         <span style={{ backgroundColor: bgColor, color }}>
                                             {date}
                                         </span>
                                     </>
-                                ) : (
-                                    ' CHECK BACK LATER'
-                                )}
                             </p>
                         </div>
                     </div>
