@@ -262,7 +262,7 @@ const SupportScreen = () => {
                 <div style={{ display: 'flex', gap: '1.75rem', padding: isSmallScreen2 ? '0.5rem 0.75rem' : '0.5rem 1.25rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--main-bg-color)', position: 'sticky', top: 49, zIndex: 60 }}>
                     <div style={{ maxWidth: '1300px', margin: 'auto', display: 'flex', gap: '1.75rem', width: '100%', justifyContent: 'space-between' }}>
                         <p onClick={() => {
-                            navigate('/')
+                            navigate(-1)
                         }} style={{ margin: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '10px' }}><MdKeyboardArrowLeft size={12} />GO BACK</p>
                         <div style={{ display: 'flex', gap: '1.75rem' }}>
                             <p
@@ -273,6 +273,7 @@ const SupportScreen = () => {
                                     margin: 0,
                                     textDecoration: selectedSection === 'Contact' ? 'underline' : 'none',
                                     cursor: 'pointer',
+                                    display: isSmallScreen ? '' : 'none'
                                 }}
                             >
                                 CONTACT US
@@ -285,6 +286,7 @@ const SupportScreen = () => {
                                     margin: 0,
                                     textDecoration: selectedSection === 'FAQ' ? 'underline' : 'none',
                                     cursor: 'pointer',
+                                    display: isSmallScreen ? '' : 'none'
                                 }}
                             >
                                 FAQ
