@@ -4,13 +4,13 @@ import { fetchStoreStatus } from '../utils/shopify';
 
 const WebsitePreviewScreen = () => {
     const [loading, setLoading] = useState(true);
-    const [previewHero, setPreviewHero] = useState({ type: 'image', url: null });
     const [storeStatus, setStoreStatus] = useState(false);
     const [bgColor, setBgColor] = useState('');
     const [color, setColor] = useState('white');
+    const [heroMedia, setHeroMedia] = useState({ type: 'image', url: null });
     const [date, setDate] = useState(undefined);
 
-    // Helper to determine media type
+    // Helper function to determine media type
     const getMediaType = (url) => {
         const extension = url.split('.').pop().toLowerCase();
         const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
@@ -33,19 +33,17 @@ const WebsitePreviewScreen = () => {
                     const dateField = fields.find((f) => f.key === 'date');
                     const colorField = fields.find((f) => f.key === 'color');
                     const bgColorField = fields.find((f) => f.key === 'accent_color');
-                    const previewHeroField = fields.find((f) => f.key === 'preview_hero');
+                    const heroField = fields.find((f) => f.key === 'preview_hero');
 
                     setStoreStatus(statusField?.value === 'true');
                     setDate(dateField?.value);
                     setColor(colorField?.value);
                     setBgColor(bgColorField?.value);
 
-                    if (previewHeroField?.reference?.mediaUrl) {
-                        const url = previewHeroField.reference.mediaUrl;
+                    if (heroField?.reference?.mediaUrl) {
+                        const url = heroField.reference.mediaUrl;
                         const type = getMediaType(url);
-                        setPreviewHero({ type, url });
-                    } else {
-                        setPreviewHero({ type: 'image', url: null }); // Default fallback
+                        setHeroMedia({ type, url });
                     }
                 }
             } catch (err) {
@@ -81,9 +79,9 @@ const WebsitePreviewScreen = () => {
                     flexDirection: 'column',
                 }}
             >
-                {!loading && previewHero.url && (
+                {!loading && heroMedia.url && (
                     <>
-                        {previewHero.type === 'video' ? (
+                        {heroMedia.type === 'video' ? (
                             <video
                                 style={{
                                     position: 'absolute',
@@ -95,7 +93,7 @@ const WebsitePreviewScreen = () => {
                                     opacity: 0.5,
                                     filter: 'grayscale(50%)',
                                 }}
-                                src={previewHero.url}
+                                src={heroMedia.url}
                                 autoPlay
                                 loop
                                 muted
@@ -112,7 +110,7 @@ const WebsitePreviewScreen = () => {
                                     opacity: 0.5,
                                     filter: 'grayscale(50%)',
                                 }}
-                                src={previewHero.url}
+                                src={heroMedia.url}
                                 alt="Hero"
                             />
                         )}
