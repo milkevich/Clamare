@@ -33,6 +33,7 @@ const WebsitePreviewScreen = () => {
                     const colorField = fields.find((f) => f.key === 'color');
                     const bgColorField = fields.find((f) => f.key === 'accent_color');
                     const heroField = fields.find((f) => f.key === 'preview_hero');
+                    console.log(heroField)
 
                     setStoreStatus(statusField?.value === 'true');
                     setDate(dateField?.value);
