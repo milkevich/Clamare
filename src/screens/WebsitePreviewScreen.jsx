@@ -139,7 +139,7 @@ const WebsitePreviewScreen = () => {
                         style={{
                             zIndex: 1000,
                             textAlign: 'center',
-                            width: isSmallScreen ? '350px' : '420px',
+                            width: isSmallScreen ? '320px' : '420px',
                             marginTop: '3rem',
                             display: 'flex',
                             flexDirection: 'column',
