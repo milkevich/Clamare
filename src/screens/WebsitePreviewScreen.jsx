@@ -149,7 +149,7 @@ const WebsitePreviewScreen = () => {
                                     <>
                                         {' '}COME BACK ON{' '}
                                         <span>
-                                            {date.split('-').shift().join('/')} {time ? `AT ${time}` : ''}
+                                            {date.split('-').remove(0).join('/')} {time ? `AT ${time}` : ''}
                                         </span>
                                     </>
                                 ) : (
