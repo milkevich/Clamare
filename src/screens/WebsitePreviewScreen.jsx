@@ -40,7 +40,7 @@ const WebsitePreviewScreen = () => {
                     setLogo(logoField?.reference?.image?.url);
                     setHeroImg(heroField?.reference?.image?.url);
                     setStoreStatus(statusField?.value === 'true');
-                    setDate(dateField2.shift().join('/'));
+                    setDate(dateField2.slice(1).join('/'));
                 }
             } catch (err) {
             }
