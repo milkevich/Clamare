@@ -10,7 +10,6 @@ const WebsitePreviewScreen = () => {
     const [heroMedia, setHeroMedia] = useState({ type: 'image', url: null });
     const [date, setDate] = useState(undefined);
 
-    // Helper function to determine media type
     const getMediaType = (url) => {
         const extension = url.split('.').pop().toLowerCase();
         const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
@@ -18,7 +17,7 @@ const WebsitePreviewScreen = () => {
 
         if (imageExtensions.includes(extension)) return 'image';
         if (videoExtensions.includes(extension)) return 'video';
-        return 'image'; // Default to image if unknown
+        return 'image'; 
     };
 
     useEffect(() => {
@@ -44,6 +43,7 @@ const WebsitePreviewScreen = () => {
                         const url = heroField.reference.mediaUrl;
                         const type = getMediaType(url);
                         setHeroMedia({ type, url });
+                        console.log(heroField)
                     }
                 }
             } catch (err) {
