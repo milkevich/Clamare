@@ -1,212 +1,167 @@
-// src/screens/WebsitePreviewScreen.jsx
 import React, { useEffect, useState } from 'react';
 import { Fade } from '@mui/material';
-import { fetchStoreStatus, fetchMediaById } from '../utils/shopify';
+import { fetchStoreStatus } from '../utils/shopify';
 
 const WebsitePreviewScreen = () => {
-  const [loading, setLoading] = useState(true);
-  const [storeStatus, setStoreStatus] = useState(false);
-  const [bgColor, setBgColor] = useState('');
-  const [color, setColor] = useState('white');
-  const [heroMedia, setHeroMedia] = useState({ type: null, url: null });
-  const [date, setDate] = useState(undefined);
+    const [loading, setLoading] = useState(true);
+    const [previewData, setPreviewData] = useState([]);
+    const [storeStatus, setStoreStatus] = useState(false);
+    const [time, setTime] = useState('')
+    const [mixBlendMode, setMixBlendMode] = useState(false)
+    const [bgColor, setBgColor] = useState('');
+    const [color, setColor] = useState('white');
+    const [heroImg, setHeroImg] = useState(null);
+    const [logo, setLogo] = useState(null);
+    const [date, setDate] = useState(undefined);
 
-  useEffect(() => {
-    const loadStoreStatus = async () => {
-      try {
-        const data = await fetchStoreStatus();
-        console.log('Fetched data:', data); // Debugging
+    useEffect(() => {
+        const loadStoreStatus = async () => {
+            try {
+                const data = await fetchStoreStatus();
+                setPreviewData(data);
 
-        if (data.length > 0) {
-          const fields = data[0];
-          console.log('Fields:', fields); // Debugging
+                if (data.length > 0) {
+                    const fields = data[0];
 
-          const statusField = fields.find((f) => f.key === 'status');
-          const dateField = fields.find((f) => f.key === 'date');
-          const colorField = fields.find((f) => f.key === 'color');
-          const bgColorField = fields.find((f) => f.key === 'accent_color');
-          const heroField = fields.find((f) => f.key === 'preview_hero');
-
-          setStoreStatus(statusField?.value === 'true');
-          setDate(dateField?.value);
-          setColor(colorField?.value);
-          setBgColor(bgColorField?.value);
-
-          if (heroField?.reference) {
-            let url = null;
-            let type = null;
-
-            // Check if the media is an image
-            if (heroField.reference.image && heroField.reference.image.url) {
-              url = heroField.reference.image.url;
-              type = 'image';
+                    const statusField = fields.find((f) => f.key === 'status');
+                    const dateField = fields.find((f) => f.key === 'date');
+                    const colorField = fields.find((f) => f.key === 'color');
+                    const timeField = fields.find((f) => f.key === 'time');
+                    const mixBlendMode = fields.find((f) => f.key === 'mix_blend_mode_diff');
+                    const bgColorField = fields.find((f) => f.key === 'accent_color');
+                    const logoField = fields.find((f) => f.key === 'logo');
+                    const heroField = fields.find((f) => f.key === 'preview_hero');
+                    
+                    setMixBlendMode(mixBlendMode?.value)
+                    setTime(timeField?.value)
+                    setColor(colorField?.value);
+                    setBgColor(bgColorField?.value);
+                    setLogo(logoField?.reference?.image?.url);
+                    setHeroImg(heroField?.reference?.image?.url);
+                    setStoreStatus(statusField?.value === 'true');
+                    setDate(dateField?.value);
+                }
+            } catch (err) {
             }
-            // Check if the media is a video
-            else if (heroField.reference.__typename === 'Video') {
-              const gid = heroField.value;
-              const videoUrl = await fetchMediaById(gid);
-              if (videoUrl) {
-                url = videoUrl;
-                type = 'video';
-              }
-            }
-            // Optional: Handle other media types if necessary
-            else if (heroField.reference.mediaUrl) {
-              url = heroField.reference.mediaUrl;
-              // Optionally determine type based on extension
-              // const type = getMediaType(url);
-              type = 'image'; // Defaulting to image
-            }
+        };
 
-            if (url && type) {
-              console.log(`Hero media type: ${type}, URL: ${url}`); // Debugging
-              setHeroMedia({ type, url });
-            } else {
-              console.warn('No valid media found for preview_hero');
-            }
-          } else {
-            console.warn('No preview_hero field found');
-          }
-        } else {
-          console.warn('No data returned from fetchStoreStatus');
+        loadStoreStatus();
+    }, []);
+
+    useEffect(() => {
+        if (!heroImg && !logo) {
+            setLoading(false);
+            return;
         }
-      } catch (err) {
-        console.error('Error fetching store status:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    loadStoreStatus();
-  }, []);
+        const imageUrls = [heroImg, logo].filter(Boolean);
+        if (imageUrls.length === 0) {
+            setLoading(false);
+            return;
+        }
 
-  useEffect(() => {
-    if (!heroMedia.url) {
-      setLoading(false);
-      return;
-    }
+        let loadedCount = 0;
+        imageUrls.forEach((url) => {
+            const img = new Image();
+            img.src = url;
+            img.onload = () => {
+                loadedCount++;
+                if (loadedCount === imageUrls.length) {
+                    setLoading(false);
+                }
+            };
 
-    if (heroMedia.type === 'image') {
-      const img = new Image();
-      img.src = heroMedia.url;
-      img.onload = () => setLoading(false);
-      img.onerror = () => setLoading(false);
-    } else if (heroMedia.type === 'video') {
-      const video = document.createElement('video');
-      video.src = heroMedia.url;
-      video.onloadeddata = () => setLoading(false);
-      video.onerror = () => setLoading(false);
-    }
-  }, [heroMedia]);
+            img.onerror = () => {
+                loadedCount++;
+                if (loadedCount === imageUrls.length) {
+                    setLoading(false);
+                }
+            };
+        });
+    }, [heroImg, logo]);
 
-  return (
-    <div
-      style={{
-        width: '100vw',
-        backgroundColor: storeStatus ? 'white' : 'black',
-        color: storeStatus ? 'black' : 'white',
-        overflow: 'hidden',
-        height: '100vh',
-        position: 'relative', // Ensure positioning context
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          height: '90dvh',
-          overflow: 'hidden',
-          maxWidth: '600px',
-          margin: 'auto',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-          position: 'relative',
-        }}
-      >
-        {!loading && heroMedia.url && (
-          <>
-            {heroMedia.type === 'video' ? (
-              <video
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100vw',
-                  height: '100vh',
-                  objectFit: 'cover',
-                  opacity: 0.5,
-                  filter: 'grayscale(50%)',
-                }}
-                src={heroMedia.url}
-                autoPlay
-                loop
-                muted
-              >
-                Your browser does not support the video tag.
-              </video>
-            ) : (
-              <img
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100vw',
-                  height: '100vh',
-                  objectFit: 'cover',
-                  opacity: 0.5,
-                  filter: 'grayscale(50%)',
-                }}
-                src={heroMedia.url}
-                alt="Hero Image"
-              />
-            )}
-          </>
-        )}
-
-        <Fade timeout={2000} in={!loading}>
-          <div
+    return (
+        <div
             style={{
-              zIndex: 1000,
-              textAlign: 'center',
-              width: '350px',
-              marginTop: '3rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem',
-              justifyContent: 'center',
-              alignItems: 'center',
+                width: '100vw',
+                backgroundColor: storeStatus ? 'white' : 'black',
+                color: storeStatus ? 'black' : 'white',
+                overflow: 'hidden',
+                height: '100vh',
             }}
-          >
-            {/* You can add logo or other content here if needed */}
-            <p style={{ fontSize: '12px', fontWeight: '400', color: 'var(--main-bg-color)' }}>
-              CLAMÁRE:
-            </p>
-            <p style={{ fontSize: '12px', fontWeight: '400', marginTop: '0.5rem', color: 'var(--main-bg-color)' }}>
-              HEY, WE'RE CURRENTLY PREPARING FOR THE DROP,
-              {date ? (
-                <>
-                  {' '}COME BACK ON{' '}
-                  <span style={{ backgroundColor: bgColor, color }}>
-                    {date}
-                  </span>
-                </>
-              ) : (
-                ' CHECK BACK LATER'
-              )}
-            </p>
-          </div>
-        </Fade>
+        >
+            <div
+                style={{
+                    width: '100%',
+                    height: '90dvh',
+                    overflow: 'hidden',
+                    maxWidth: '600px',
+                    margin: 'auto',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column'
+                }}
+            >
+                <img
+                    style={{
+                        zIndex: 100,
+                        objectFit: 'cover',
+                        filter: 'grayscale(50%)',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        opacity: heroImg ? 0.5 : 0,
+                    }}
+                    src={heroImg || ''}
+                />
 
-        {/* Optional: Fallback content if media fails to load */}
-        {!loading && !heroMedia.url && (
-          <div style={{ color: 'red' }}>
-            Failed to load preview media. Please try again later.
-          </div>
-        )}
-      </div>
-    </div>
-  );
+                <Fade timeout={2000} in={!loading}>
+                    <div
+                        style={{
+                            zIndex: 1000,
+                            textAlign: 'center',
+                            width: '350px',
+                            marginTop: '3rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '1rem',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                    >
+                        {logo && (
+                            <img
+                                style={{ maxWidth: '100px' }}
+                                src={logo}
+                                alt="Clamare Logo"
+                            />
+                        )}
+                        <div>
+                            <p style={{ fontSize: '12px', fontWeight: '400', color: 'var(--main-bg-color)' }}>
+                                CLAMÁRE:
+                            </p>
+                            <p style={{ fontSize: '12px', fontWeight: '400', marginTop: '0.5rem', color: 'var(--main-bg-color)' }}>
+                                HEY, WE'RE CURRENTLY PREPARING FOR THE DROP,
+                                {date ? (
+                                    <>
+                                        {' '}COME BACK ON{' '}
+                                        <span style={{ backgroundColor: bgColor, color }}>
+                                            {date}
+                                        </span>
+                                    </>
+                                ) : (
+                                    ' CHECK BACK LATER'
+                                )}
+                            </p>
+                        </div>
+                    </div>
+                </Fade>
+            </div>
+        </div>
+    );
 };
 
 export default WebsitePreviewScreen;
