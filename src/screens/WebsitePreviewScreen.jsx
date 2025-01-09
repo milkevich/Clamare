@@ -148,8 +148,8 @@ const WebsitePreviewScreen = () => {
                                 {date ? (
                                     <>
                                         {' '}COME BACK ON{' '}
-                                        <span style={{ backgroundColor: bgColor, color }}>
-                                            {date} {time ? `AT ${time}` : ''}
+                                        <span>
+                                            {date.split('-').shift().join('/')} {time ? `AT ${time}` : ''}
                                         </span>
                                     </>
                                 ) : (
