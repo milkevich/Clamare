@@ -128,7 +128,7 @@ const WebsitePreviewScreen = () => {
                         top: 0,
                         left: 0,
                         width: '100vw',
-                        height: '100vh',
+                        height: isSmallScreen ? '100dvh' : '100vh',
                         opacity: heroImg ? 0.4 : 0,
                     }}
                     src={heroImg || ''}
