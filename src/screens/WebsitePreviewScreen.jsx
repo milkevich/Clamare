@@ -1,7 +1,7 @@
 // src/screens/WebsitePreviewScreen.jsx
 import React, { useEffect, useState } from 'react';
 import { Fade } from '@mui/material';
-import { fetchStoreStatus, fetchVideoUrl } from '../utils/shopify';
+import { fetchStoreStatus, fetchMediaById } from '../utils/shopify';
 
 const WebsitePreviewScreen = () => {
   const [loading, setLoading] = useState(true);
@@ -10,18 +10,6 @@ const WebsitePreviewScreen = () => {
   const [color, setColor] = useState('white');
   const [heroMedia, setHeroMedia] = useState({ type: null, url: null });
   const [date, setDate] = useState(undefined);
-
-  // Helper function to determine media type based on URL extension (optional)
-  const getMediaType = (url) => {
-    if (!url) return null;
-    const extension = url.split('.').pop().toLowerCase();
-    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
-    const videoExtensions = ['mp4', 'webm', 'ogg'];
-
-    if (imageExtensions.includes(extension)) return 'image';
-    if (videoExtensions.includes(extension)) return 'video';
-    return null; // Unknown type
-  };
 
   useEffect(() => {
     const loadStoreStatus = async () => {
@@ -48,22 +36,26 @@ const WebsitePreviewScreen = () => {
             let url = null;
             let type = null;
 
+            // Check if the media is an image
             if (heroField.reference.image && heroField.reference.image.url) {
-              // It's an image
               url = heroField.reference.image.url;
               type = 'image';
-            } else if (heroField.reference.__typename === 'Video') {
-              // It's a video, fetch the video URL using the gid
+            }
+            // Check if the media is a video
+            else if (heroField.reference.__typename === 'Video') {
               const gid = heroField.value;
-              const videoUrl = await fetchVideoUrl(gid);
+              const videoUrl = await fetchMediaById(gid);
               if (videoUrl) {
                 url = videoUrl;
                 type = 'video';
               }
-            } else if (heroField.reference.mediaUrl) {
-              // General media URL case, infer type
+            }
+            // Optional: Handle other media types if necessary
+            else if (heroField.reference.mediaUrl) {
               url = heroField.reference.mediaUrl;
-              type = getMediaType(url);
+              // Optionally determine type based on extension
+              // const type = getMediaType(url);
+              type = 'image'; // Defaulting to image
             }
 
             if (url && type) {
@@ -186,7 +178,7 @@ const WebsitePreviewScreen = () => {
               alignItems: 'center',
             }}
           >
-            {/* Remove logo logic as per your latest requirement */}
+            {/* You can add logo or other content here if needed */}
             <p style={{ fontSize: '12px', fontWeight: '400', color: 'var(--main-bg-color)' }}>
               CLAMÁRE:
             </p>

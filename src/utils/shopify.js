@@ -10,19 +10,27 @@ const client = axios.create({
   },
 });
 
+export default client;
+
 /**
- * Fetch the actual video URL using the gid.
- * @param {string} gid - The Global ID of the video.
- * @returns {string|null} - The video URL or null if not found.
+ * Fetch the actual media URL (image or video) using the gid.
+ * @param {string} gid - The Global ID of the media.
+ * @returns {string|null} - The media URL or null if not found.
  */
-export const fetchVideoUrl = async (gid) => {
+export const fetchMediaById = async (gid) => {
   const query = `
-    query VideoById($id: ID!) {
-      media(id: $id) {
+    query MediaById($id: ID!) {
+      node(id: $id) {
         ... on Video {
           sources {
             mimeType
             url
+          }
+        }
+        ... on MediaImage {
+          image {
+            url
+            altText
           }
         }
       }
@@ -38,22 +46,30 @@ export const fetchVideoUrl = async (gid) => {
       return null;
     }
 
-    const media = response.data.data.media;
-    if (media && media.sources && media.sources.length > 0) {
-      // Return the first source URL
-      return media.sources[0].url;
+    const node = response.data.data.node;
+    if (!node) return null;
+
+    if (node.__typename === 'Video') {
+      if (node.sources && node.sources.length > 0) {
+        // Return the first source URL
+        return node.sources[0].url;
+      }
+    } else if (node.__typename === 'MediaImage') {
+      if (node.image && node.image.url) {
+        return node.image.url;
+      }
     }
 
     return null;
   } catch (error) {
-    console.error('Error fetching video URL:', error);
+    console.error('Error fetching media by ID:', error);
     return null;
   }
 };
 
 /**
- * Fetch multiple products for ShopScreen
- * - Fetches each product's handle, which is critical for generating a Shopify-like URL.
+ * Fetch multiple products for ShopScreen 
+ * - Here we fetch each product's handle, which is critical for generating a Shopify-like URL.
  */
 export const fetchProducts = async () => {
   const query = `
@@ -99,7 +115,7 @@ export const fetchProducts = async () => {
     }
   `;
   const response = await client.post('', { query });
-  const products = response.data.data.products.edges.map((edge) => edge.node);
+  const products = response.data.data.products.edges.map(edge => edge.node);
   return products;
 };
 
@@ -142,6 +158,7 @@ export const fetchProductByHandle = async (handle) => {
             }
           }
         }
+
         metafields(identifiers: [
           {namespace: "custom", key: "modelReference"}
         ]) {
@@ -405,6 +422,3 @@ export const fetchEmailInfo = async () => {
     throw error;
   }
 };
-
-// Export all functions
-export default client;
