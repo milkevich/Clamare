@@ -31,6 +31,7 @@ const WebsitePreviewScreen = () => {
                     const bgColorField = fields.find((f) => f.key === 'accent_color');
                     const logoField = fields.find((f) => f.key === 'logo');
                     const heroField = fields.find((f) => f.key === 'preview_hero');
+                    const dateField2 = dateField?.value.split('-').join('/')
                     
                     setMixBlendMode(mixBlendMode?.value)
                     setTime(timeField?.value)
@@ -39,7 +40,7 @@ const WebsitePreviewScreen = () => {
                     setLogo(logoField?.reference?.image?.url);
                     setHeroImg(heroField?.reference?.image?.url);
                     setStoreStatus(statusField?.value === 'true');
-                    setDate(dateField?.value);
+                    setDate(dateField2);
                 }
             } catch (err) {
             }
@@ -149,7 +150,7 @@ const WebsitePreviewScreen = () => {
                                     <>
                                         {' '}COME BACK ON{' '}
                                         <span>
-                                            {date.split('-').remove(0).join('/')} {time ? `AT ${time}` : ''}
+                                            {date} {time ? `AT ${time}` : ''}
                                         </span>
                                     </>
                                 ) : (
