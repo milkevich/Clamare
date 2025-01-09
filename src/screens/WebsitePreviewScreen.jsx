@@ -149,7 +149,7 @@ const WebsitePreviewScreen = () => {
                                 {date ? (
                                     <>
                                         {' '}COME BACK ON{' '}
-                                        <span>
+                                        <span style={{color: color}}>
                                             {date} {time ? `AT ${time}` : ''}
                                         </span>
                                     </>
