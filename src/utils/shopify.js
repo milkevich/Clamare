@@ -3,23 +3,57 @@ import axios from 'axios';
 
 // Create an Axios client for Shopify Storefront
 const client = axios.create({
-    baseURL: `https://${import.meta.env.VITE_SHOPIFY_STORE_URL}/api/2023-07/graphql.json`,
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': import.meta.env.VITE_SHOPIFY_API_TOKEN,
-    },
-  });
-  
-  export default client;
-
-  // src/utils/shopify.js
-
-// Add similar logs for other variables if needed
-
+  baseURL: `https://${import.meta.env.VITE_SHOPIFY_STORE_URL}/api/2023-07/graphql.json`,
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Shopify-Storefront-Access-Token': import.meta.env.VITE_SHOPIFY_API_TOKEN,
+  },
+});
 
 /**
- * 1) Fetch multiple products for ShopScreen 
- *    - Here we fetch each product's handle, which is critical for generating a Shopify-like URL.
+ * Fetch the actual video URL using the gid.
+ * @param {string} gid - The Global ID of the video.
+ * @returns {string|null} - The video URL or null if not found.
+ */
+export const fetchVideoUrl = async (gid) => {
+  const query = `
+    query VideoById($id: ID!) {
+      media(id: $id) {
+        ... on Video {
+          sources {
+            mimeType
+            url
+          }
+        }
+      }
+    }
+  `;
+  const variables = { id: gid };
+
+  try {
+    const response = await client.post('', { query, variables });
+
+    if (response.data.errors) {
+      console.error('GraphQL Errors:', response.data.errors);
+      return null;
+    }
+
+    const media = response.data.data.media;
+    if (media && media.sources && media.sources.length > 0) {
+      // Return the first source URL
+      return media.sources[0].url;
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error fetching video URL:', error);
+    return null;
+  }
+};
+
+/**
+ * Fetch multiple products for ShopScreen
+ * - Fetches each product's handle, which is critical for generating a Shopify-like URL.
  */
 export const fetchProducts = async () => {
   const query = `
@@ -29,7 +63,7 @@ export const fetchProducts = async () => {
           node {
             id
             title
-            handle      #
+            handle
             description
             availableForSale
             priceRange {
@@ -65,13 +99,13 @@ export const fetchProducts = async () => {
     }
   `;
   const response = await client.post('', { query });
-  const products = response.data.data.products.edges.map(edge => edge.node);
+  const products = response.data.data.products.edges.map((edge) => edge.node);
   return products;
 };
 
 /**
- * 2) Fetch a single product by its "handle".
- *    e.g., "grey-knit-sweater" => productByHandle.
+ * Fetch a single product by its "handle".
+ * e.g., "grey-knit-sweater" => productByHandle.
  */
 export const fetchProductByHandle = async (handle) => {
   const query = `
@@ -108,7 +142,6 @@ export const fetchProductByHandle = async (handle) => {
             }
           }
         }
-
         metafields(identifiers: [
           {namespace: "custom", key: "modelReference"}
         ]) {
@@ -124,7 +157,10 @@ export const fetchProductByHandle = async (handle) => {
   const response = await client.post('', { query, variables });
   return response.data.data.productByHandle;
 };
-// shopify.js
+
+/**
+ * Fetch landing page data.
+ */
 export const fetchLandingPage = async () => {
   const query = `
     query {
@@ -163,13 +199,20 @@ export const fetchLandingPage = async () => {
 
     const heroField = metaobjectData.fields.find((field) => field.key === 'hero_image');
     if (!heroField) {
+      console.warn('No hero_image field found');
+      return null;
     }
 
     return heroField?.reference?.image?.url ?? null;
   } catch (error) {
+    console.error('Error fetching landing page:', error);
     throw error;
   }
 };
+
+/**
+ * Fetch magazine pages.
+ */
 export const fetchMagazinePages = async () => {
   const query = `
     query {
@@ -210,35 +253,27 @@ export const fetchMagazinePages = async () => {
     // Map each edge to just the "node"
     return edges.map((edge) => edge.node);
   } catch (error) {
+    console.error('Error fetching magazine pages:', error);
     throw error;
   }
 };
 
+/**
+ * Fetch a single magazine page by ID.
+ */
 export const fetchSingleMagazinePage = async (idNumber) => {
   const fullGID = `gid://shopify/Metaobject/${idNumber}`;
 
   const query = `
     query MetaobjectByID($id: ID!) {
-  metaobject(id: $id) {
-    id
-    handle
-    fields {
-      key
-      value
-      # single ref
-      reference {
-        __typename
-        ... on MediaImage {
-          image {
-            url
-            altText
-          }
-        }
-      }
-      # multi-refs
-      references(first: 100) {
-        edges {
-          node {
+      metaobject(id: $id) {
+        id
+        handle
+        fields {
+          key
+          value
+          # single ref
+          reference {
             __typename
             ... on MediaImage {
               image {
@@ -247,12 +282,23 @@ export const fetchSingleMagazinePage = async (idNumber) => {
               }
             }
           }
+          # multi-refs
+          references(first: 100) {
+            edges {
+              node {
+                __typename
+                ... on MediaImage {
+                  image {
+                    url
+                    altText
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
-  }
-}
-
   `;
 
   const variables = { id: fullGID };
@@ -263,10 +309,14 @@ export const fetchSingleMagazinePage = async (idNumber) => {
     }
     return response.data?.data?.metaobject ?? null;
   } catch (error) {
+    console.error('Error fetching single magazine page:', error);
     throw error;
   }
 };
 
+/**
+ * Fetch store status data.
+ */
 export const fetchStoreStatus = async () => {
   const query = `
     query {
@@ -305,10 +355,14 @@ export const fetchStoreStatus = async () => {
 
     return edges.map((edge) => edge.node.fields);
   } catch (error) {
+    console.error('Error fetching store status:', error);
     throw error;
   }
 };
 
+/**
+ * Fetch email info.
+ */
 export const fetchEmailInfo = async () => {
   const query = `
     query {
@@ -347,6 +401,10 @@ export const fetchEmailInfo = async () => {
 
     return edges.map((edge) => edge.node.fields);
   } catch (error) {
+    console.error('Error fetching email info:', error);
     throw error;
   }
 };
+
+// Export all functions
+export default client;
