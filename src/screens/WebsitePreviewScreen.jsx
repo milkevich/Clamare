@@ -107,13 +107,13 @@ const WebsitePreviewScreen = () => {
                     style={{
                         zIndex: 100,
                         objectFit: 'cover',
-                        filter: 'grayscale(50%)',
+                        filter: 'grayscale(100%)',
                         position: 'absolute',
                         top: 0,
                         left: 0,
                         width: '100vw',
                         height: '100vh',
-                        opacity: heroImg ? 0.5 : 0,
+                        opacity: heroImg ? 0.4 : 0,
                     }}
                     src={heroImg || ''}
                 />
@@ -134,7 +134,7 @@ const WebsitePreviewScreen = () => {
                     >
                         {logo && (
                             <img
-                                style={{ maxWidth: '100px' }}
+                                style={{ maxWidth: '70px', marginBottom: '-5px' }}
                                 src={logo}
                                 alt="Clamare Logo"
                             />
@@ -149,7 +149,7 @@ const WebsitePreviewScreen = () => {
                                     <>
                                         {' '}COME BACK ON{' '}
                                         <span style={{ backgroundColor: bgColor, color }}>
-                                            {date}
+                                            {date} {time ? `AT ${time}` : ''}
                                         </span>
                                     </>
                                 ) : (
