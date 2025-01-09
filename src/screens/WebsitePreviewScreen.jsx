@@ -10,10 +10,19 @@ const WebsitePreviewScreen = () => {
     const [mixBlendMode, setMixBlendMode] = useState(false);
     const [bgColor, setBgColor] = useState('');
     const [color, setColor] = useState('white');
-    const [heroFile, setHeroFile] = useState(null);
-    const [logo, setLogo] = useState(null);
+    const [heroMedia, setHeroMedia] = useState({ type: 'image', url: null });
+    const [logoMedia, setLogoMedia] = useState({ type: 'image', url: null });
     const [date, setDate] = useState(undefined);
-    const [isHeroVideo, setIsHeroVideo] = useState(false);
+
+    const getMediaType = (url) => {
+        const extension = url.split('.').pop().toLowerCase();
+        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+        const videoExtensions = ['mp4', 'webm', 'ogg'];
+
+        if (imageExtensions.includes(extension)) return 'image';
+        if (videoExtensions.includes(extension)) return 'video';
+        return 'image'; // Default to image if unknown
+    };
 
     useEffect(() => {
         const loadStoreStatus = async () => {
@@ -28,28 +37,27 @@ const WebsitePreviewScreen = () => {
                     const dateField = fields.find((f) => f.key === 'date');
                     const colorField = fields.find((f) => f.key === 'color');
                     const timeField = fields.find((f) => f.key === 'time');
-                    const mixBlendMode = fields.find((f) => f.key === 'mix_blend_mode_diff');
+                    const mixBlendModeField = fields.find((f) => f.key === 'mix_blend_mode_diff');
                     const bgColorField = fields.find((f) => f.key === 'accent_color');
                     const logoField = fields.find((f) => f.key === 'logo');
                     const heroField = fields.find((f) => f.key === 'preview_hero');
 
-                    setMixBlendMode(mixBlendMode?.value);
+                    setMixBlendMode(mixBlendModeField?.value);
                     setTime(timeField?.value);
                     setColor(colorField?.value);
                     setBgColor(bgColorField?.value);
-                    setLogo(logoField?.reference?.image?.url);
-                    
-                    // Check if heroField is an image or video
-                    if (heroField?.reference?.__typename === 'MediaImage') {
-                        setHeroFile(heroField.reference.image.url);
-                        setIsHeroVideo(false);
-                    } else if (heroField?.reference?.__typename === 'Video') {
-                        setHeroFile(heroField.reference.sources[0]?.url);
-                        setIsHeroVideo(true);
-                    }
-
                     setStoreStatus(statusField?.value === 'true');
                     setDate(dateField?.value);
+
+                    // Determine media type for hero
+                    const heroUrl = heroField?.reference?.image?.url || heroField?.reference?.mediaUrl;
+                    const heroType = heroUrl ? getMediaType(heroUrl) : 'image';
+                    setHeroMedia({ type: heroType, url: heroUrl });
+
+                    // Determine media type for logo
+                    const logoUrl = logoField?.reference?.image?.url || logoField?.reference?.mediaUrl;
+                    const logoType = logoUrl ? getMediaType(logoUrl) : 'image';
+                    setLogoMedia({ type: logoType, url: logoUrl });
                 }
             } catch (err) {
                 console.error(err);
@@ -60,36 +68,55 @@ const WebsitePreviewScreen = () => {
     }, []);
 
     useEffect(() => {
-        if (!heroFile && !logo) {
+        if ((!heroMedia.url && !logoMedia.url)) {
             setLoading(false);
             return;
         }
 
-        const fileUrls = [heroFile, logo].filter(Boolean);
-        if (fileUrls.length === 0) {
+        const mediaUrls = [heroMedia.url, logoMedia.url].filter(Boolean);
+        if (mediaUrls.length === 0) {
             setLoading(false);
             return;
         }
 
         let loadedCount = 0;
-        fileUrls.forEach((url) => {
-            const media = new Image();
-            media.src = url;
-            media.onload = () => {
-                loadedCount++;
-                if (loadedCount === fileUrls.length) {
-                    setLoading(false);
-                }
-            };
+        mediaUrls.forEach((url) => {
+            const extension = url.split('.').pop().toLowerCase();
+            const videoExtensions = ['mp4', 'webm', 'ogg'];
 
-            media.onerror = () => {
-                loadedCount++;
-                if (loadedCount === fileUrls.length) {
-                    setLoading(false);
-                }
-            };
+            if (videoExtensions.includes(extension)) {
+                const video = document.createElement('video');
+                video.src = url;
+                video.onloadeddata = () => {
+                    loadedCount++;
+                    if (loadedCount === mediaUrls.length) {
+                        setLoading(false);
+                    }
+                };
+                video.onerror = () => {
+                    loadedCount++;
+                    if (loadedCount === mediaUrls.length) {
+                        setLoading(false);
+                    }
+                };
+            } else {
+                const img = new Image();
+                img.src = url;
+                img.onload = () => {
+                    loadedCount++;
+                    if (loadedCount === mediaUrls.length) {
+                        setLoading(false);
+                    }
+                };
+                img.onerror = () => {
+                    loadedCount++;
+                    if (loadedCount === mediaUrls.length) {
+                        setLoading(false);
+                    }
+                };
+            }
         });
-    }, [heroFile, logo]);
+    }, [heroMedia, logoMedia]);
 
     return (
         <div
@@ -111,10 +138,10 @@ const WebsitePreviewScreen = () => {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    flexDirection: 'column',
+                    flexDirection: 'column'
                 }}
             >
-                {isHeroVideo ? (
+                {heroMedia.type === 'video' ? (
                     <video
                         style={{
                             zIndex: 100,
@@ -124,9 +151,10 @@ const WebsitePreviewScreen = () => {
                             left: 0,
                             width: '100vw',
                             height: '100vh',
-                            opacity: heroFile ? 0.5 : 0,
+                            opacity: 0.5,
+                            filter: 'grayscale(50%)',
                         }}
-                        src={heroFile || ''}
+                        src={heroMedia.url}
                         autoPlay
                         loop
                         muted
@@ -142,9 +170,9 @@ const WebsitePreviewScreen = () => {
                             left: 0,
                             width: '100vw',
                             height: '100vh',
-                            opacity: heroFile ? 0.5 : 0,
+                            opacity: heroMedia.url ? 0.5 : 0,
                         }}
-                        src={heroFile || ''}
+                        src={heroMedia.url || ''}
                         alt="Hero"
                     />
                 )}
@@ -160,15 +188,25 @@ const WebsitePreviewScreen = () => {
                             flexDirection: 'column',
                             gap: '1rem',
                             justifyContent: 'center',
-                            alignItems: 'center',
+                            alignItems: 'center'
                         }}
                     >
-                        {logo && (
-                            <img
+                        {logoMedia.type === 'video' ? (
+                            <video
                                 style={{ maxWidth: '100px' }}
-                                src={logo}
-                                alt="Clamare Logo"
+                                src={logoMedia.url}
+                                autoPlay
+                                loop
+                                muted
                             />
+                        ) : (
+                            logoMedia.url && (
+                                <img
+                                    style={{ maxWidth: '100px' }}
+                                    src={logoMedia.url}
+                                    alt="Clamare Logo"
+                                />
+                            )
                         )}
                         <div>
                             <p style={{ fontSize: '12px', fontWeight: '400', color: 'var(--main-bg-color)' }}>
