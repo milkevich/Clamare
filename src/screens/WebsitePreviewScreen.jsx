@@ -103,13 +103,13 @@ const WebsitePreviewScreen = () => {
                 backgroundColor: storeStatus ? 'white' : 'black',
                 color: storeStatus ? 'black' : 'white',
                 overflow: 'hidden',
-                height: '100vh',
+                height: isSmallScreen ? '100dvh' : '100vh',
             }}
         >
             <div
                 style={{
                     width: '100%',
-                    height: '90dvh',
+                    height: isSmallScreen ? '90dvh' : '90vh',
                     overflow: 'hidden',
                     maxWidth: '600px',
                     margin: 'auto',
