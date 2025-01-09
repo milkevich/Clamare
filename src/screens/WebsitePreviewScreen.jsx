@@ -13,6 +13,21 @@ const WebsitePreviewScreen = () => {
     const [heroImg, setHeroImg] = useState(null);
     const [logo, setLogo] = useState(null);
     const [date, setDate] = useState(undefined);
+    const [isSmallScreen, setIsSmallScreen] = useState(false)
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsSmallScreen(window.innerWidth <= 500);
+        };
+
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     useEffect(() => {
         const loadStoreStatus = async () => {
@@ -32,7 +47,7 @@ const WebsitePreviewScreen = () => {
                     const logoField = fields.find((f) => f.key === 'logo');
                     const heroField = fields.find((f) => f.key === 'preview_hero');
                     const dateField2 = dateField?.value.split('-')
-                    
+
                     setMixBlendMode(mixBlendMode?.value)
                     setTime(timeField?.value)
                     setColor(colorField?.value);
@@ -124,7 +139,7 @@ const WebsitePreviewScreen = () => {
                         style={{
                             zIndex: 1000,
                             textAlign: 'center',
-                            width: '350px',
+                            width: isSmallScreen ? '350px' : '420px',
                             marginTop: '3rem',
                             display: 'flex',
                             flexDirection: 'column',
@@ -135,21 +150,21 @@ const WebsitePreviewScreen = () => {
                     >
                         {logo && (
                             <img
-                                style={{ maxWidth: '100px', marginBottom: '-5px' }}
+                                style={{ maxWidth: isSmallScreen ? '70px' : '100px', marginBottom: '-5px' }}
                                 src={logo}
                                 alt="Clamare Logo"
                             />
                         )}
                         <div>
-                            <p style={{ fontSize: '14px', fontWeight: '400', color: 'var(--main-bg-color)' }}>
+                            <p style={{ fontSize: isSmallScreen ? '10px' : '14px', fontWeight: '400', color: 'var(--main-bg-color)' }}>
                                 CLAMÁRE:
                             </p>
-                            <p style={{ fontSize: '14px', fontWeight: '400', marginTop: '0.5rem', color: 'var(--main-bg-color)' }}>
+                            <p style={{ fontSize: isSmallScreen ? '10px' : '14px', fontWeight: '400', marginTop: '0.5rem', color: 'var(--main-bg-color)' }}>
                                 HEY, WE'RE CURRENTLY PREPARING FOR THE DROP,
                                 {date ? (
                                     <>
                                         {' '}COME BACK ON{' '}
-                                        <span style={{color: color}}>
+                                        <span style={{ color: color }}>
                                             {date} {time ? `AT ${time}` : ''}
                                         </span>
                                     </>
