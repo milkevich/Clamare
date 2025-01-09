@@ -150,7 +150,7 @@ const WebsitePreviewScreen = () => {
                     >
                         {logo && (
                             <img
-                                style={{ maxWidth: isSmallScreen ? '70px' : '100px', marginBottom: '-25px' }}
+                                style={{ maxWidth: isSmallScreen ? '70px' : '100px', marginBottom: '-20px' }}
                                 src={logo}
                                 alt="Clamare Logo"
                             />
