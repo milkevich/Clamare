@@ -31,7 +31,7 @@ const WebsitePreviewScreen = () => {
                     const bgColorField = fields.find((f) => f.key === 'accent_color');
                     const logoField = fields.find((f) => f.key === 'logo');
                     const heroField = fields.find((f) => f.key === 'preview_hero');
-                    const dateField2 = dateField?.value.split('-').shift()
+                    const dateField2 = dateField?.value.split('-')
                     
                     setMixBlendMode(mixBlendMode?.value)
                     setTime(timeField?.value)
@@ -40,7 +40,7 @@ const WebsitePreviewScreen = () => {
                     setLogo(logoField?.reference?.image?.url);
                     setHeroImg(heroField?.reference?.image?.url);
                     setStoreStatus(statusField?.value === 'true');
-                    setDate(dateField2.join('/'));
+                    setDate(dateField2.shift().join('/'));
                 }
             } catch (err) {
             }
@@ -135,16 +135,16 @@ const WebsitePreviewScreen = () => {
                     >
                         {logo && (
                             <img
-                                style={{ maxWidth: '70px', marginBottom: '-5px' }}
+                                style={{ maxWidth: '100px', marginBottom: '-5px' }}
                                 src={logo}
                                 alt="Clamare Logo"
                             />
                         )}
                         <div>
-                            <p style={{ fontSize: '10px', fontWeight: '400', color: 'var(--main-bg-color)' }}>
+                            <p style={{ fontSize: '14px', fontWeight: '400', color: 'var(--main-bg-color)' }}>
                                 CLAMÁRE:
                             </p>
-                            <p style={{ fontSize: '10px', fontWeight: '400', marginTop: '0.5rem', color: 'var(--main-bg-color)' }}>
+                            <p style={{ fontSize: '14px', fontWeight: '400', marginTop: '0.5rem', color: 'var(--main-bg-color)' }}>
                                 HEY, WE'RE CURRENTLY PREPARING FOR THE DROP,
                                 {date ? (
                                     <>
