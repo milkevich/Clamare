@@ -2,14 +2,14 @@
   display: flex;
   justify-content: center;
   width: calc(100vw - 2.5rem);
-  height: calc(100vh - 175px);
+  min-height: calc(100vh - 175px);
   max-width: 1470px;
   margin: auto;
   padding: 1.25rem;
 }
 
 .landingImage {
-  height: calc(100vh - 140px - 1rem);
+  height: calc(100dvh - 120px);
 }
 
 @media (max-width: 600px) {
