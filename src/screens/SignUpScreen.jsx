@@ -141,7 +141,7 @@ const SignUpScreen = () => {
               </p>
               <p style={{ fontSize: '12px', fontWeight: '500', margin: 0, marginTop: '0.5rem', padding: '0rem 1rem' }}>
                 {showVerification
-                  ? "PLEASE GO TO YOUR INBOX, WE'VE SENT YOU A 6-DIGIT CODE FOR VERIFICATION"
+                  ? "PLEASE GO TO YOUR INBOX, WE'VE SENT YOU A 6-DIGIT CODE FOR VERIFICATION. IF YOU CAN'T FIND IT, CHECK YOUR SMAP FOLDER, IT MIGHT TAKE A MINUTE OR TWO."
                   : 'PLEASE FILL IN YOUR INFORMATION'}
               </p>
             </div>
