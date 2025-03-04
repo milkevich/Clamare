@@ -73,7 +73,7 @@ const Magazine = () => {
                         navigate(`/pages/magazine/${urlId}/${titleField?.value.toLowerCase().split(' ').join('-')}`)
                     }} key={chapter.id} style={{cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '0.25rem'}}>
                         <img
-                            style={{ width: '100%', maxWidth: '400px', aspectRatio: '3/2' }}
+                            style={{ width: '100%', maxWidth: '400px', aspectRatio: '3/2', objectFit: 'cover' }}
                             src={heroImageUrl}
                             alt="Chapter Hero"
                         />
