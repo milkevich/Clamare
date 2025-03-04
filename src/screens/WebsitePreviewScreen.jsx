@@ -144,13 +144,14 @@ const WebsitePreviewScreen = () => {
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '1rem',
-                            justifyContent: 'center',
-                            alignItems: 'center'
+                            position: 'fixed',
+                            top: '2rem',
+                            left: '2rem'
                         }}
                     >
                         {logo && (
                             <img
-                                style={{ maxWidth: isSmallScreen ? '70px' : '100px', marginBottom: '-20px' }}
+                                style={{ maxWidth: isSmallScreen ? '60px' : '90px', marginBottom: '-20px', width: '100%' }}
                                 src={logo}
                                 alt="Clamare Logo"
                             />
