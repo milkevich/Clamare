@@ -146,7 +146,7 @@ const SignUpScreen = () => {
               />
               <div className={s.buttonContainer}>
                 <Button type="submit" onClick={handleSubmit} disabled={isSubmitting}>
-                  SIGN UP
+                  {isSubmitting ? 'VERIFYING' : 'SIGN UP'}
                 </Button>
               </div>
             </form>
