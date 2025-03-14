@@ -51,6 +51,7 @@ const SignUpScreen = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setAlert(false);
+    setIsSubmitting(true);
 
     if (!validateForm()) {
       setAlert(true);
