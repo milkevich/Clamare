@@ -63,11 +63,8 @@ const SignUpScreen = () => {
       const { email, password, firstName, lastName, phone } = form;
       const success = await signUp(email, password, firstName, lastName, phone);
       if (success) {
-        setAlert(true)
-        setAlertMessage('Account created successfully!')
-        setTimeout(() => {
           navigate('/account');
-        }, 1000);
+          setIsSubmitting(false);
       } else {
         setAlertMessage(authError || 'Something went wrong. Please try again.');
         setAlert(true);
@@ -78,7 +75,6 @@ const SignUpScreen = () => {
       setAlert(true);
       console.log(error)
     } finally {
-      setIsSubmitting(false);
       setTimeout(() => setAlert(false), 3000);
     }
   };
@@ -147,7 +143,7 @@ const SignUpScreen = () => {
               />
               <div className={s.buttonContainer}>
                 <Button type="submit" onClick={handleSubmit} disabled={isSubmitting}>
-                  {isSubmitting ? 'VERIFYING' : 'SIGN UP'}
+                  {isSubmitting ? 'VERIFYING...' : 'SIGN UP'}
                 </Button>
               </div>
             </form>
