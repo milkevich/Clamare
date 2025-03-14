@@ -18,23 +18,12 @@ const SignUpScreen = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
-  const [showVerification, setShowVerification] = useState(false);
-  const [generatedCode, setGeneratedCode] = useState(''); // New state for generated code
-  const [enteredCode, setEnteredCode] = useState('');     // New state for user-entered code
 
   const { signUp, authError } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const generateVerificationCode = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleVerificationChange = (e) => {
-    setEnteredCode(e.target.value);
   };
 
   const validateForm = () => {
@@ -62,73 +51,34 @@ const SignUpScreen = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setAlert(false);
-  
-    if (!showVerification) {
-      if (!validateForm()) {
-        setAlert(true);
-        setTimeout(() => setAlert(false), 3000);
-        return;
-      }
-  
-      const code = generateVerificationCode();
-      setGeneratedCode(code);
-      setIsSubmitting(true)
-      try {
-        const response = await api.post('/api/verification', {
-          code: code,
-          firstName: form.firstName,
-          email: form.email,
-        });
-    
-        if (response.data.success) {
-          setShowVerification(true);
-          setAlertMessage('A verification code has been sent to your email.');
-          setAlert(true);
-          setTimeout(() => setAlert(false), 3000);
-          setIsSubmitting(false)
-        } else {
-          setAlertMessage(response.data.message || 'Failed to send verification email.');
-          setAlert(true);
-          setTimeout(() => setAlert(false), 3000);
-        }
-      } catch (error) {
-        console.error('Error sending verification code:', error);
-        setAlertMessage('An error occurred while sending the verification code. Please try again.');
-        setAlert(true);
-        setTimeout(() => setAlert(false), 3000);
-      }
-    } else {
-      if (enteredCode !== generatedCode) {
-        setAlertMessage('Invalid verification code. Please try again.');
-        setAlert(true);
-        setTimeout(() => setAlert(false), 3000);
-        return;
-      }
-  
-      setIsSubmitting(true);
-      const { email, password, firstName, lastName, phone } = form;
-  
-      try {
-        const success = await signUp(email, password, firstName, lastName, phone);
-        if (success) {
+
+    if (!validateForm()) {
+      setAlert(true);
+      setTimeout(() => setAlert(false), 3000);
+      return;
+    }
+
+    try {
+      const success = await signUp(email, password, firstName, lastName, phone);
+      if (success) {
+        setAlert(true)
+        setAlertMessage('Account created successfully!')
+        setTimeout(() => {
           navigate('/account');
-        } else {
-          setAlertMessage(authError || 'Something went wrong. Please try again.');
-          setAlert(true);
-        }
-      } catch (error) {
-        setAlertMessage('An unexpected error occurred. Please try again later.');
+        }, 1000);
+      } else {
+        setAlertMessage(authError || 'Something went wrong. Please try again.');
         setAlert(true);
-      } finally {
-        setIsSubmitting(false);
-        setShowVerification(false); // Reset the verification step
-        setEnteredCode('');        // Clear the entered code
-        setGeneratedCode('');      // Clear the generated code
-        setTimeout(() => setAlert(false), 3000);
       }
+    } catch (error) {
+      setAlertMessage('An unexpected error occurred. Please try again later.');
+      setAlert(true);
+    } finally {
+      setIsSubmitting(false);
+      setTimeout(() => setAlert(false), 3000);
     }
   };
-  
+
 
   return (
     <>
@@ -137,93 +87,66 @@ const SignUpScreen = () => {
           <div className={s.contentWrapper}>
             <div style={{ textAlign: 'center' }}>
               <p style={{ fontSize: '42px', fontWeight: '900', margin: 0 }}>
-                {showVerification ? "VERIFY IT'S YOU" : 'SIGN UP'}
+                SIGN UP
               </p>
               <p style={{ fontSize: '12px', fontWeight: '500', margin: 0, marginTop: '0.5rem', padding: '0rem 1rem' }}>
-                {showVerification
-                  ? "PLEASE GO TO YOUR INBOX, WE'VE SENT YOU A 6-DIGIT CODE FOR VERIFICATION. IF YOU CAN'T FIND IT, CHECK YOUR SMAP FOLDER, IT MIGHT TAKE A MINUTE OR TWO."
-                  : 'PLEASE FILL IN YOUR INFORMATION'}
+                PLEASE FILL IN YOUR INFORMATION
               </p>
             </div>
 
-            {showVerification ? (
-              <div style={{ width: 'calc(100% - 2rem)' }}>
-                {/* Optional: Display the generated code for testing (Remove in production) */}
-                {/* <p style={{ color: 'green', textAlign: 'center' }}>
-                  Your verification code is: <strong>{generatedCode}</strong>
-                </p> */}
-
+            <form onSubmit={handleSubmit} className={s.form}>
+              <div className={s.nameFields}>
                 <Input
-                  value={enteredCode}
-                  onChange={handleVerificationChange}
-                  label='6-DIGIT CODE'
-                  name="verificationCode"
+                  value={form.firstName}
+                  onChange={handleChange}
+                  label="FIRST NAME"
+                  required
+                  outlined={false}
+                  name="firstName"
                   type="text"
-                  maxLength={6}
+                />
+                <Input
+                  value={form.lastName}
+                  onChange={handleChange}
+                  label="LAST NAME"
                   required
                   outlined={false}
+                  name="lastName"
+                  type="text"
                 />
-                <div className={s.buttonContainer}>
-                  <Button onClick={handleSubmit} type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'SIGNING UP...' : 'SIGN UP'}
-                  </Button>
-                </div>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className={s.form}>
-                <div className={s.nameFields}>
-                  <Input
-                    value={form.firstName}
-                    onChange={handleChange}
-                    label="FIRST NAME"
-                    required
-                    outlined={false}
-                    name="firstName"
-                    type="text"
-                  />
-                  <Input
-                    value={form.lastName}
-                    onChange={handleChange}
-                    label="LAST NAME"
-                    required
-                    outlined={false}
-                    name="lastName"
-                    type="text"
-                  />
-                </div>
-                <Input
-                  value={form.email}
-                  onChange={handleChange}
-                  label="EMAIL"
-                  name="email"
-                  type="email"
-                  required
-                  outlined={false}
-                />
-                <Input
-                  value={form.password}
-                  onChange={handleChange}
-                  label="PASSWORD"
-                  type="password"
-                  name="password"
-                  required
-                  outlined={false}
-                />
-                <Input
-                  value={form.phone}
-                  onChange={handleChange}
-                  label="PHONE"
-                  type="tel"
-                  name="phone"
-                  outlined={false}
-                />
-                <div className={s.buttonContainer}>
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'VERIFYING...' : 'CONTINUE'}
-                  </Button>
-                </div>
-              </form>
-            )}
+              <Input
+                value={form.email}
+                onChange={handleChange}
+                label="EMAIL"
+                name="email"
+                type="email"
+                required
+                outlined={false}
+              />
+              <Input
+                value={form.password}
+                onChange={handleChange}
+                label="PASSWORD"
+                type="password"
+                name="password"
+                required
+                outlined={false}
+              />
+              <Input
+                value={form.phone}
+                onChange={handleChange}
+                label="PHONE"
+                type="tel"
+                name="phone"
+                outlined={false}
+              />
+              <div className={s.buttonContainer}>
+                <Button type="submit" onClick={handleSubmit} disabled={isSubmitting}>
+                  SIGN UP
+                </Button>
+              </div>
+            </form>
 
             <div className={s.footer}>
               <p>
