@@ -59,6 +59,7 @@ const SignUpScreen = () => {
     }
 
     try {
+      const { email, password, firstName, lastName, phone } = form;
       const success = await signUp(email, password, firstName, lastName, phone);
       if (success) {
         setAlert(true)
@@ -69,10 +70,12 @@ const SignUpScreen = () => {
       } else {
         setAlertMessage(authError || 'Something went wrong. Please try again.');
         setAlert(true);
+        console.log(authError && authError)
       }
     } catch (error) {
       setAlertMessage('An unexpected error occurred. Please try again later.');
       setAlert(true);
+      console.log(error)
     } finally {
       setIsSubmitting(false);
       setTimeout(() => setAlert(false), 3000);
