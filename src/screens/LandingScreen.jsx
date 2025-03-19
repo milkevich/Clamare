@@ -27,6 +27,7 @@ const LandingScreen = () => {
 
   return (
     <div className={s.landingScreen}>
+      <meta name="facebook-domain-verification" content="i7ht91j92d8v7kvtpma5zsyaipdgua" />
       {heroImage ? (
         <Fade in={true}>
           <img className={s.landingImage} src={heroImage} alt="Hero" />
