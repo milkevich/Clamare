@@ -131,7 +131,7 @@ const LogInScreen = () => {
             <p>
               OR CONTINUE AS A{' '}
               <span
-                onClick={() => navigate('/clothing/shop')}
+                onClick={() => navigate(-1)}
                 style={{ fontWeight: '600', cursor: 'pointer' }}
               >
                 GUEST

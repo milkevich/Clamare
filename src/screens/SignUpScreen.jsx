@@ -157,7 +157,7 @@ const SignUpScreen = () => {
               </p>
               <p>
                 OR CONTINUE AS A{' '}
-                <span onClick={() => navigate('/clothing/shop')} className={s.link}>
+                <span onClick={() => navigate(-1)} className={s.link}>
                   GUEST
                 </span>
               </p>
