@@ -58,7 +58,6 @@ export const AuthProvider = ({ children }) => {
         console.log('Customer set in AuthContext:', customerResult.customer);
       }
     } else if (result.errors) {
-      // Aggregate error messages
       const errorMessages = result.errors.map(err => err.message).join(' ');
       setAuthError(errorMessages);
       console.log('AuthContext.logIn errors:', errorMessages);
