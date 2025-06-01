@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('hello from clamáre backend :)');
+  res.send(`<div style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;"><p>HELLO FROM CLAMÁRE BACKEND<p></div>`);
 });
 
 app.post('/api/contact', cors(), async (req, res) => {
