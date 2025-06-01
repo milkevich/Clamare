@@ -124,113 +124,62 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
     .toFixed(2);
 
     const handleCheckoutClick = async () => {
-      localStorage.removeItem('checkout_id');
-      try {
-        const customerAccessToken = localStorage.getItem('shopify_access_token');
-    
-        const lineItems = cart.lines.edges.map((edge) => ({
-          variantId: edge.node.merchandise.id,
-          quantity: edge.node.quantity,
-        }));
-    
-        const checkoutCreateInput = {
-          lineItems, 
-          ...(customer?.email ? { email: customer.email } : {})
-        };
-    
-        const createCheckoutMutation = `
-          mutation checkoutCreate($input: CheckoutCreateInput!) {
-            checkoutCreate(input: $input) {
-              checkout {
-                id
-                webUrl
-              }
-              checkoutUserErrors {
-                message
-                field
-                code
-              }
-            }
+  try {
+    const customerAccessToken = localStorage.getItem('shopify_access_token');
+
+    const lineItems = cart?.lines?.edges?.map((edge) => ({
+      merchandiseId: edge.node?.merchandise?.id,
+      quantity: Number(edge.node?.quantity),
+    })).filter(item => item.merchandiseId && item.quantity > 0);
+
+    if (!lineItems.length) {
+      alert('Cart is empty.');
+      return;
+    }
+
+    const cartCreateMutation = `
+      mutation cartCreate($input: CartInput!) {
+        cartCreate(input: $input) {
+          cart {
+            id
+            checkoutUrl
           }
-        `;
-    
-        const checkoutResponse = await client.post('', {
-          query: createCheckoutMutation,
-          variables: { input: checkoutCreateInput },
-        });
-    
-        if (
-          !checkoutResponse?.data ||
-          !checkoutResponse.data.data ||
-          !checkoutResponse.data.data.checkoutCreate
-        ) {
-          alert('Failed to create checkout. Please try again.');
-          console.log('Checkout Response:', checkoutResponse.data);
-          return;
-        }
-    
-        const { checkout, checkoutUserErrors } = checkoutResponse.data.data.checkoutCreate;
-        if (checkoutUserErrors?.length > 0) {
-          const errorMessages = checkoutUserErrors.map((err) => err.message).join('\n');
-          alert(`Checkout Creation Errors:\n${errorMessages}`);
-          console.log(errorMessages, checkoutUserErrors)
-          return;
-        }
-    
-        if (customerAccessToken) {
-          const associateCustomerMutation = `
-            mutation checkoutCustomerAssociateV2($checkoutId: ID!, $customerAccessToken: String!) {
-              checkoutCustomerAssociateV2(checkoutId: $checkoutId, customerAccessToken: $customerAccessToken) {
-                checkout {
-                  id
-                  webUrl
-                  email
-                }
-                checkoutUserErrors {
-                  message
-                  field
-                  code
-                }
-              }
-            }
-          `;
-    
-          const associateResponse = await client.post('', {
-            query: associateCustomerMutation,
-            variables: {
-              checkoutId: checkout.id,
-              customerAccessToken,
-            },
-          });
-    
-          if (
-            !associateResponse?.data ||
-            !associateResponse.data.data ||
-            !associateResponse.data.data.checkoutCustomerAssociateV2
-          ) {
-            alert('Failed to associate your account with the checkout. Please try again.');
-            console.log('Association Response:', associateResponse.data);
-            return;
+          userErrors {
+            field
+            message
           }
-    
-          const { checkout: updatedCheckout, checkoutUserErrors: associateErrors } =
-            associateResponse.data.data.checkoutCustomerAssociateV2;
-    
-          if (associateErrors?.length > 0) {
-            const errorMessages = associateErrors.map((err) => err.message).join('\n');
-            alert(`Customer Association Errors:\n${errorMessages}`);
-            console.log(errorMessages, associateErrors)
-            return;
-          }
-    
-          window.location.href = updatedCheckout.webUrl;
-        } else {
-          window.location.href = checkout.webUrl;
         }
-      } catch (error) {
-        alert('An unexpected error occurred during checkout. Please try again.');
       }
-    };    
+    `;
+
+    const input = {
+      lines: lineItems,
+      buyerIdentity: customer?.email ? { email: customer.email } : {},
+    };
+
+    const cartResponse = await client.post('', {
+      query: cartCreateMutation,
+      variables: { input },
+    });
+
+    const { cartCreate } = cartResponse?.data?.data || {};
+
+    if (!cartCreate?.cart?.checkoutUrl) {
+      const errMsg = cartCreate?.userErrors?.map(e => e.message).join('\n') || 'Unknown error creating cart';
+      alert(errMsg);
+      console.log('Cart errors:', cartCreate?.userErrors);
+      return;
+    }
+
+    // Redirect to checkout 🎉
+    window.location.href = cartCreate.cart.checkoutUrl;
+
+  } catch (error) {
+    console.error('Cart creation error:', error);
+    alert('Unexpected error during checkout. Try again.');
+  }
+};
+ 
 
 
   const totalQuantity = cart?.lines?.edges?.reduce((sum, edge) => sum + edge.node.quantity, 0) || 0;
