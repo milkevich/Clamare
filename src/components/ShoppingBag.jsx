@@ -137,6 +137,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
       return;
     }
 
+    // Step 1: Create cart
     const cartCreateMutation = `
       mutation cartCreate($input: CartInput!) {
         cartCreate(input: $input) {
@@ -163,22 +164,68 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
     });
 
     const { cartCreate } = cartResponse?.data?.data || {};
+    let checkoutUrl = cartCreate?.cart?.checkoutUrl;
+    const cartId = cartCreate?.cart?.id;
 
-    if (!cartCreate?.cart?.checkoutUrl) {
+    if (!checkoutUrl || !cartId) {
       const errMsg = cartCreate?.userErrors?.map(e => e.message).join('\n') || 'Unknown error creating cart';
       alert(errMsg);
-      console.log('Cart errors:', cartCreate?.userErrors);
+      console.warn('Cart errors:', cartCreate?.userErrors);
       return;
     }
 
-    // Redirect to checkout 🎉
-    window.location.href = cartCreate.cart.checkoutUrl;
+    // Step 2: If user is logged in, associate them with the cart
+    if (customerAccessToken) {
+      const associateMutation = `
+        mutation cartBuyerIdentityUpdate($cartId: ID!, $buyerIdentity: CartBuyerIdentityInput!) {
+          cartBuyerIdentityUpdate(cartId: $cartId, buyerIdentity: $buyerIdentity) {
+            cart {
+              id
+              checkoutUrl
+            }
+            userErrors {
+              field
+              message
+            }
+          }
+        }
+      `;
+
+      const associateResponse = await client.post('', {
+        query: associateMutation,
+        variables: {
+          cartId,
+          buyerIdentity: {
+            customerAccessToken,
+          },
+        },
+      });
+
+      const assoc = associateResponse?.data?.data?.cartBuyerIdentityUpdate;
+
+      if (assoc?.userErrors?.length) {
+        console.warn("Association errors:", assoc.userErrors);
+      }
+
+      checkoutUrl = assoc?.cart?.checkoutUrl || checkoutUrl;
+    }
+
+    // Step 3: Only redirect if it's a valid checkout URL (not theme cart)
+    if (!checkoutUrl.includes('checkout.shopify.com') && !checkoutUrl.includes('.myshopify.com')) {
+      alert("Invalid checkout URL returned. Shopify sent a theme cart page instead.");
+      console.warn("Bad checkoutUrl:", checkoutUrl);
+      return;
+    }
+
+    // ✅ All good → redirect
+    window.location.href = checkoutUrl;
 
   } catch (error) {
-    console.error('Cart creation error:', error);
-    alert('Unexpected error during checkout. Try again.');
+    console.error('Cart error:', error);
+    alert('Something went wrong during checkout.');
   }
 };
+
  
 
 
