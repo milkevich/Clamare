@@ -124,6 +124,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
     .toFixed(2);
 
     const handleCheckoutClick = async () => {
+      localStorage.removeItem('checkout_id');
       try {
         const customerAccessToken = localStorage.getItem('shopify_access_token');
     
@@ -164,6 +165,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
           !checkoutResponse.data.data.checkoutCreate
         ) {
           alert('Failed to create checkout. Please try again.');
+          console.log('Checkout Response:', checkoutResponse.data);
           return;
         }
     
@@ -207,6 +209,7 @@ const ShoppingBag = ({ onCheckout, onClose }) => {
             !associateResponse.data.data.checkoutCustomerAssociateV2
           ) {
             alert('Failed to associate your account with the checkout. Please try again.');
+            console.log('Association Response:', associateResponse.data);
             return;
           }
     
