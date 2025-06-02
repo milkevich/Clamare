@@ -245,26 +245,26 @@ const OrderScreen = () => {
                 {orderDetails.lineItems.edges.map((item, index) => (
                   <tr key={index} style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'center', fontSize: '12px' }}>
                     <td style={{ padding: '0.5rem', display: 'flex', alignItems: 'center', textAlign: 'left' }}>
-                      {item.node.variant.image ? (
-                        <img src={item.node.variant.image.src} alt={item.node.title} style={{ width: '50px', marginRight: '10px' }} />
+                      {item?.node?.variant.image ? (
+                        <img src={item?.node?.variant?.image?.src} alt={item?.node.title} style={{ width: '50px', marginRight: '10px' }} />
                       ) : (
                         <div style={{ width: '50px', height: '50px', backgroundColor: '#f0f0f0', marginRight: '10px' }}></div>
                       )}
                       <div>
-                        <p style={{ margin: 0, fontWeight: '600' }}>{item.node.title.toUpperCase()}</p>
-                        {item.node.variant.title !== 'Default Title' && (
-                          <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>{item.node.variant.title}</p>
+                        <p style={{ margin: 0, fontWeight: '600' }}>{item?.node.title.toUpperCase()}</p>
+                        {item?.node.variant.title !== 'Default Title' && (
+                          <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>{item?.node.variant.title}</p>
                         )}
                       </div>
                     </td>
-                    <td>{item.node.quantity}</td>
+                    <td>{item?.node.quantity}</td>
                     <td>
-                      {item.node.variant.priceV2.currencyCode === 'USD' ? '$' : ''}
-                      {parseFloat(item.node.variant.priceV2.amount).toFixed(2)}
+                      {item?.node.variant.priceV2.currencyCode === 'USD' ? '$' : ''}
+                      {parseFloat(item?.node.variant.priceV2.amount).toFixed(2)}
                     </td>
                     <td style={{ textAlign: 'right', paddingRight: '0.5rem' }}>
-                      {item.node.variant.priceV2.currencyCode === 'USD' ? '$' : ''}
-                      {(parseFloat(item.node.variant.priceV2.amount) * item.node.quantity).toFixed(2)}
+                      {item?.node.variant.priceV2.currencyCode === 'USD' ? '$' : ''}
+                      {(parseFloat(item?.node.variant.priceV2.amount) * item?.node.quantity).toFixed(2)}
                     </td>
                   </tr>
                 ))}
