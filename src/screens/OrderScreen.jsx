@@ -269,12 +269,12 @@ const OrderScreen = () => {
                     </td>
                     <td>{item?.node.quantity}</td>
                     <td>
-                      {item?.node.variant.priceV2.currencyCode === 'USD' ? '$' : ''}
-                      {parseFloat(item?.node.variant.priceV2.amount).toFixed(2)}
+                      {item?.node?.variant?.priceV2?.currencyCode === 'USD' ? '$' : ''}
+                      {parseFloat(item?.node?.variant?.priceV2?.amount).toFixed(2)}
                     </td>
                     <td style={{ textAlign: 'right', paddingRight: '0.5rem' }}>
-                      {item?.node.variant.priceV2.currencyCode === 'USD' ? '$' : ''}
-                      {(parseFloat(item?.node.variant.priceV2.amount) * item?.node.quantity).toFixed(2)}
+                      {item?.node?.variant?.priceV2?.currencyCode === 'USD' ? '$' : ''}
+                      {(parseFloat(item?.node?.variant?.priceV2?.amount) * item?.node?.quantity).toFixed(2)}
                     </td>
                   </tr>
                 ))}
@@ -285,7 +285,7 @@ const OrderScreen = () => {
                 <p style={{ margin: 0 }}>SUBTOTAL:</p>
                 <p style={{ margin: 0 }}>
                   {orderDetails.subtotalPriceV2.currencyCode === 'USD' ? '$' : ''}
-                  {parseFloat(orderDetails.subtotalPriceV2.amount).toFixed(2)}
+                  {parseFloat(orderDetails?.subtotalPriceV2?.amount).toFixed(2)}
                 </p>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
