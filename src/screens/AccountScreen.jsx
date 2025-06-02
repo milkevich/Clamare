@@ -285,9 +285,10 @@ const AccountScreen = () => {
                             </span>{' '}
                             <span>
                               {order.totalPriceV2.currencyCode === 'USD' ? ' $' : ''}
-                              {node.variant?.priceV2?.amount
+                              {typeof node.variant?.priceV2?.amount !== 'undefined'
                                 ? Math.floor(node.variant.priceV2.amount)
                                 : 'N/A'}
+
 
                               {order.totalPriceV2.currencyCode === 'USD' ? '' : order.totalPriceV2.currencyCode}
                             </span>
