@@ -148,7 +148,7 @@ const OrderScreen = () => {
   }, [orderId, navigate, customer]);
 
   if (loading) {
-    return 
+    return
   }
 
   if (error) {
@@ -190,7 +190,7 @@ const OrderScreen = () => {
           <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '1470px', margin: 'auto', fontSize: '10px', fontWeight: '580', padding: '0rem 0.75rem' }}>
             <p style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }} onClick={() => {
               navigate(-1)
-            }}><MdKeyboardArrowLeft size={12}/> BACK TO ACCOUNT</p>
+            }}><MdKeyboardArrowLeft size={12} /> BACK TO ACCOUNT</p>
             <p style={{ color: 'var(--sec-color)' }}>{orderDetails.name} ORDER</p>
           </div>
         </div>
@@ -245,11 +245,12 @@ const OrderScreen = () => {
                 {orderDetails.lineItems.edges.map((item, index) => (
                   <tr key={index} style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'center', fontSize: '12px' }}>
                     <td style={{ padding: '0.5rem', display: 'flex', alignItems: 'center', textAlign: 'left' }}>
-                      {item?.node?.variant.image ? (
-                        <img src={item?.node?.variant?.image?.src} alt={item?.node.title} style={{ width: '50px', marginRight: '10px' }} />
+                      {item?.node?.variant?.image?.src ? (
+                        <img src={item.node.variant.image.src} alt={item.node.title} style={{ width: '50px', marginRight: '10px' }} />
                       ) : (
                         <div style={{ width: '50px', height: '50px', backgroundColor: '#f0f0f0', marginRight: '10px' }}></div>
                       )}
+
                       <div>
                         <p style={{ margin: 0, fontWeight: '600' }}>{item?.node.title.toUpperCase()}</p>
                         {item?.node.variant.title !== 'Default Title' && (
@@ -311,7 +312,7 @@ const OrderScreen = () => {
             </div>
           }
           {!isSmallScreen ?
-            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div>
                 <p style={{ marginTop: '2.5rem', fontSize: '12px', fontWeight: '600' }}>SHIPPING ADDRESS</p>
                 {orderDetails.shippingAddress ? (
