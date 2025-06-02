@@ -253,9 +253,18 @@ const OrderScreen = () => {
 
                       <div>
                         <p style={{ margin: 0, fontWeight: '600' }}>{item?.node.title.toUpperCase()}</p>
-                        {item?.node.variant.title !== 'Default Title' && (
-                          <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>{item?.node.variant.title}</p>
+                        {item?.node?.variant ? (
+                          <>
+                            {item.node.variant.title !== 'Default Title' && (
+                              <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>
+                                {item.node.variant.title}
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <p style={{ margin: 0, fontSize: '12px', color: 'var(--sec-color)' }}>Variant info unavailable</p>
                         )}
+
                       </div>
                     </td>
                     <td>{item?.node.quantity}</td>
