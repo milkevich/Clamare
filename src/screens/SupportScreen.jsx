@@ -8,99 +8,84 @@ import { toast } from 'react-toastify';
 import api from '../api';
 
 const questions = [
-    {
-        question: 'Can I make modifications to my order after it\'s been placed?',
-        answer: 'Once an order has been confirmed, it can\'t be modified or adjusted.',
-    },
-    {
-        question: 'I used the incorrect address. How can I update it?',
-        answer: 'Address updates can be requested, but are not guaranteed. Please review your information before you checkout.',
-    },
-    {
-        question: 'How can I cancel my order?',
-        answer: 'Reach out to customer support with your order number and email address to submit a cancellation request. If your order was placed during peak periods or over the weekend, cancellations may not be possible. Cancellations are not guaranteed. Disclaimer: The abuse of cancellations that are deemed as unusual activity will be suspended from future cancellations. For more information, please review our terms of use.',
-    },
-    {
-        question: 'How do I know my order is confirmed?',
-        answer: 'Every order is subject to review. The order is confirmed once you receive a shipping confirmation email. Please check your spam inbox.',
-    },
-    {
-        question: 'When will I receive my order?',
-        answer: 'Orders are processed Monday – Friday and shipped within 3-7 business days, excluding the weekend and major holidays.\n\nOnce your order is shipped, you will receive a shipping confirmation email with your tracking information. Allow 48-72 business hours for your tracking information to update with an estimated delivery date.',
-    },
-    {
-        question: 'Do you ship internationally?',
-        answer: 'Yes. Orders shipped outside the U.S. are subject to non-refundable customs duties/taxes. Global-E has enabled us to allow the payment of stated fees at the time of checkout.\n\nStussy.com ships to the following countries: AR, BR, CA, CO, CR, DO, EC, HK, HU, ID, IL, KW, MY, MX, PA, PH, QA, RU, SA, SG, TW, AE, UA, UY, VN, ZA.',
-    },
-    {
-        question: 'My tracking information states that my order was delivered, but I have not received it. What does this mean?',
-        answer: 'Allow 48 hours after the stated delivery time for your package to show up. If your package hasn\'t been delivered, please contact support@stussy.com.',
-    },
-    {
-        question: 'Why was my order canceled?',
-        answer: 'If your order was canceled, we advise you to contact your financial institution to ensure your information is up to date. Cancellations may also be affected by limited stock availability.',
-    },
-    {
-        question: 'What payment methods do you take?',
-        answer: 'Stussy.com and Global-E accept all major credit cards including: Visa, MasterCard, American Express, Discover, and PayPal. Payments made via PayPal must be purchased by a verified account with a confirmed shipping address.\n\nOther payment methods will vary per region: Apple Pay, Google Pay, etc.\n\nInternational orders will appear as Global-E on bank statements.',
-    },
-    {
-        question: 'How do I know if an item will fit?',
-        answer: 'In order to identify the best fit, please visit our size guide. Additional fit details with measurements are found on the product page specific to the item. Measurements are displayed in inches unless otherwise noted. For assistance, please contact support@stussy.com.',
-    },
-    {
-        question: 'How do I find out when new styles are released?',
-        answer: 'Subscribe to our newsletter or follow us on Instagram for early release information.',
-    },
-    {
-        question: 'When can I expect a response from customer support?',
-        answer: 'Our team will respond within 24-72 hours, excluding weekends and major holidays.',
-    },
-    {
-        question: 'My package is being returned to sender. What are the next steps?',
-        answer: 'Once your order has been returned to our warehouse, it will be fully refunded upon delivery. We do not re-ship orders.',
-    },
-    {
-        question: 'I placed multiple orders, can I combine them?',
-        answer: 'Once your order is placed, we are unable to combine shipments on multiple orders.',
-    },
-    {
-        question: 'I received a damaged product, what should I do?',
-        answer: 'Please contact support@stussy.com within 24-48 hours of delivery. We ask you to provide detailed images of the product(s) in question along with the packing/invoice slip.',
-    },
-    {
-        question: 'Can I return my online order in store?',
-        answer: 'Online orders must be returned through our online return portal as chapter stores only accept returns for in-store purchases. No exceptions.',
-    },
-    {
-        question: 'I received a tracking number, but the shipment hasn\'t moved.',
-        answer: 'Tracking numbers are generated when your shipping label is created. Allow 1-3 business days for the courier to scan the package for updates.',
-    },
-    {
-        question: 'Can I return collaboration items?',
-        answer: 'All sales are final for any purchases on Nike, limited editions, and special collaboration items.',
-    },
-    {
-        question: 'If an item is sold out, when will it be available again?',
-        answer: 'Stussy.com displays real-time inventory. Unfortunately, an item is no longer available if you don\'t see it on our website. Please note some items will allow you to sign up for back-in-stock notifications in product details.',
-    },
-    {
-        question: 'My order is a gift, do you include the price in the package?',
-        answer: 'We do not include prices on our packing slips.',
-    },
-    {
-        question: 'Do you offer gift receipts or gift cards?',
-        answer: 'We do not offer gift receipts or gift cards.',
-    },
-    {
-        question: 'I received an item from Stussy.com as a gift. Can I return it or exchange it?',
-        answer: 'We do not offer exchanges. You will have to contact the purchaser to return the product and purchase the updated item we have in stock.',
-    },
-    {
-        question: 'Can I get some free stickers?',
-        answer: 'Stickers are provided in online orders, but are not guaranteed as they are provided based on availability.',
-    },
+  {
+    question: "Can I make modifications to my order after it’s been placed?",
+    answer: "Once an order is confirmed, we’re unable to make any changes or edits.",
+  },
+  {
+    question: "I used the wrong address. Can I update it?",
+    answer: "You can reach out to us ASAP, but address changes aren’t guaranteed. Please double-check everything before placing your order.",
+  },
+  {
+    question: "How can I cancel my order?",
+    answer: "Send us your order number and email to request cancellation. Cancellations aren’t guaranteed and may be denied during peak periods. Abuse of cancellations may lead to restrictions.",
+  },
+  {
+    question: "How do I know my order is confirmed?",
+    answer: "You’ll get a confirmation email once your order is reviewed and accepted. Don’t forget to check your spam folder too.",
+  },
+  {
+    question: "When will I get my order?",
+    answer: "We process orders Monday to Friday and ship within 3–7 business days. Once shipped, you'll get a tracking email. Tracking updates can take 48–72 hours.",
+  },
+  {
+    question: "Do you ship internationally?",
+    answer: "Yes. International orders may have customs fees or taxes. These aren’t refundable and are paid at checkout when available.",
+  },
+  {
+    question: "My tracking says delivered but I don’t have my package?",
+    answer: "Wait 48 hours after it says delivered. If it's still missing, contact us at support@clamare.store.",
+  },
+  {
+    question: "Why was my order canceled?",
+    answer: "Orders may be canceled due to payment issues or limited stock. Please make sure your payment info is up to date.",
+  },
+  {
+    question: "What payment methods do you accept?",
+    answer: "We accept major cards (Visa, MasterCard, AmEx, etc.), PayPal, Apple Pay, Google Pay, and more depending on your region.",
+  },
+  {
+    question: "How do I know if something will fit?",
+    answer: "Check out our size guide. Each product page also has fit notes and model reference. Still unsure? Hit us up at support@clamare.store.",
+  },
+  {
+    question: "How do I find out when new drops happen?",
+    answer: "Subscribe to our newsletter and follow us on Instagram for drop announcements.",
+  },
+  {
+    question: "When will support reply?",
+    answer: "We typically respond within 24–48 hours.",
+  },
+  {
+    question: "I placed multiple orders — can you combine them?",
+    answer: "We can’t combine separate orders. Each one is processed individually.",
+  },
+  {
+    question: "I got a damaged item. Help?",
+    answer: "Email support@clamare.store within 48 hours with pictures of the product and packaging slip.",
+  },
+  {
+    question: "Can I return my online order in person?",
+    answer: "No. All returns must be done online. We don’t accept in-person returns at this time.",
+  },
+  {
+    question: "My tracking number isn’t updating.",
+    answer: "Tracking numbers are created when the label is made. Allow 1–3 business days for updates.",
+  },
+  {
+    question: "Sold out items — will they restock?",
+    answer: "If it’s not on our site, it’s likely gone. Some products may let you sign up for restock alerts.",
+  },
+  {
+    question: "Do you offer gift cards?",
+    answer: "Not at the moment, but we’re working on it.",
+  },
+  {
+    question: "Can I get free stickers?",
+    answer: "We include stickers in some orders while supplies last, but they’re not guaranteed.",
+  },
 ];
+
 
 const reasons = [
     { value: 'Cancellation', label: 'CANCEL REQUEST' },
