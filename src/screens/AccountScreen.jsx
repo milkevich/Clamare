@@ -277,14 +277,18 @@ const AccountScreen = () => {
                               display: 'flex',
                               justifyContent: 'space-between',
                             }}
-                            key={node.id}
+                            key={node.variant?.id || node.title}
+
                           >
                             <span>
                               {node.quantity}x {node.title}
                             </span>{' '}
                             <span>
                               {order.totalPriceV2.currencyCode === 'USD' ? ' $' : ''}
-                              {Math.floor(node.variant.priceV2.amount)}
+                              {node.variant?.priceV2?.amount
+                                ? Math.floor(node.variant.priceV2.amount)
+                                : 'N/A'}
+
                               {order.totalPriceV2.currencyCode === 'USD' ? '' : order.totalPriceV2.currencyCode}
                             </span>
                           </li>
@@ -294,7 +298,7 @@ const AccountScreen = () => {
                   ))}
                 </ul>
               ) : (
-                <div style={{paddingLeft: isSmallScreen ? '0.75rem' : '1.25rem'}}>
+                <div style={{ paddingLeft: isSmallScreen ? '0.75rem' : '1.25rem' }}>
                   <p style={{ margin: 0, fontSize: '12px', fontWeight: '600' }}>NO ORDERS.</p>
                   <p style={{ margin: 0, fontSize: '12px', fontWeight: '580' }}>You haven't placed any orders yet.</p>
                 </div>
